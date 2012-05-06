@@ -72,7 +72,7 @@ namespace MapEditor
 			int foo = this.ActiveLayer;
 			if (Model.ActiveLevel != null)
 			{
-				this.ActiveLevelRenderer.Refresh();
+				this.ActiveLevelRenderer.RefreshAll();
 			}
 		}
 
@@ -86,6 +86,22 @@ namespace MapEditor
 			this.menu_stuff_down.Click += new RoutedEventHandler(menu_stuff_down_Click);
 			this.menu_stuff_up.Click += new RoutedEventHandler(menu_stuff_up_Click);
 			this.menu_stuff_duke.Click += new RoutedEventHandler(menu_stuff_duke_Click);
+			this.menu_stuff_resize.Click += new RoutedEventHandler(menu_stuff_resize_Click);
+		}
+
+		void menu_stuff_resize_Click(object sender, RoutedEventArgs e)
+		{
+			if (Model.ActiveLevel != null)
+			{
+				ResizeDialog rd = new ResizeDialog(Model.ActiveLevel);
+				rd.ShowDialog();
+				if (rd.Status)
+				{
+					Model.ActiveLevel.Resize(rd.Anchor, rd.NewWidth, rd.NewHeight);
+					UpdateTitle();
+					this.ActiveLevelRenderer.RefreshAll();
+				}
+			}
 		}
 
 		void menu_stuff_duke_Click(object sender, RoutedEventArgs e)
@@ -186,6 +202,10 @@ namespace MapEditor
 			{
 				this.menu_stuff_duke_Click(null, null);
 			}
+			else if (e.Key == Key.E && ctrl)
+			{
+				this.menu_stuff_resize_Click(null, null);
+			}
 			else if (e.Key == Key.F5)
 			{
 				this.menu_file_revert_Click(null, null);
@@ -236,7 +256,7 @@ namespace MapEditor
 		{
 			Model.ActiveLevel = level;
 			LevelRenderer renderer = new LevelRenderer(level);
-			renderer.Refresh();
+			renderer.RefreshAll();
 			this.render_host.Children.Clear();
 			this.render_host.Children.Add(renderer);
 		}

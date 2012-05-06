@@ -66,6 +66,9 @@
     <Compile Include="OpenLevelDialog.xaml.cs">
       <DependentUpon>OpenLevelDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ResizeDialog.xaml.cs">
+      <DependentUpon>ResizeDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="TileStore.cs" />
     <Compile Include="Tile.cs" />
     <Compile Include="TileCategory.cs" />
@@ -95,6 +98,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="OpenLevelDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ResizeDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

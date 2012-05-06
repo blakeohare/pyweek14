@@ -85,19 +85,54 @@ namespace MapEditor
 			}
 		}
 
-		private string DEBUG_tile_stack
+		public void Resize(string anchor, int width, int height)
 		{
-			get
+			if (width == this.Width && height == this.Height) return;
+
+			List<Tile>[] newGrid = new List<Tile>[width * height];
+
+			// blit old Grid onto newGrid at xOffset, yOffset
+			int xOffset = 0;
+			int yOffset = 0;
+			if (anchor == "left" || anchor == "bottom")
 			{
-				int col = 3;
-				int row = 3;
-				List<string> foo = new List<string>();
-				foreach (Tile t in this.Grid[col + row * this.Width])
-				{
-					foo.Add(t == null ? "_" : t.ID);
-				}
-				return string.Join(" | ", foo);
+				yOffset = height - this.Height;
 			}
+			if (anchor == "bottom" || anchor == "right")
+			{
+				xOffset = width - this.Width;
+			}
+
+			int targetX, targetY;
+			for (int y = 0; y < this.Height; ++y)
+			{
+				for (int x = 0; x < this.Width; ++x)
+				{
+					targetX = x + xOffset;
+					targetY = y + yOffset;
+					if (targetX >= 0 && targetX < width && targetY >= 0 && targetY < height)
+					{
+						newGrid[targetX + targetY * width] = this.Grid[x + y * this.Width];
+					}
+				}
+			}
+
+
+			for (int y = 0; y < height; ++y)
+			{
+				for (int x = 0; x < width; ++x)
+				{
+					if (newGrid[x + y * width] == null)
+					{
+						newGrid[x + y * width] = new List<Tile>();
+					}
+				}
+			}
+
+			this.Width = width;
+			this.Height = height;
+			this.Grid = newGrid;
+			this.IsDirty = true;
 		}
 
 		/// <summary>

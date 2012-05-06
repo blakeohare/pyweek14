@@ -16,6 +16,8 @@
 				<MenuItem x:Name="menu_stuff_up" Header="Go up a layer" InputGestureText="+" />
 				<MenuItem x:Name="menu_stuff_down" Header="Go down a layer" InputGestureText="-" />
 				<Separator />
+				<MenuItem x:Name="menu_stuff_resize" Header="Resize Map" InputGestureText="Ctrl + E" />
+				<Separator />
 				<MenuItem x:Name="menu_stuff_duke" Header="Toggle Duke Mode" InputGestureText="Ctrl + D" />
 			</MenuItem>
 		</Menu>
