@@ -27,16 +27,77 @@ namespace MapEditor
 			InitializeComponent();
 			this.foundationImage = ((Image)this.Resources["foundation_image"]).Source;
 			this.Refresh();
+			this.clicker_catcher.MouseMove += new MouseEventHandler(clicker_catcher_MouseMove);
+			this.clicker_catcher.MouseDown += new MouseButtonEventHandler(clicker_catcher_MouseDown);
+			this.clicker_catcher.MouseUp += new MouseButtonEventHandler(clicker_catcher_MouseUp);
 		}
+
+		private bool isDrawing = false;
+		private bool isErasing = false;
+		void clicker_catcher_MouseUp(object sender, MouseButtonEventArgs e)
+		{
+			this.isDrawing = false;
+			this.last_modified_x = -1;
+			this.last_modified_y = -1;
+		}
+
+		void clicker_catcher_MouseDown(object sender, MouseButtonEventArgs e)
+		{
+			this.isDrawing = true;
+			this.isErasing = e.RightButton == MouseButtonState.Pressed;
+			this.Draw(e);
+		}
+
+		private int last_modified_x = -1;
+		private int last_modified_y = -1;
+
+		private void Draw(MouseEventArgs e)
+		{
+			Point p = e.GetPosition(this.clicker_catcher);
+			int x = (int)p.X;
+			int y = (int)p.Y;
+			int layer = Model.LayerCutoff;
+			y -= this.RenderTop;
+			x -= this.RenderMiddle;
+			y += 8 * (layer + 1);
+			int col = (y + x / 2) / 16;
+			int row = (y - x / 2) / 16;
+			this.LastX = col;
+			this.LastY = row;
+
+			if (this.isDrawing)
+			{
+				if (this.level.ModifyTile(col, row, layer, this.isErasing ? null : Model.ActiveTileSwatch))
+				{
+					this.level.IsDirty = true;
+					this.Refresh();
+				}
+			}
+
+			MainWindow.UpdateTitle();
+		}
+
+		void clicker_catcher_MouseMove(object sender, MouseEventArgs e)
+		{
+			this.Draw(e);
+		}
+
+		public int LastX { get; private set; }
+		public int LastY { get; private set; }
+
+		private int RenderTop { get { return 8 * 16 + 20; } }
+		private int RenderMiddle { get { return this.level.Height * 16 + 20; } }
 
 		public void Refresh()
 		{
+			this.tile_upper.Children.Clear();
+			this.tile_lower.Children.Clear();
 			int width = this.level.Width;
 			int height = this.level.Height;
 			// top center is 16 "layers"
 
-			int top = 8 * 16 + 20;
-			int middle = height * 16 + 20;
+			int top = this.RenderTop;
+			int middle = this.RenderMiddle; ;
 			int layerCutoff = Model.LayerCutoff;
 			int x = 0;
 			int y = 0;
@@ -111,8 +172,14 @@ namespace MapEditor
 
 			foreach (Tile tile in tileStack)
 			{
-				BlitTile(tile.Image, tile.Height, px, py, cumulativeHeight, inUpperLevel ? RenderTarget.Upper : RenderTarget.Lower);
-				cumulativeHeight += tile.Height;
+				int height = 1;
+				if (tile != null)
+				{
+					BlitTile(tile.Image, tile.Height, px, py, cumulativeHeight, inUpperLevel ? RenderTarget.Upper : RenderTarget.Lower);
+					height = tile.Height;
+				}
+
+				cumulativeHeight += height;
 				if (cumulativeHeight > layerCutoff)
 				{
 					inUpperLevel = true;

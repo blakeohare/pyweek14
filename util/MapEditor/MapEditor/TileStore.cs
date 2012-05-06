@@ -37,6 +37,7 @@ namespace MapEditor
 
 		public static Tile GetTile(string id)
 		{
+			if (id == "0") return null;
 			Tile tile = null;
 			tilesById.TryGetValue(id, out tile);
 			return tile;

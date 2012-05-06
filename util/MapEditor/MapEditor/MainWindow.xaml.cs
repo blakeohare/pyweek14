@@ -33,6 +33,35 @@ namespace MapEditor
 			this.AddMenuHandlers();
 		}
 
+		public static void UpdateTitle()
+		{
+			string output = "Blake's Magic Map Editor";
+			if (instance.ActiveLevelRenderer != null)
+			{
+				LevelRenderer lr = instance.ActiveLevelRenderer;
+				if (Model.ActiveLevel != null && Model.ActiveLevel.IsDirty)
+				{
+					output = "*";
+
+					output += Model.ActiveLevel.Name;
+				}
+				else
+				{
+					output = "";
+				}
+
+				output += " (" + lr.LastX.ToString() + ", " + lr.LastY.ToString() + ")";
+			}
+
+			instance.Title = output;
+		}
+
+		public static string TitleDebug
+		{
+			get { return MainWindow.instance.Title; }
+			set { MainWindow.instance.Title = value; }
+		}
+
 		private LevelRenderer ActiveLevelRenderer
 		{
 			get { return this.render_host.Children[0] as LevelRenderer; }
@@ -132,6 +161,7 @@ namespace MapEditor
 				Level level = new Level(old.Level, false);
 				this.MakeThisLevelActive(level);
 			}
+			UpdateTitle();
 		}
 
 		void MainWindow_KeyDown(object sender, KeyEventArgs e)
@@ -177,6 +207,8 @@ namespace MapEditor
 			{
 				activeLevel.Save();
 			}
+
+			UpdateTitle();
 		}
 
 		void menu_file_new_Click(object sender, RoutedEventArgs e)
@@ -196,7 +228,8 @@ namespace MapEditor
 					this.MakeThisLevelActive(level);
 				}
 			}
-			
+
+			UpdateTitle();
 		}
 
 		private void MakeThisLevelActive(Level level)

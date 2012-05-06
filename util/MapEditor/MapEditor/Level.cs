@@ -13,10 +13,12 @@ namespace MapEditor
 		public int Height { get; private set; }
 		private Dictionary<string, string> values = new Dictionary<string, string>();
 
+		public bool IsDirty { get; set; }
+
 		public Level(string name, bool overwrite)
 		{
 			this.Name = name;
-
+			this.IsDirty = false;
 			string filepath = "data/levels/" + name + ".txt";
 			if (overwrite && FileStuff.Exists(filepath))
 			{
@@ -83,6 +85,82 @@ namespace MapEditor
 			}
 		}
 
+		private string DEBUG_tile_stack
+		{
+			get
+			{
+				int col = 3;
+				int row = 3;
+				List<string> foo = new List<string>();
+				foreach (Tile t in this.Grid[col + row * this.Width])
+				{
+					foo.Add(t == null ? "_" : t.ID);
+				}
+				return string.Join(" | ", foo);
+			}
+		}
+
+		/// <summary>
+		/// passing in null tileswatch is an eraser
+		/// </summary>
+		/// <returns>true if a change has occurred and the view ought to be updated</returns>
+		public bool ModifyTile(int col, int row, int layer, Tile tileSwatch)
+		{
+			if (col < 0 || col >= this.Width || row < 0 || row >= this.Height) return false;
+			int index = col + row * this.Width;
+			List<Tile> tileStack = this.Grid[index];
+			List<Tile> spread = new List<Tile>();
+			foreach (Tile tile in tileStack)
+			{
+				if (tile == null)
+				{
+					spread.Add(null);
+				}
+				else
+				{
+					spread.Add(tile);
+					for (int i = 1; i < tile.Height; ++i)
+					{
+						spread.Add(null);
+					}
+				}
+			}
+
+			while (spread.Count <= layer)
+			{
+				spread.Add(null);
+			}
+
+			spread[layer] = tileSwatch;
+			List<Tile> output = new List<Tile>();
+			for (int i = 0; i < spread.Count; ++i)
+			{
+				output.Add(spread[i]);
+				if (spread[i] != null)
+				{
+					i += spread[i].Height - 1;
+				}
+			}
+
+			if (output.Count != tileStack.Count)
+			{
+				tileStack.Clear();
+				tileStack.AddRange(output);
+				return true;
+			}
+			bool changes = false;
+			for (int i = 0; i < output.Count; ++i)
+			{
+				if (output[i] != tileStack[i])
+				{
+					tileStack[i] = output[i];
+					changes = true;
+				}
+			}
+
+			return changes;
+		}
+
 		public void Save()
 		{
 			Dictionary<string, string> outputValues = new Dictionary<string, string>(this.values);
@@ -91,7 +169,12 @@ namespace MapEditor
 			List<string> tiles = new List<string>();
 			foreach (List<Tile> tileStack in this.Grid)
 			{
-				tiles.Add(tileStack.Count == 0 ? "" : string.Join("|", tileStack.Select<Tile, string>(tile => tile.ID)));
+				string value = tileStack.Count == 0 ? "" : string.Join("|", tileStack.Select<Tile, string>(tile => tile == null ? "0" : tile.ID));
+				while (value.EndsWith("|0"))
+				{
+					value = value.Substring(0, value.Length - 2);
+				}
+				tiles.Add(value);
 			}
 			outputValues["tiles"] = string.Join(",", tiles);
 
@@ -102,6 +185,7 @@ namespace MapEditor
 			}
 			string finalOutput = string.Join("\r\n", output);
 			FileStuff.WriteFile("data/levels/" + this.Name + ".txt", finalOutput);
+			this.IsDirty = false;
 		}
 	}
 }
