@@ -43,6 +43,10 @@
 #     2 - stairs that go up NE
 #     3 - stairs that go up SW
 #     4 - stairs that go up SE
+#     5 - tall stairs that go up NW
+#     6 - tall stairs that go up NE
+#     7 - tall stairs that go up SW
+#     8 - tall stairs that go up SE
 #     c - contamination present
 #     g - use for the tile in front of the goal
 #     h - capable of holding a charge
