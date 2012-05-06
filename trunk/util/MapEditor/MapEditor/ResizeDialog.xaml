@@ -1,0 +1,34 @@
+﻿<Window x:Class="MapEditor.ResizeDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="ResizeDialog" Height="300" Width="300">
+    <Grid>
+		<StackPanel Orientation="Vertical">
+			<TextBlock Text="..." x:Name="current_dimensions" />
+
+			<StackPanel Orientation="Horizontal">
+				<TextBlock Text="New Width: " />
+				<TextBox x:Name="new_width" Width="200"/>
+			</StackPanel>
+			<StackPanel Orientation="Horizontal">
+				<TextBlock Text="New Height: " />
+				<TextBox x:Name="new_height" Width="200"/>
+			</StackPanel>
+
+			<StackPanel Orientation="Horizontal">
+				<TextBlock Text="Anchor to: " />
+				<ComboBox x:Name="anchor_to">
+					<ComboBoxItem>Left</ComboBoxItem>
+					<ComboBoxItem>Top</ComboBoxItem>
+					<ComboBoxItem>Right</ComboBoxItem>
+					<ComboBoxItem>Bottom</ComboBoxItem>
+				</ComboBox>
+			</StackPanel>
+			
+			<StackPanel Orientation="Horizontal">
+				<Button x:Name="ok_button" Content="OK" />
+				<Button x:Name="cancel_button" Content="Cancel" />
+			</StackPanel>
+		</StackPanel>
+	</Grid>
+</Window>
