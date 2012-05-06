@@ -1,9 +1,14 @@
 # Lines that begin with # are comments. 
 # Blank lines ignored.
 # If you are editing this file, please make sure that your name is Spears before continuing. 
-
+#
+# Each file will show up as a different tile category in the map editor listing all the tiles
+# that reside in that file. 
+#
+# Do not duplicate tiles across files.
+#
 # Format is as follows...
-
+#
 # This file is a table. Each line is a row. Each tab-delimited thing is a column
 #
 # The first column is the tile ID. 
@@ -43,6 +48,3 @@
 #     h - capable of holding a charge
 #
 # I may add something as a 5th column if it becomes necessary
-
-
-1	template.png	1	x
