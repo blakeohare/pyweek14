@@ -1,1 +1,2 @@
 1	template.png	1	x
+2	whitetile.png	1	x
