@@ -14,6 +14,8 @@ def get_all(path):
 	output = []
 	for thing in os.listdir(path):
 		newpath = path + os.sep + thing
+		if '.svn' in newpath:
+			continue
 		if os.path.isdir(newpath):
 			output = output + get_all(newpath)
 		else:
