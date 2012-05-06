@@ -11,7 +11,7 @@
 	<Grid>
 		<Grid x:Name="tile_lower"/>
 		<Grid x:Name="tile_cursor" />
-		<Grid x:Name="tile_upper" />
+		<Grid x:Name="tile_upper" Opacity=".40"/>
 		<Grid x:Name="clicker_catcher" Background="Transparent" />
 	</Grid>
 </UserControl>
