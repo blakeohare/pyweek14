@@ -19,15 +19,50 @@ namespace MapEditor
 	/// </summary>
 	public partial class MainWindow : Window
 	{
+		private static MainWindow instance;
 		public MainWindow()
 		{
+			instance = this;
 			InitializeComponent();
-			
+			TileStore.Initialize();
+			this.InitializeTileCategoryPickerChoices();
 		}
 
 		private void InitializeTileCategoryPickerChoices()
 		{
-			//this.tile_category_picker.Items.Add(
+			foreach (string category in TileStore.GetSortedCategories())
+			{
+				this.tile_category_picker.Items.Add(category);
+			}
+			this.tile_category_picker.SelectionChanged += new SelectionChangedEventHandler(tile_category_picker_SelectionChanged);
+		}
+
+		private void tile_category_picker_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			this.RefreshTileSwatches();
+		}
+
+		private void RefreshTileSwatches()
+		{
+			this.tile_swatches.Children.Clear();
+			string category = (this.tile_category_picker.SelectedValue ?? "").ToString();
+			if (category.Length > 0)
+			{
+				foreach (Tile t in TileStore.GetSortedTilesForCategory(category))
+				{
+					TileSwatch ts = new TileSwatch(t);
+					ts.UpdateSelectionVisual();
+					this.tile_swatches.Children.Add(ts);
+				}
+			}
+		}
+
+		public static void UpdateSwatchSelection()
+		{
+			foreach (TileSwatch swatches in instance.tile_swatches.Children.OfType<TileSwatch>())
+			{
+				swatches.UpdateSelectionVisual();
+			}
 		}
 	}
 }

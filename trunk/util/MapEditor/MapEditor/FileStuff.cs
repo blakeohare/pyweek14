@@ -17,13 +17,13 @@ namespace MapEditor
 				if (_rootDirectory == null)
 				{
 					string current = System.IO.Directory.GetCurrentDirectory();
-					_rootDirectory = current.Split(new string[] { "util" }, StringSplitOptions.RemoveEmptyEntries)[0];
+					_rootDirectory = current.Split(new string[] { "\\util" }, StringSplitOptions.RemoveEmptyEntries)[0];
 				}
 				return _rootDirectory;
 			}
 		}
 
-		private static string CanonicalizePath(string relativePathToRoot)
+		public static string CanonicalizePath(string relativePathToRoot)
 		{
 			if (!relativePathToRoot.StartsWith("\\"))
 			{
@@ -44,16 +44,32 @@ namespace MapEditor
 			System.IO.File.WriteAllText(path, contents);
 		}
 
-		public static string[] GetFilesInFolder(string folderPath)
+		public static string[] GetFilesInFolder(string folderPath, bool fullPath)
 		{
 			string path = CanonicalizePath(folderPath);
-			return System.IO.Directory.GetFiles(path);
+			string[] output = System.IO.Directory.GetFiles(path);
+			output = fullPath ? output : StripOffFullPaths(output);
+			return output;
 		}
 
-		public static string[] GetFoldersInFolder(string folderPath)
+		public static string[] GetFoldersInFolder(string folderPath, bool fullPath)
 		{
 			string path = CanonicalizePath(folderPath);
-			return System.IO.Directory.GetDirectories(path);
+			string[] output = System.IO.Directory.GetDirectories(path);
+			output = fullPath ? output : StripOffFullPaths(output);
+			return output;
+		}
+
+		private static string[] StripOffFullPaths(string[] paths)
+		{
+			List<string> newPaths = new List<string>();
+			foreach (string fullPath in paths)
+			{
+				string[] pieces = fullPath.Split('\\');
+				string file = pieces[pieces.Length - 1];
+				newPaths.Add(file);
+			}
+			return newPaths.ToArray();
 		}
 	}
 }

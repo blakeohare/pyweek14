@@ -12,7 +12,7 @@ namespace MapEditor
 		public static void Initialize()
 		{
 			string folder = "data/tile_manifests";
-			string[] files = FileStuff.GetFilesInFolder(folder);
+			string[] files = FileStuff.GetFilesInFolder(folder, false);
 			foreach (string file in files)
 			{
 				string path = folder + "/" + file;
@@ -21,6 +21,18 @@ namespace MapEditor
 
 				InitializeCategory(name, contents);
 			}
+		}
+
+		public static string[] GetSortedCategories()
+		{
+			return tilesByCategory.Keys.ToArray<string>();
+		}
+
+		public static Tile[] GetSortedTilesForCategory(string category)
+		{
+			return tilesByCategory[category].Values
+				.OrderBy<Tile, string>(tile => tile.ImageFiles[0])
+				.ToArray<Tile>();
 		}
 
 		private static void InitializeCategory(string categoryName, string fileContents)
@@ -56,7 +68,28 @@ namespace MapEditor
 
 		private static Tile CreateTile(string category, string[] columns)
 		{
-			return null;
+			Tile t = new Tile()
+			{
+				ID = columns[0],
+				Category = category
+			};
+
+			string[] images = columns[1].Split('|');
+			int anim = 4;
+			int i = 0;
+			if (int.TryParse(images[0], out anim))
+			{
+				++i;
+			}
+
+			List<string> frames = new List<string>();
+			for (; i < images.Length; ++i)
+			{
+				frames.Add("images/tiles/" + images[i]);
+			}
+
+			t.ImageFiles = frames.ToArray();
+			return t;
 		}
 
 		private static List<string[]> SanitzeLines(string contents)
