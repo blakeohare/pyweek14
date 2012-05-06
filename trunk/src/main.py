@@ -52,7 +52,7 @@ def main():
 		'action': False
 	}
 	
-	active_scene = TitleScene()
+	active_scene = PlayScene('1-1')
 	counter = 0
 	while active_scene != None:
 		
