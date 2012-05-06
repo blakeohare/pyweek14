@@ -1,0 +1,48 @@
+# Lines that begin with # are comments. 
+# Blank lines ignored.
+# If you are editing this file, please make sure that your name is Spears before continuing. 
+
+# Format is as follows...
+
+# This file is a table. Each line is a row. Each tab-delimited thing is a column
+#
+# The first column is the tile ID. 
+#     This is may consiste of alphanumeric characters, underscores, or dashes. Anything
+#     else will blow up the world.
+#     The actual ID doesn't really matter that much. No one will see it.
+#
+# The second column is the images for the tile
+#     For un-animated tiles, this is just a filename
+#     For animated tiles, this is a number followed by a list of filenames
+#       The number is the number of frames between each animation
+#       The number can be omitted and 4 will be assumed
+#     Each filename is the path under images/tiles/
+#     Each item in this list is delimited with a | character
+#     Examples:
+#        bricks.png
+#        shiny_bricks1.png|shiny_bricks2.png|shiny_bricks3.png
+#        2|glowing_block1.png|glowing_block2.png
+#
+# The third column is the height of the tile.
+#     This is just a number.
+#     A tile shaped like a cube has a height of 2
+#
+# The fourth column is a list of properties. This is just a list of characters codes.
+#     Each character code is one ascii character that means something
+#     The order you list them doesn't matter.
+#     I will add more properties to this list as they become necessary
+#     x - blocking
+#     s - sliding block
+#     c - circuit
+#     1 - stairs that go up NW
+#     2 - stairs that go up NE
+#     3 - stairs that go up SW
+#     4 - stairs that go up SE
+#     c - contamination present
+#     g - use for the tile in front of the goal
+#     h - capable of holding a charge
+#
+# I may add something as a 5th column if it becomes necessary
+
+
+1	template.png	1	x
