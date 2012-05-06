@@ -1,0 +1,14 @@
+﻿<Window x:Class="MapEditor.OpenLevelDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="OpenLevelDialog" Height="300" Width="300">
+    <Grid>
+		<StackPanel Orientation="Vertical">
+			<ComboBox x:Name="level_selector" />
+			<StackPanel Orientation="Horizontal">
+				<Button x:Name="ok_button" Content="OK" />
+				<Button x:Name="cancel_button" Content="Cancel" />
+			</StackPanel>
+		</StackPanel>
+	</Grid>
+</Window>

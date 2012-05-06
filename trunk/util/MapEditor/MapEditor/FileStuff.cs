@@ -23,6 +23,24 @@ namespace MapEditor
 			}
 		}
 
+		public static bool Exists(string relativePathToRoot)
+		{
+			string path = CanonicalizePath(relativePathToRoot);
+			return System.IO.File.Exists(path);
+		}
+
+		public static string ReadOrCreateBlank(string relativePathToRoot)
+		{
+			string path = CanonicalizePath(relativePathToRoot);
+			if (System.IO.File.Exists(path))
+			{
+				return ReadFile(relativePathToRoot);
+			}
+
+			System.IO.File.WriteAllText(path, "");
+			return "";
+		}
+
 		public static string CanonicalizePath(string relativePathToRoot)
 		{
 			if (!relativePathToRoot.StartsWith("\\"))

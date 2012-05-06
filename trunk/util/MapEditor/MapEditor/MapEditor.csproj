@@ -56,6 +56,16 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="FileStuff.cs" />
+    <Compile Include="Level.cs" />
+    <Compile Include="LevelRenderer.xaml.cs">
+      <DependentUpon>LevelRenderer.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="NewLevelDialog.xaml.cs">
+      <DependentUpon>NewLevelDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="OpenLevelDialog.xaml.cs">
+      <DependentUpon>OpenLevelDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="TileStore.cs" />
     <Compile Include="Tile.cs" />
     <Compile Include="TileCategory.cs" />
@@ -63,6 +73,11 @@
       <DependentUpon>TileSwatch.xaml</DependentUpon>
     </Compile>
     <Compile Include="Model.cs" />
+    <Compile Include="Util.cs" />
+    <Page Include="LevelRenderer.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -75,6 +90,14 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="NewLevelDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="OpenLevelDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="TileSwatch.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -103,6 +126,9 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\black.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -35,6 +35,13 @@ namespace MapEditor
 				.ToArray<Tile>();
 		}
 
+		public static Tile GetTile(string id)
+		{
+			Tile tile = null;
+			tilesById.TryGetValue(id, out tile);
+			return tile;
+		}
+
 		private static void InitializeCategory(string categoryName, string fileContents)
 		{
 			foreach (string[] columns in SanitzeLines(fileContents))
@@ -81,6 +88,8 @@ namespace MapEditor
 			{
 				++i;
 			}
+
+			t.Height = int.Parse(columns[2]);
 
 			List<string> frames = new List<string>();
 			for (; i < images.Length; ++i)
