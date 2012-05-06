@@ -38,7 +38,7 @@
 #     I will add more properties to this list as they become necessary
 #     x - blocking
 #     s - sliding block
-#     c - circuit
+#     e - circuit
 #     1 - stairs that go up NW
 #     2 - stairs that go up NE
 #     3 - stairs that go up SW
