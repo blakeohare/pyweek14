@@ -1,0 +1,41 @@
+﻿<Window x:Class="MapEditor.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="MainWindow" Height="350" Width="525">
+	<DockPanel>
+		<Menu DockPanel.Dock="Top">
+			<MenuItem Header="File">
+				<MenuItem x:Name="menu_file_new" Header="New" />
+				<MenuItem x:Name="menu_file_open" Header="Open" />
+				<MenuItem x:Name="menu_file_save" Header="Save" />
+				<MenuItem x:Name="menu_file_exit" Header="Exit" />
+			</MenuItem>
+			<MenuItem Header="Stuff">
+				<MenuItem Header="The File menu seemed lonely." />
+			</MenuItem>
+		</Menu>
+		<Grid>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="250" />
+				<ColumnDefinition Width="*" />
+			</Grid.ColumnDefinitions>
+			
+			<Grid Grid.Column="0">
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="*" />
+				</Grid.RowDefinitions>
+				
+				<ComboBox x:Name="tile_category_picker" />
+				
+				<ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Visible">
+					<StackPanel x:Name="tile_swatches" />
+				</ScrollViewer>
+			</Grid>
+			
+			<Grid Grid.Column="1" Background="#FF303030">
+				
+			</Grid>
+		</Grid>
+	</DockPanel>
+</Window>
