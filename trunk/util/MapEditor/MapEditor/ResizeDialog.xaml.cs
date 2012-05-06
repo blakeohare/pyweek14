@@ -27,6 +27,7 @@ namespace MapEditor
 			this.new_height.Text = level.Height.ToString();
 			this.ok_button.Click += new RoutedEventHandler(ok_button_Click);
 			this.cancel_button.Click += new RoutedEventHandler(cancel_button_Click);
+			this.anchor_to.SelectedIndex = 1;
 		}
 
 		void cancel_button_Click(object sender, RoutedEventArgs e)
