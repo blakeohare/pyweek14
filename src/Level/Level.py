@@ -85,5 +85,5 @@ class Level:
 				cumulative_height += 8
 			else:
 				tile.render(screen, x, y - cumulative_height, render_counter)
-				cumulative_height += tile.height
+				cumulative_height += tile.height * 8
 		
