@@ -26,7 +26,7 @@ class Tile:
 			img = self.still_image
 			y += self.still_y_offset
 		else:
-			i = render_counter % self.image_count
+			i = (render_counter // self.framerate) % self.image_count
 			img = self.images[i]
 			y += self.y_offsets[i]
 		
