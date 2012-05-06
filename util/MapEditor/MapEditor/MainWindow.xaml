@@ -8,10 +8,15 @@
 				<MenuItem x:Name="menu_file_new" Header="New" InputGestureText="Ctrl + N" />
 				<MenuItem x:Name="menu_file_open" Header="Open" InputGestureText="Ctrl + O"/>
 				<MenuItem x:Name="menu_file_save" Header="Save" InputGestureText="Ctrl + S"/>
+				<MenuItem x:Name="menu_file_revert" Header="Revert" InputGestureText="F5" />
+				<Separator />
 				<MenuItem x:Name="menu_file_exit" Header="Exit" InputGestureText="Alt + F4"/>
 			</MenuItem>
 			<MenuItem Header="Stuff">
-				<MenuItem Header="The File menu seemed lonely." />
+				<MenuItem x:Name="menu_stuff_up" Header="Go up a layer" InputGestureText="+" />
+				<MenuItem x:Name="menu_stuff_down" Header="Go down a layer" InputGestureText="-" />
+				<Separator />
+				<MenuItem x:Name="menu_stuff_duke" Header="Toggle Duke Mode" InputGestureText="Ctrl + D" />
 			</MenuItem>
 		</Menu>
 		<Grid>
@@ -37,6 +42,7 @@
 				<ScrollViewer HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible">
 					<Grid Background="#FF303030" x:Name="render_host" />
 				</ScrollViewer>
+				<ComboBox x:Name="layer_picker" HorizontalAlignment="Left" VerticalAlignment="Top" Width="80" Height="20"/>
 			</Grid>
 		</Grid>
 	</DockPanel>

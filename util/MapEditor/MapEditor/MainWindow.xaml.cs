@@ -26,12 +26,101 @@ namespace MapEditor
 			InitializeComponent();
 			TileStore.Initialize();
 			this.InitializeTileCategoryPickerChoices();
+			this.InitializeLayerPicker(0);
 			this.tile_category_picker.SelectedIndex = 0;
+			this.KeyDown += new KeyEventHandler(MainWindow_KeyDown);
+			this.layer_picker.SelectionChanged += new SelectionChangedEventHandler(layer_picker_SelectionChanged);
+			this.AddMenuHandlers();
+		}
+
+		private LevelRenderer ActiveLevelRenderer
+		{
+			get { return this.render_host.Children[0] as LevelRenderer; }
+		}
+
+		void layer_picker_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			int foo = this.ActiveLayer;
+			if (Model.ActiveLevel != null)
+			{
+				this.ActiveLevelRenderer.Refresh();
+			}
+		}
+
+		private void AddMenuHandlers()
+		{
 			this.menu_file_exit.Click += new RoutedEventHandler(menu_file_exit_Click);
 			this.menu_file_new.Click += new RoutedEventHandler(menu_file_new_Click);
 			this.menu_file_save.Click += new RoutedEventHandler(menu_file_save_Click);
 			this.menu_file_open.Click += new RoutedEventHandler(menu_file_open_Click);
-			this.KeyDown += new KeyEventHandler(MainWindow_KeyDown);
+			this.menu_file_revert.Click += new RoutedEventHandler(menu_file_revert_Click);
+			this.menu_stuff_down.Click += new RoutedEventHandler(menu_stuff_down_Click);
+			this.menu_stuff_up.Click += new RoutedEventHandler(menu_stuff_up_Click);
+			this.menu_stuff_duke.Click += new RoutedEventHandler(menu_stuff_duke_Click);
+		}
+
+		void menu_stuff_duke_Click(object sender, RoutedEventArgs e)
+		{
+			Model.IsHiddenLayersVisible = !Model.IsHiddenLayersVisible;
+			this.ActiveLevelRenderer.RefreshHiddenOpacity();
+		}
+
+		private void AdjustPickedLayer(int amount)
+		{
+			int index = this.layer_picker.SelectedIndex + amount;
+			int max = this.layer_picker.Items.Count;
+			index = index < 0 ? 0 : index;
+			index = index >= max ? max - 1 : index;
+			this.InitializeLayerPicker(index);
+			//this.layer_picker.SelectedIndex = index;
+			//this.layer_picker.SelectedItem = this.layer_picker.Items[index];
+			//this.layer_picker.SelectedValue = "Layer " + index;
+			//this.layer_picker_SelectionChanged(null, null);
+		}
+
+		
+
+		private int ActiveLayer
+		{
+			get
+			{
+				string value = (this.layer_picker.SelectedValue ?? "Layer 0").ToString();
+				return int.Parse(value.Split(' ')[1]);
+			}
+		}
+
+		public static int LayerCutoff
+		{
+			get { return instance.ActiveLayer; }
+		}
+
+		void menu_stuff_up_Click(object sender, RoutedEventArgs e)
+		{
+			this.AdjustPickedLayer(1);
+		}
+
+		void menu_stuff_down_Click(object sender, RoutedEventArgs e)
+		{
+			this.AdjustPickedLayer(-1);
+		}
+
+		void menu_file_revert_Click(object sender, RoutedEventArgs e)
+		{
+			if (Model.ActiveLevel != null)
+			{
+				Level level = new Level(Model.ActiveLevel.Name, false);
+				this.MakeThisLevelActive(level);
+			}
+		}
+
+		private void InitializeLayerPicker(int selectedIndex)
+		{
+			this.layer_picker.Items.Clear();
+			for (int i = 0; i <= 30; ++i) {
+				this.layer_picker.Items.Add("Layer " + i.ToString());
+			}
+			this.layer_picker.SelectedItem = this.layer_picker.Items[selectedIndex];
+			//this.layer_picker.SelectedIndex = selectedIndex;
 		}
 
 		private void menu_file_open_Click(object sender, RoutedEventArgs e)
@@ -62,6 +151,22 @@ namespace MapEditor
 			else if (e.Key == Key.S && ctrl)
 			{
 				this.menu_file_save_Click(null, null);
+			}
+			else if (e.Key == Key.D && ctrl)
+			{
+				this.menu_stuff_duke_Click(null, null);
+			}
+			else if (e.Key == Key.F5)
+			{
+				this.menu_file_revert_Click(null, null);
+			}
+			else if (e.Key == Key.OemPlus || e.Key == Key.Add)
+			{
+				this.AdjustPickedLayer(1);
+			}
+			else if (e.Key == Key.OemMinus || e.Key == Key.Subtract)
+			{
+				this.AdjustPickedLayer(-1);
 			}
 		}
 

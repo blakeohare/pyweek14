@@ -37,7 +37,7 @@ namespace MapEditor
 
 			int top = 8 * 16 + 20;
 			int middle = height * 16 + 20;
-
+			int layerCutoff = Model.LayerCutoff;
 			int x = 0;
 			int y = 0;
 			int pixelX, pixelY;
@@ -51,7 +51,7 @@ namespace MapEditor
 					pixelY = top + i * 8;
 					if (x < width && y < height)
 					{
-						this.RenderTile(x, y, pixelX, pixelY, 4);
+						this.RenderTileStack(x, y, pixelX, pixelY, layerCutoff);
 					}
 					--x;
 					++y;
@@ -68,6 +68,11 @@ namespace MapEditor
 			Cursor
 		}
 
+		public void RefreshHiddenOpacity()
+		{
+			this.tile_upper.Opacity = Model.IsHiddenLayersVisible ? .4 : 0;
+		}
+
 		private void Blit(ImageSource image, int pixelX, int pixelY, RenderTarget target)
 		{
 			Grid grid = this.tile_lower;
@@ -81,8 +86,10 @@ namespace MapEditor
 			}
 
 			grid.Children.Add(
-				new Image() {
+				new Image()
+				{
 					Source = image,
+					Width = 32,
 					Margin = new Thickness(pixelX, pixelY, 0, 0),
 					HorizontalAlignment = System.Windows.HorizontalAlignment.Left,
 					VerticalAlignment = System.Windows.VerticalAlignment.Top
@@ -94,18 +101,22 @@ namespace MapEditor
 			this.Blit(image, pixelX - 16, pixelY - cumulativeHeight * 8 - height * 8, target);
 		}
 
-		private void RenderTile(int col, int row, int px, int py, int layerCutoff)
+		private void RenderTileStack(int col, int row, int px, int py, int layerCutoff)
 		{
 			int cumulativeHeight = 0;
 			List<Tile> tileStack = this.level.Grid[col + row * this.level.Width];
 			bool inUpperLevel = false;
 
-			BlitTile(this.foundationImage, 0, px, py, cumulativeHeight, RenderTarget.Lower);
+			BlitTile(this.foundationImage, 0, px, py + 1, cumulativeHeight, RenderTarget.Lower);
 
 			foreach (Tile tile in tileStack)
 			{
-
+				BlitTile(tile.Image, tile.Height, px, py, cumulativeHeight, inUpperLevel ? RenderTarget.Upper : RenderTarget.Lower);
 				cumulativeHeight += tile.Height;
+				if (cumulativeHeight > layerCutoff)
+				{
+					inUpperLevel = true;
+				}
 			}
 		}
 	}
