@@ -11,6 +11,7 @@ namespace MapEditor
 
 		public string ID { get; set; }
 		public string Category { get; set; }
+		public int Height { get; set; }
 		public string[] ImageFiles { get; set; }
 		public System.Windows.Media.ImageSource Image
 		{

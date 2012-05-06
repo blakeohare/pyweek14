@@ -1,0 +1,17 @@
+﻿<Window x:Class="MapEditor.NewLevelDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="NewLevelDialog" Height="300" Width="300">
+    <Grid>
+		<StackPanel Orientation="Vertical">
+			<StackPanel Orientation="Horizontal">
+				<TextBlock Text="Name: " />
+				<TextBox Width="100" x:Name="level_name" />
+			</StackPanel>
+			<StackPanel Orientation="Horizontal">
+				<Button x:Name="ok_button" Content="OK" />
+				<Button x:Name="cancel_button" Content="Cancel" />
+			</StackPanel>
+		</StackPanel>
+	</Grid>
+</Window>

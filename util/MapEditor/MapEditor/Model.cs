@@ -7,6 +7,12 @@ namespace MapEditor
 {
 	public static class Model
 	{
+		public static Level ActiveLevel
+		{
+			get;
+			set;
+		}
+
 		public static Tile ActiveTileSwatch
 		{
 			get;
