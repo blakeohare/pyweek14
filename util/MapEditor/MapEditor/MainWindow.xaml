@@ -29,7 +29,7 @@
 				<ComboBox x:Name="tile_category_picker" />
 				
 				<ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Visible">
-					<StackPanel x:Name="tile_swatches" />
+					<StackPanel x:Name="tile_swatches" Orientation="Vertical" />
 				</ScrollViewer>
 			</Grid>
 			
