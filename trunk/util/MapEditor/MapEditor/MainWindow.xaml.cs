@@ -25,7 +25,14 @@ namespace MapEditor
 			instance = this;
 			InitializeComponent();
 			TileStore.Initialize();
-			this.InitializeTileCategoryPickerChoices();
+			try
+			{
+				this.InitializeTileCategoryPickerChoices();
+			}
+			catch (Exception e)
+			{
+				MessageBox.Show(e.Message);
+			}
 			this.InitializeLayerPicker(0);
 			this.tile_category_picker.SelectedIndex = 0;
 			this.KeyDown += new KeyEventHandler(MainWindow_KeyDown);
