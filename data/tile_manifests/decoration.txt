@@ -1,2 +1,2 @@
 7	chemicals.png	1	x
-15	radioactivegoo1.png|radiactivegoo2.png	1	c
+15	radioactivegoo1.png|radioactivegoo2.png	1	c
