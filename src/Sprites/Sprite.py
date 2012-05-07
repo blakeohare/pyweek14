@@ -45,6 +45,20 @@ class Sprite:
 		y = y - self.z - img.get_height() + 8
 		if self.isblock:
 			y += 8
+		
+		platform = self.standingon
+		if platform != None and platform.stairs:
+			left = platform.topography[3] * 8 #platform.height * 8.0
+			right = platform.topography[1] * 8 #platform.height * 8.0
+			if platform.entrance == 'SW' or platform.entrance == 'NE':
+				ap = self.y % 16 + 0.0
+				p = 16.0 - ap
+			else:
+				p = self.x % 16 + 0.0
+				ap = 16.0 - p
+			dy = int((left * ap + p * right) / 16.0)
+			y -= dy
+			
 		output = (int(x + xOffset), int(y + yOffset))
 		
 		return output
