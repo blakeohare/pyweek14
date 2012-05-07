@@ -15,3 +15,5 @@
 36	rightcorner.png	1	x
 37	doorleft.png	4	g
 38	doorright.png	4	g
+39	opendoorright.png	4	d
+40	opendoorleft.png	4	d
