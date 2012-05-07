@@ -71,7 +71,11 @@ namespace MapEditor
 
 		private LevelRenderer ActiveLevelRenderer
 		{
-			get { return this.render_host.Children[0] as LevelRenderer; }
+			get
+			{
+				if (this.render_host.Children.Count == 0) return null;
+				return this.render_host.Children[0] as LevelRenderer;
+			}
 		}
 
 		void layer_picker_SelectionChanged(object sender, SelectionChangedEventArgs e)
