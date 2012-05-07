@@ -1,3 +1,9 @@
+def flags_contains(flags, items):
+	for c in items:
+		if c in flags:
+			return True
+	return False
+
 class Tile:
 	def is_num(self, string):
 		return string in '0123456789'
@@ -16,8 +22,26 @@ class Tile:
 		self.still_y_offset = self.y_offsets[0]
 		self.image_count = len(self.images)
 		self.height = height
-		self.pushable = 'b' in flags
-		self.blocking = 'x' in flags
+		self.pushable = flags_contains(flags, 'b')
+		self.blocking = flags_contains(flags, 'x')
+		self.stairs = flags_contains(flags, '12345678')
+		self.blocking = self.blocking or self.stairs
+		if self.stairs:
+			double = flags_contains(flags, '5678')
+			topo = 2 if double else 1
+			if flags_contains(flags, '15'):
+				self.topography = [0, -topo, -topo, 0]
+				self.entrance = 'SE'
+			elif flags_contains(flags, '26'):
+				self.topography = [0, 0, -topo, -topo]
+				self.entrance = 'SW'
+			elif flags_contains(flags, '37'):
+				self.topography = [-topo, 0, 0, -topo]
+				self.entrance = 'NW'
+			elif flags_contains(flags, '48'):
+				self.topography = [-topo, -topo, 0, 0]
+				self.entrance = 'NE'
+				
 		# TODO: go through manifest and add them all
 	
 	def render(self, screen, x, y, render_counter):
