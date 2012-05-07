@@ -44,13 +44,13 @@ class Level:
 				for cell in cells:
 					
 					if cell == '0':
-						referenceStack.append(len(tileStack))
+						referenceStack.append(None)
 						tileStack.append(None)
 					else:
 						t = tilestore.get_tile(cell)
 						z = 0
 						while z < t.height:
-							referenceStack.append(len(tileStack) - 1)
+							referenceStack.append(len(tileStack))
 							z += 1
 						
 						tileStack.append(t)
@@ -60,13 +60,34 @@ class Level:
 		self.grid = grid
 		self.cellLookup = references
 	
+	def get_platform_below(self, col, row, z):
+	
+		# TODO: interlace the block list here
+		# so that blocks get included in the collision
+		# results
+		
+		# Alternatively, pushed blocks can be part of the 
+		# primary model and will be updated when they move
+		# around.
+		refStack = self.cellLookup[col][row]
+		tileStack = self.grid[col][row]
+		i = min(len(refStack) - 1, z // 8)
+		
+		while i >= 0:
+			t = refStack[i]
+			if t == None:
+				pass
+			else:
+				tile = self.grid[col][row][t]
+				return ((i + 1) * 8, tile)
+	
 	def render(self, screen, xOffset, yOffset, sprites, render_counter):
 		width = self.width
 		height = self.height
 		sprite_lookup = {}
 		for sprite in sprites:
-			x = sprite.x // 16
-			y = sprite.y // 16
+			x = int(sprite.x // 16)
+			y = int(sprite.y // 16)
 			key = str(x) + '_' + str(y)
 			list = sprite_lookup.get(key)
 			if list == None:
@@ -93,7 +114,7 @@ class Level:
 	def render_tile_stack(self, screen, col, row, xOffset, yOffset, render_counter, sprites):
 		stack = self.grid[col][row]
 		cumulative_height = 0
-		x = xOffset + col * 16 - row * 16
+		x = xOffset + col * 16 - row * 16 - 16
 		y = yOffset + col * 8 + row * 8
 		for tile in stack:
 			if sprites != None:
@@ -117,3 +138,4 @@ class Level:
 				img = sprite.get_image(render_counter)
 				coords = sprite.pixel_position(xOffset, yOffset, img)
 				screen.blit(img, coords)
+				

@@ -41,3 +41,30 @@ def safe_map(function, list):
 		output.append(function(list[i]))
 		i += 1
 	return output
+
+def max(a, b):
+	if a < b:
+		return b
+	return a
+	
+def min(a, b):
+	if a < b:
+		return a
+	return b
+
+_range_4 = [0, 1, 2, 3]
+_range_2 = [0, 1]
+def safe_range(x):
+	global _range_4, _range_2
+	if x < 10:
+		if x == 4:
+			return _range_4
+		if x == 2:
+			return _range_2
+	
+	output = [0] * x
+	i = 1
+	while i < x:
+		output[i] = i
+		i += 1
+	return output
