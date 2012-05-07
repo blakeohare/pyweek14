@@ -4,6 +4,10 @@ class Level:
 		self.name = name
 		self.initialize()
 		self.sprite_z_sorter = lambda x,y:x.z < y.z
+		self.push_counter = -1
+		self.max_push_counter = 25
+		self.push_target = None
+		
 	
 	def initialize(self):
 		lines = read_file('data/levels/' + self.name + '.txt').split('\n')
@@ -150,4 +154,76 @@ class Level:
 			sprites = safe_sorted(sprites, self.sprite_z_sorter)
 			for sprite in sprites:
 				self.render_sprite(screen, sprite, xOffset, yOffset, render_counter)
+	
+	# there are no blockages. It's already been verified by the time this function
+	# has been called.
+	def push_block(self, start_col, start_row, end_col, end_row, layer):
+		self.push_counter = -1
+		self.push_target = None
+		
+		block = self.modify_block(start_col, start_row, layer, None)
+		self.modify_block(end_col, end_row, layer, block)
+		# TODO: need block to fall, potentially convert it into a sprite that
+		# turns into a map component upon landing
+	
+	
+	def modify_block(self, col, row, layer, type):
+		output = None
+		z = 0
+		stack = self.grid[col][row]
+		newstack = []
+		layer_bottom = layer
+		layer_top = layer
+		if type != None:
+			layer_top += type.height - 1
+		
+		for item in stack:
+			if item == None:
+				newstack.append(None)
+				z += 1
+			else:
 				
+				if z >= layer_bottom and z <= layer_top:
+					if z == layer_bottom:
+						output = item
+					newstack += [None] * item.height
+				else:
+					newstack.append(item)
+				z += item.height
+		while z <= layer_top:
+			newstack.append(None)
+			z += 1
+		# at this point newstack has all None's where the modification will go
+		
+		i = 0
+		z = 0
+		while i < len(newstack):
+			item = newstack[i]
+			if z == layer_bottom:
+				newstack[i] = type
+				for q in range(layer_top - layer_bottom):
+					newstack.pop(i + 1)
+				break
+			if item == None:
+				z += 1
+			else:
+				z += item.height
+			i += 1
+		
+		copy_array(stack, newstack)
+		
+		self.canonicalize_stack(col, row)
+		return output
+	
+	def canonicalize_stack(self, col, row):
+		stack = self.grid[col][row]
+		lookup = []
+		i = 0
+		for item in stack:
+			if item == None:
+				lookup.append(None)
+			else:
+				lookup += [i] * item.height
+			i += 1
+		copy_array(self.cellLookup[col][row], lookup)
+		

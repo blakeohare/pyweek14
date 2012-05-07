@@ -89,4 +89,21 @@ def safe_sorted(list, compare):
 	left = safe_sorted(left, compare)
 	right = safe_sorted(right, compare)
 	return left + right
+
+_assertions_break = True
+def assertion(message):
+	global _assertions_break
+	print(message)
+	if _assertions_break:
+		destroy = 1 / 0
+
+def copy_array(target, source):
+	while len(target) > len(source):
+		target.pop()
+	while len(target) < len(source):
+		target.append(None)
 	
+	i = 0
+	while i < len(source):
+		target[i] = source[i]
+		i += 1
