@@ -127,13 +127,6 @@ class Level:
 	def render_sprite(self, screen, sprite, xOffset, yOffset, render_counter):
 		platform = sprite.standingon
 		img = sprite.get_image(render_counter)
-		if platform != None and platform.stairs:
-			left = platform.topography[3] * platform.height * 8.0
-			right = platform.topography[1] * platform.height * 8.0
-			p = sprite.x % 16 + 0.0
-			ap = 16.0 - p
-			dy = int((left * ap + p * right) / 16.0)
-			yOffset -= dy
 		coords = sprite.pixel_position(xOffset, yOffset, img)
 		screen.blit(img, coords)
 	
