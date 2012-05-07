@@ -1,7 +1,7 @@
 7	chemicals.png	1	x
-15	radioactivegoo1.png|radioactivegoo2.png	1	c
-41	researchpapers.png	1	
-42	smalldegoo.png	1	
-43	mediumdegoo.png	2	
-44	largedegoo.png	2	
+15	radioactivegoo1.png|radioactivegoo2.png	1	cn
+41	researchpapers.png	1	n
+42	smalldegoo.png	1	n
+43	mediumdegoo.png	2	n
+44	largedegoo.png	2	n
 47	table.png	2	x
