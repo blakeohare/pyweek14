@@ -207,10 +207,12 @@ class Sprite:
 									
 								
 							# The target tile will always be last in check_these
-							if blocked == False and t.stairs and t.entrance == opposite and c == 0 and check == check_these[-1]:
-								# not blocked
-								self.z += t.height * 8
-								break
+							if blocked == False and t.stairs and t.entrance == opposite and check == check_these[-1]:
+								if c == 0:
+									# not blocked
+									zbefore = self.z
+									self.z += t.height * 8
+									break
 							else:
 								blocked = True
 								break
