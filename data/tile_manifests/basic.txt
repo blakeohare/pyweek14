@@ -13,3 +13,5 @@
 34	leftcorner.png	1	x
 35	rightconvexcorner.png	1	x
 36	rightcorner.png	1	x
+37	doorleft.png	4	g
+38	doorright.png	4	g
