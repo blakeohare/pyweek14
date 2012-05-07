@@ -84,7 +84,15 @@ def main():
 		'y-axis': 0
 	}
 	
+	
+	
 	active_scene = PlayScene('7-0')
+	if os.path.exists('start.txt'):
+		lines = trim(read_file('start.txt').split('\n'))
+		active_scene = PlayScene(lines[0])
+		coords = safe_map(int, lines[1].split(','))
+		active_scene.player.x = coords[0] * 16 + 8
+		active_scene.player.y = coords[1] * 16 + 8
 	counter = 0
 	while active_scene != None:
 		
