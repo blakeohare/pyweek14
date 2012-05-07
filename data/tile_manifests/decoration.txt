@@ -4,3 +4,4 @@
 42	smalldegoo.png	1	
 43	mediumdegoo.png	2	
 44	largedegoo.png	2	
+47	table.png	2	x

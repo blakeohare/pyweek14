@@ -6,3 +6,4 @@
 13	cyanblock.png	2	s
 14	yellowblock.png	2	s
 45	battery.png	2	s
+46	deadbattery.png	2	s
