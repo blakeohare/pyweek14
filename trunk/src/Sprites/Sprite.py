@@ -196,7 +196,39 @@ class Sprite:
 													top_free = False
 											
 											if bottom_free and top_free:
-												level.push_block(col, row, tcol, trow, c + layer - 1)
+												# TODO: make sure you're not pushing onto a ramp
+												target_level = c + layer - 1
+												while len(tlookup) <= target_level:
+													tstack.append(None)
+													tlookup.append(None)
+												_t = tlookup[target_level - 1]
+												_i = target_level - 1
+												while _i >= 0 and _t == None:
+													_t = tlookup[_i]
+													_i -= 1
+												
+												if _i == -1:
+													_t = -1
+												
+												valid = True
+												while _t >= 0:
+													landing_tile = tstack[_t]
+													
+													if landing_tile != None:
+														if landing_tile.stairs:
+															valid = False
+														elif landing_tile.no_blocks:
+															valid = False
+														else:
+															valid = True
+														break
+													_t -= 1
+												
+												if valid:
+													level.push_block(col, row, tcol, trow, target_level)
+												else:
+													level.push_counter = -1
+													level.push_target = None
 											else:
 												level.push_counter = -1
 												level.push_target = None
