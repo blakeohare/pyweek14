@@ -1,8 +1,12 @@
+_block_images_for_sprites = None
+
 class Sprite:
 	# sprite coordinates are assuming the grid is 16x16 tiles
 	# these get transposed into pixel coordinates and
 	# are converted into tile coords by simply dividing by 16
 	def __init__(self, x, y, z, type):
+		global _block_images_for_sprites
+		self.garbage_collect = False
 		self.x = x + 0.0
 		self.y = y + 0.0
 		self.z = z
@@ -12,10 +16,26 @@ class Sprite:
 		self.standingon = None
 		self.ismain = type == 'main'
 		self.height = 4
+		self.isblock = type.startswith('block|')
+		
+		if _block_images_for_sprites == None:
+			tile_store = get_tile_store()
+			ids = tile_store.get_all_block_tiles()
+			_block_images_for_sprites = {}
+			for id in ids:
+				_block_images_for_sprites[id] = tile_store.get_tile(id)
+		
+		if self.isblock:
+			self.block_id = type.split('|')[-1] # should be the tile ID
+			self.block_tile = get_tile_store().get_tile(self.block_id)
 		
 	
 	def get_image(self, render_counter):
-		img = get_image('temp_sprite.png')
+		img = None
+		if self.ismain:
+			img = get_image('temp_sprite.png')
+		elif self.isblock:
+			img = self.block_tile.get_image(render_counter)
 		return img
 	
 	def pixel_position(self, xOffset, yOffset, img):
@@ -23,6 +43,8 @@ class Sprite:
 		y = (self.x + self.y) / 2
 		x = x - img.get_width() / 2
 		y = y - self.z - img.get_height() + 8
+		if self.isblock:
+			y += 8
 		output = (int(x + xOffset), int(y + yOffset))
 		
 		return output
@@ -39,7 +61,7 @@ class Sprite:
 	
 	def update(self, level):
 		if self.standingon == None:
-			self.dz = -3
+			self.dz = -1
 
 		if self.dz != 0:
 			platform_data = level.get_platform_below(int(self.x) // 16, int(self.y) // 16, self.z, True)
@@ -205,13 +227,22 @@ class Sprite:
 			layer = int(self.z - 1) // 8
 			lookup = level.cellLookup[col][row]
 			if layer < len(lookup):
-				tile = level.grid[col][row][lookup[layer]]
-				if tile.blocking:
-					self.standingon = tile
-				else:
+				_t = lookup[layer]
+				if _t == None:
 					self.standingon = None
+				else:
+					tile = level.grid[col][row][_t]
+					if tile.blocking:
+						self.standingon = tile
+					else:
+						self.standingon = None
 			else:
 				self.standingon = None
+		
+		if self.isblock and self.standingon != None:
+			# turn me back into a real block
+			self.garbage_collect = True
+			level.modify_block(int(self.x // 16), int(self.y // 16), int(self.z // 8), self.block_tile)
 		
 		self.dx = 0
 		self.dy = 0

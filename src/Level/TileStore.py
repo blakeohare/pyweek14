@@ -20,7 +20,12 @@ class TileStore:
 	def get_tile(self, id):
 		return self.tiles[id]
 					
-			
+	def get_all_block_tiles(self):
+		output = []
+		for k in self.tiles.keys():
+			if self.tiles[k].pushable:
+				output.append(k)
+		return output
 
 
 _tile_store = None

@@ -44,6 +44,14 @@ class Tile:
 				
 		# TODO: go through manifest and add them all
 	
+	# Code duplicated below
+	def get_image(self, render_counter):
+		if self.still:
+			return self.still_image
+		i = (render_counter // self.framerate) % self.image_count
+		return self.images[i]
+
+	# Code duplicated above
 	def render(self, screen, x, y, render_counter):
 		
 		if self.still:
