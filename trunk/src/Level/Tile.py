@@ -22,10 +22,10 @@ class Tile:
 		self.still_y_offset = self.y_offsets[0]
 		self.image_count = len(self.images)
 		self.height = height
-		self.pushable = flags_contains(flags, 'b')
+		self.pushable = flags_contains(flags, 's')
 		self.blocking = flags_contains(flags, 'x')
 		self.stairs = flags_contains(flags, '12345678')
-		self.blocking = self.blocking or self.stairs
+		self.blocking = self.blocking or self.stairs or self.pushable
 		if self.stairs:
 			double = flags_contains(flags, '5678')
 			topo = 2 if double else 1
