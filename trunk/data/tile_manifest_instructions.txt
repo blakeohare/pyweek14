@@ -51,5 +51,6 @@
 #     g - use for the tile in front of the goal
 #     d - entry door
 #     h - capable of holding a charge
+#     n - no blocks allowed on top
 #
 # I may add something as a 5th column if it becomes necessary
