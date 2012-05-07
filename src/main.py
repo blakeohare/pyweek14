@@ -14,6 +14,7 @@ _key_mapping = {
 	pygame.K_DOWN: 'down',
 	pygame.K_SPACE: 'action'
 }
+
 def get_inputs(event_list, pressed, isometric):
 	global _key_mapping
 	pg_pressed = pygame.key.get_pressed()
@@ -46,17 +47,22 @@ def get_inputs(event_list, pressed, isometric):
 	elif pressed['down']:
 		y_axis = 2
 	
-	fx_axis = x_axis
-	fy_axis = y_axis
+	do_one_off_fix = x_axis != 0 and y_axis != 0
 	if isometric:
-		fx_axis = x_axis + y_axis
-		fy_axis = -x_axis + y_axis
+		fx_axis = x_axis
+		fy_axis = -x_axis
+		fx_axis += y_axis
+		fy_axis += y_axis
 		x_axis = fx_axis
 		y_axis = fy_axis
 	
+	# BUG: one off fix
+	if do_one_off_fix:
+		x_axis = x_axis // 2
+		y_axis = y_axis // 2
+		
 	pressed['x-axis'] = x_axis
 	pressed['y-axis'] = y_axis
-	
 	return False
 			
 
@@ -78,9 +84,7 @@ def main():
 		'y-axis': 0
 	}
 	
-	playscene_type = str(PlayScene('1-2'))
-	
-	active_scene = PlayScene('1-2')
+	active_scene = PlayScene('7-0')
 	counter = 0
 	while active_scene != None:
 		
@@ -89,7 +93,8 @@ def main():
 		counter += 1
 		
 		event_list = []
-		try_quit = get_inputs(event_list, pressed, str(active_scene) == playscene_type)
+		
+		try_quit = get_inputs(event_list, pressed, isinstance(active_scene, PlayScene))
 		
 		active_scene.process_input(event_list, pressed)
 		active_scene.update(counter)
