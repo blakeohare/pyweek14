@@ -60,30 +60,60 @@ class Level:
 		self.grid = grid
 		self.cellLookup = references
 	
-	def render(self, screen, xOffset, yOffset, render_counter):
-		
-		i = 0
+	def render(self, screen, xOffset, yOffset, sprites, render_counter):
 		width = self.width
 		height = self.height
+		sprite_lookup = {}
+		for sprite in sprites:
+			x = sprite.x // 16
+			y = sprite.y // 16
+			key = str(x) + '_' + str(y)
+			list = sprite_lookup.get(key)
+			if list == None:
+				list = []
+				sprite_lookup[key] = list
+			list.append(sprite)
+		#print sprite_lookup
+		empty_list = []
+		
+		i = 0
 		while i < width + height:
 			col = i
 			row = 0
+			
 			while row < height and col >= 0:
 				if col < width:
-					self.render_tile_stack(screen, col, row, xOffset, yOffset, render_counter)
+					sprite_list = sprite_lookup.get(str(col) + '_' + str(row))
+					
+					self.render_tile_stack(screen, col, row, xOffset, yOffset, render_counter, sprite_list)
 				row += 1
 				col -= 1
 			i += 1
 	
-	def render_tile_stack(self, screen, col, row, xOffset, yOffset, render_counter):
+	def render_tile_stack(self, screen, col, row, xOffset, yOffset, render_counter, sprites):
 		stack = self.grid[col][row]
 		cumulative_height = 0
 		x = xOffset + col * 16 - row * 16
 		y = yOffset + col * 8 + row * 8
 		for tile in stack:
+			if sprites != None:
+				new_sprites = []
+				for sprite in sprites:
+					if sprite.z < cumulative_height:
+						img = sprite.get_image(render_counter)
+						coords = sprite.pixel_position(xOffset, yOffset, img)
+						screen.blit(img, coords)
+					else:
+						new_sprites.append(sprite)
+				sprites = new_sprites
 			if tile == None:
 				cumulative_height += 8
 			else:
 				tile.render(screen, x, y - cumulative_height, render_counter)
 				cumulative_height += tile.height * 8
-		
+		if sprites != None and len(sprites) > 0:
+			sprites = sorted(sprites, lambda x:x.z)
+			for sprite in sprites:
+				img = sprite.get_image(render_counter)
+				coords = sprite.pixel_position(xOffset, yOffset, img)
+				screen.blit(img, coords)
