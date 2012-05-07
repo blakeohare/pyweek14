@@ -68,3 +68,25 @@ def safe_range(x):
 		output[i] = i
 		i += 1
 	return output
+
+def safe_sorted(list, compare):
+	if len(list) <= 1:
+		return list
+	if len(list) == 2:
+		if compare(list[0], list[1]):
+			return list
+		else:
+			return list[::-1]
+	pivot = list[len(list) // 2]
+	left = []
+	right = []
+	for item in list:
+		if compare(item, pivot):
+			left.append(item)
+		else:
+			right.append(item)
+	
+	left = safe_sorted(left, compare)
+	right = safe_sorted(right, compare)
+	return left + right
+	
