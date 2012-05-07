@@ -12,6 +12,7 @@ class Sprite:
 		self.standingon = None
 		self.ismain = type == 'main'
 		self.height = 4
+		
 	
 	def get_image(self, render_counter):
 		img = get_image('temp_sprite.png')
@@ -105,24 +106,86 @@ class Sprite:
 						opposite = 'SE'
 			
 			blocked = False
-			clearance = safe_range(self.height)
+			topToBottom = True
+			clearance = safe_range(self.height)[:]
+			if topToBottom:
+				clearance = clearance[::-1]
 			cellLookup = level.cellLookup
 			tilestack = level.grid
 			new_platform = self.standingon
 			for check in check_these:
 				col = check[0]
 				row = check[1]
+				if col < 0 or col >= level.width or row < 0 or row >= level.height:
+					blocked = True
+					break
 				lookup = cellLookup[col][row]
 				tiles = tilestack[col][row]
 				for c in clearance:
 					if len(lookup) > c + layer and lookup[c + layer] != None:
-						t = tiles[lookup[c + layer]]
+						tz = lookup[c + layer]
+						t = tiles[tz]
+						
 						if t.blocking:
-							if t.pushable:
-								#TODO: add a shove counter if it's pushable
-								pass
+							if self.ismain:
+								prev_push_target = level.push_target
+								level.push_target = None
+								if t.pushable and direction != None and len(direction) == 2:
+									blocked = True
+									push_key = str(col) + '^' + str(row) + '^' + str(tz)
+									level.push_target = push_key
+									if push_key == prev_push_target:
+										level.push_counter -= 1
+									else:
+										level.push_counter = level.max_push_counter
+									if level.push_counter == 0:
+										# Try to do the push
+										if direction == 'NW':
+											tcol = col - 1
+											trow = row
+										elif direction == 'NE':
+											tcol = col
+											trow = row - 1
+										elif direction == 'SW':
+											tcol = col
+											trow = row + 1
+										elif direction == 'SE':
+											tcol = col + 1
+											trow = row
+										else:
+											assertion("ERROR: bad direction while pushing block.")
+										
+										if tcol >= 0 and tcol < level.width and trow >= 0 and trow < level.height:
+											tlookup = level.cellLookup[tcol][trow]
+											tstack = level.grid[tcol][trow]
+											bottom_free = True
+											top_free = True
+											bottom_index = c + layer - 1
+											top_index = c + layer
+											
+											if len(tlookup) > bottom_index:
+												bottom_index = tlookup[bottom_index]
+												if bottom_index != None and tstack[bottom_index].blocking:
+													bottom_free = False
+											
+											if len(tlookup) > top_index:
+												top_index = tlookup[top_index]
+												if top_index != None and tstack[top_index].blocking:
+													top_free = False
+											
+											if bottom_free and top_free:
+												level.push_block(col, row, tcol, trow, c + layer - 1)
+											else:
+												level.push_counter = -1
+												level.push_target = None
+											break
+										else:
+											level.push_counter = -1
+											level.push_target = None
+									
+								
 							# The target tile will always be last in check_these
-							if t.stairs and t.entrance == opposite and c == 0 and check == check_these[-1]:
+							if blocked == False and t.stairs and t.entrance == opposite and c == 0 and check == check_these[-1]:
 								# not blocked
 								self.z += t.height * 8
 								break
