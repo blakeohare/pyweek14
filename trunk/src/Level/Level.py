@@ -7,7 +7,13 @@ class Level:
 		self.push_counter = -1
 		self.max_push_counter = 25
 		self.push_target = None
+		self.newsprites = []
 		
+	
+	def get_new_sprites(self):
+		output = self.newsprites
+		self.newsprites = []
+		return output
 	
 	def initialize(self):
 		lines = read_file('data/levels/' + self.name + '.txt').split('\n')
@@ -163,9 +169,26 @@ class Level:
 		
 		block = self.modify_block(start_col, start_row, layer, None)
 		self.modify_block(end_col, end_row, layer, block)
-		# TODO: need block to fall, potentially convert it into a sprite that
-		# turns into a map component upon landing
-	
+		
+		target_lookup = self.cellLookup[end_col][end_row]
+		stack = self.grid[end_col][end_row]
+		below_layer = layer - 1
+		should_spritify = False
+		if below_layer < len(target_lookup):
+			standingon = target_lookup[below_layer]
+			if standingon == None:
+				should_spritify = True
+			else:
+				standingon = stack[standingon]
+				if not standingon.blocking:
+					should_spritify = True
+		else:
+			should_spritify = True
+		
+		if should_spritify:
+			self.modify_block(end_col, end_row, layer, None)
+			self.newsprites.append(Sprite(end_col * 16 + 8, end_row * 16 + 8, layer * 8, 'block|' + block.id))
+		
 	
 	def modify_block(self, col, row, layer, type):
 		output = None

@@ -17,8 +17,12 @@ class PlayScene:
 	
 	def update(self, counter):
 		level = self.level
+		filtered = []
 		for sprite in self.sprites:
 			sprite.update(level)
+			if not sprite.garbage_collect:
+				filtered.append(sprite)
+		self.sprites = filtered + level.get_new_sprites()
 	
 	def render(self, screen, counter):
 		self.level.render(screen, screen.get_width() / 2, 50, self.sprites, counter)
