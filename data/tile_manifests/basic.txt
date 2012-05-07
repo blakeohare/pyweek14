@@ -1,6 +1,7 @@
 1	template.png	1	x
 2	whitetile.png	1	x
 8	bluetile.png	1	x
+48	darktile.png	1	x
 25	backleft.png	1	x
 26	backright.png	1	x
 27	backcorner.png	1	x
