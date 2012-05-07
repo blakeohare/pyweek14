@@ -91,6 +91,8 @@ class Sprite:
 				self.standingon = None
 				self.z += self.dz
 		layer = self.z // 8
+		on_new_coordinates_now = False
+		new_platform = self.standingon
 		
 		if self.dz == 0:
 			starting_col = int(self.x) // 16
@@ -148,7 +150,6 @@ class Sprite:
 				clearance = clearance[::-1]
 			cellLookup = level.cellLookup
 			tilestack = level.grid
-			new_platform = self.standingon
 			for check in check_these:
 				col = check[0]
 				row = check[1]
@@ -266,8 +267,18 @@ class Sprite:
 					break
 				
 			if not blocked:
+				old_col = int(self.x // 16)
+				old_row = int(self.y // 16)
 				self.x += self.dx
 				self.y += self.dy
+				new_col = int(self.x // 16)
+				new_row = int(self.y // 16)
+				if old_col != new_col or old_row != new_row:
+					on_new_coordinates_now = True
+		
+		if new_platform != None and new_platform.stairs and on_new_coordinates_now:
+			if direction == new_platform.entrance:
+				self.z -= new_platform.height * 8
 		
 		if self.dz == 0:
 			col = int(self.x // 16)
