@@ -3,6 +3,7 @@ class Level:
 	def __init__(self, name):
 		self.name = name
 		self.initialize()
+		self.sprite_z_sorter = lambda x,y:x.z < y.z
 	
 	def initialize(self):
 		lines = read_file('data/levels/' + self.name + '.txt').split('\n')
@@ -111,6 +112,8 @@ class Level:
 				col -= 1
 			i += 1
 	
+	
+	
 	def render_tile_stack(self, screen, col, row, xOffset, yOffset, render_counter, sprites):
 		stack = self.grid[col][row]
 		cumulative_height = 0
@@ -133,7 +136,7 @@ class Level:
 				tile.render(screen, x, y - cumulative_height, render_counter)
 				cumulative_height += tile.height * 8
 		if sprites != None and len(sprites) > 0:
-			sprites = sorted(sprites, lambda x:x.z)
+			sprites = safe_sorted(sprites, self.sprite_z_sorter)
 			for sprite in sprites:
 				img = sprite.get_image(render_counter)
 				coords = sprite.pixel_position(xOffset, yOffset, img)
