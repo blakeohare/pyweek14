@@ -1,0 +1,7 @@
+b1	button.png	1	
+b2	redbutton.png	1	
+b3	greenbutton.png	1	
+b4	bluebutton.png	1	
+b5	cyanbutton.png	1	
+b6	magentabutton.png	1	
+b7	yellowbutton.png	1	
