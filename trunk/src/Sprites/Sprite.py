@@ -64,15 +64,45 @@ class Sprite:
 			
 			check_these = []
 			if starting_col == ending_col and starting_row == ending_row:
-				pass # if we were cool with it before, we're cool with it now
+				# if we were cool with it before, we're cool with it now
+				direction = None
+				opposite = None
 			elif starting_col != ending_col and starting_row != ending_row:
 				# player moved diagonally to another tile and skipped over intermediate tiles
 				# check one of the tiles between to make sure there's a path.
 				check_these.append((ending_col, starting_row))
 				check_these.append((ending_col, ending_row))
+				if starting_col < ending_col:
+					if starting_row < ending_row:
+						direction = 'S'
+						opposite = 'N'
+					else:
+						direction = 'E'
+						opposite = 'W'
+				else:
+					if starting_row < ending_row:
+						direction = 'W'
+						opposite = 'E'
+					else:
+						direction = 'N'
+						opposite = 'S'
 			else:
 				# player moved to a tile cardinally next to it
 				check_these.append((ending_col, ending_row))
+				if starting_col == ending_col:
+					if starting_row < ending_row:
+						direction = 'SW'
+						opposite = 'NE'
+					else:
+						direction = 'NE'
+						opposite = 'SW'
+				else:
+					if starting_col < ending_col:
+						direction = 'SE'
+						opposite = 'NW'
+					else:
+						direction = 'NW'
+						opposite = 'SE'
 			
 			blocked = False
 			clearance = safe_range(self.height)
@@ -86,10 +116,19 @@ class Sprite:
 				tiles = tilestack[col][row]
 				for c in clearance:
 					if len(lookup) > c + layer and lookup[c + layer] != None:
-						if tiles[lookup[c + layer]].blocking:
-							#TODO: add a shove counter if it's pushable
-							blocked = True
-							break
+						t = tiles[lookup[c + layer]]
+						if t.blocking:
+							if t.pushable:
+								#TODO: add a shove counter if it's pushable
+								pass
+							# The target tile will always be last in check_these
+							if t.stairs and t.entrance == opposite and c == 0 and check == check_these[-1]:
+								# not blocked
+								self.z += t.height * 8
+								break
+							else:
+								blocked = True
+								break
 				if blocked:
 					break
 				
