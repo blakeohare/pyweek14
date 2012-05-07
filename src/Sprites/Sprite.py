@@ -39,10 +39,9 @@ class Sprite:
 	def update(self, level):
 		if self.standingon == None:
 			self.dz = -3
-		#print self.debug_stats()
+
 		if self.dz != 0:
-			platform_data = level.get_platform_below(int(self.x) // 16, int(self.y) // 16, self.z)
-			#print platform_data
+			platform_data = level.get_platform_below(int(self.x) // 16, int(self.y) // 16, self.z, True)
 			if platform_data != None:
 				z = platform_data[0]
 				platform = platform_data[1]
@@ -93,21 +92,25 @@ class Sprite:
 							break
 				if blocked:
 					break
-			
-			if len(check_these) > 0:
-				layer = int(self.z - 1) // 8
-				lookup = cellLookup[col][row]
-				if layer < len(lookup):
-					if not tilestack[col][row][lookup[layer]].blocking:
-						self.standingon = None
-				else:
-					self.standingon = None
-				# TODO: update platform you're standing on
-				pass
 				
 			if not blocked:
 				self.x += self.dx
 				self.y += self.dy
+		
+		if self.dz == 0:
+			col = int(self.x // 16)
+			row = int(self.y // 16)
+			layer = int(self.z - 1) // 8
+			lookup = level.cellLookup[col][row]
+			if layer < len(lookup):
+				tile = level.grid[col][row][lookup[layer]]
+				if tile.blocking:
+					self.standingon = tile
+				else:
+					self.standingon = None
+			else:
+				self.standingon = None
+		
 		self.dx = 0
 		self.dy = 0
 		self.dz = 0

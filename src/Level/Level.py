@@ -61,7 +61,7 @@ class Level:
 		self.grid = grid
 		self.cellLookup = references
 	
-	def get_platform_below(self, col, row, z):
+	def get_platform_below(self, col, row, z, blocking_only):
 	
 		# TODO: interlace the block list here
 		# so that blocks get included in the collision
@@ -80,7 +80,9 @@ class Level:
 				pass
 			else:
 				tile = self.grid[col][row][t]
-				return ((i + 1) * 8, tile)
+				if not blocking_only or tile.blocking:
+					return ((i + 1) * 8, tile)
+			i -= 1
 	
 	def render(self, screen, xOffset, yOffset, sprites, render_counter):
 		width = self.width
@@ -112,7 +114,18 @@ class Level:
 				col -= 1
 			i += 1
 	
-	
+	def render_sprite(self, screen, sprite, xOffset, yOffset, render_counter):
+		platform = sprite.standingon
+		img = sprite.get_image(render_counter)
+		if platform != None and platform.stairs:
+			left = platform.topography[3] * platform.height * 8.0
+			right = platform.topography[1] * platform.height * 8.0
+			p = sprite.x % 16 + 0.0
+			ap = 16.0 - p
+			dy = int((left * ap + p * right) / 16.0)
+			yOffset -= dy
+		coords = sprite.pixel_position(xOffset, yOffset, img)
+		screen.blit(img, coords)
 	
 	def render_tile_stack(self, screen, col, row, xOffset, yOffset, render_counter, sprites):
 		stack = self.grid[col][row]
@@ -124,9 +137,7 @@ class Level:
 				new_sprites = []
 				for sprite in sprites:
 					if sprite.z < cumulative_height:
-						img = sprite.get_image(render_counter)
-						coords = sprite.pixel_position(xOffset, yOffset, img)
-						screen.blit(img, coords)
+						self.render_sprite(screen, sprite, xOffset, yOffset, render_counter)
 					else:
 						new_sprites.append(sprite)
 				sprites = new_sprites
@@ -138,7 +149,5 @@ class Level:
 		if sprites != None and len(sprites) > 0:
 			sprites = safe_sorted(sprites, self.sprite_z_sorter)
 			for sprite in sprites:
-				img = sprite.get_image(render_counter)
-				coords = sprite.pixel_position(xOffset, yOffset, img)
-				screen.blit(img, coords)
+				self.render_sprite(screen, sprite, xOffset, yOffset, render_counter)
 				
