@@ -11,8 +11,10 @@ _render_exceptions_coords = [
 class RenderException:
 	
 	# start is a set of 3D coordinates
-	def __init__(self, start, direction, tile):
+	def __init__(self, start, direction, tile, is_block):
 		global _render_exceptions_coords
+		self.is_block = is_block
+		self.is_sprite = not is_block
 		self.z = start[2]
 		self.counter = 0
 		self.expired = False

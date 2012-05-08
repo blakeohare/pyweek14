@@ -116,6 +116,8 @@ class Level:
 			i -= 1
 	
 	def render(self, screen, xOffset, yOffset, sprites, render_counter):
+		self.allsprites = sprites
+		
 		width = self.width
 		height = self.height
 		sprite_lookup = {}
@@ -176,6 +178,29 @@ class Level:
 	
 	def render_tile_stack(self, screen, col, row, xOffset, yOffset, render_counter, sprites, re_on, re_off):
 		
+		re_sprite_on = None
+		re_sprite_off = None
+		re_block_on = None
+		re_block_off = None
+		
+		if re_on != None:
+			re_block_on = []
+			re_sprite_on = []
+			for re in re_on:
+				if re.is_block:
+					re_block_on.append(re)
+				else:
+					re_sprite_on.append(re)
+			
+		if re_off != None:
+			re_block_off = []
+			re_sprite_off = []
+			for re in re_off:
+				if re.is_block:
+					re_block_off.append(re)
+				else:
+					re_sprite_off.append(re)				
+		
 		prefix = str(col) + '|' + str(row) + '|'
 		
 		stack = self.grid[col][row]
@@ -188,23 +213,49 @@ class Level:
 			if sprites != None:
 				new_sprites = []
 				for sprite in sprites:
-					if sprite.z < z * 8:
-						self.render_sprite(screen, sprite, xOffset, yOffset, render_counter)
+					if sprite.z <= z * 8:
+						if re_sprite_off != None and len(re_sprite_off) > 0 and re_sprite_off[0].z == z and re_sprite_off[0].tile == sprite:
+							re = re_sprite_off.pop(0)
+						else:
+							re_offset = (0, 0)
+							if re_sprite_on != None:
+								rei = 0
+								while rei < len(re_sprite_on):
+									re = re_sprite_on[rei]
+									if re.tile == sprite:
+										re_sprite_on.pop(rei)
+										re_offset = re.get_offset()
+									else:
+										rei += 1
+							self.render_sprite(screen, sprite, xOffset + re_offset[0], yOffset + re_offset[1], render_counter)
 					else:
 						new_sprites.append(sprite)
 				sprites = new_sprites
+			
+			while re_sprite_on != None and len(re_sprite_on) > 0 and re_sprite_on[0].z <= z:
+				re = re_sprite_on.pop(0)
+				offset = re.get_offset()
+				_x = xOffset + offset[0]
+				_y = yOffset + offset[1]
+				xdiff = re.do_show[0] - re.dont_show[0]
+				ydiff = re.do_show[1] - re.dont_show[1]
+				xdiff_pixel = xdiff * 16 - ydiff * 16
+				ydiff_pixel = xdiff * 8 + ydiff * 8
+				self.render_sprite(screen, re.tile, _x + xdiff_pixel, _y + ydiff_pixel, render_counter)
+				
+			
 			if tile == None:
-				if re_on != None and len(re_on) > 0 and re_on[0].z == z:
-					re = re_on.pop(0)
+				if re_block_on != None and len(re_block_on) > 0 and re_block_on[0].z == z:
+					re = re_block_on.pop(0)
 					offset = re.get_offset()
 					re.tile.render(screen, x + offset[0], y - z * 8 + offset[1], render_counter)
 					z += re.tile.height - 1
 				z += 1
 			else:
-				if re_off != None and len(re_off) > 0 and re_off[0].z == z:
-					re = re_off.pop(0)
-				elif re_on != None and len(re_on) > 0 and re_on[0].z == z:
-					re = re_on.pop(0)
+				if re_block_off != None and len(re_block_off) > 0 and re_block_off[0].z == z:
+					re = re_block_off.pop(0)
+				elif re_block_on != None and len(re_block_on) > 0 and re_block_on[0].z == z:
+					re = re_block_on.pop(0)
 					offset = re.get_offset()
 					tile.render(screen, x + offset[0], y - z * 8 + offset[1], render_counter)
 				else:
@@ -214,7 +265,23 @@ class Level:
 		if sprites != None and len(sprites) > 0:
 			sprites = safe_sorted(sprites, self.sprite_z_sorter)
 			for sprite in sprites:
-				self.render_sprite(screen, sprite, xOffset, yOffset, render_counter)
+				if re_sprite_on != None and len(re_sprite_on) > 0 and re_sprite_on[0].tile == sprite:
+					re = re_sprite_on.pop(0)
+					offset = re.get_offset()
+					self.render_sprite(screen, sprite, xOffset + offset[0], yOffset + offset[1], render_counter)
+				else:
+					suppress = False
+					if re_sprite_off != None:
+						rei = 0
+						while rei < len(re_sprite_off):
+							re = re_sprite_off[rei]
+							if sprite == re.tile:
+								re_sprite_off.pop(rei)
+								suppress = True
+							else:
+								rei += 1
+					if not suppress:
+						self.render_sprite(screen, sprite, xOffset, yOffset, render_counter)
 	
 	# there are no blockages. It's already been verified by the time this function
 	# has been called.
@@ -236,7 +303,7 @@ class Level:
 		else:
 			dir = 'NE'
 			
-		self.render_exceptions.append(RenderException((start_col, start_row, layer), dir, block))
+		self.render_exceptions.append(RenderException((start_col, start_row, layer), dir, block, True))
 		
 		below_layer = layer - 1
 		

@@ -48,7 +48,7 @@ class MovingPlatformManager:
 						level.modify_block(target[0], target[1], target[2], mp)
 						directions.append(directions.pop(0))
 						self.platforms[i] = target
-						render_exceptions.append(RenderException(platform, direction, mp))
+						render_exceptions.append(RenderException(platform, direction, mp, True))
 						for sprite in sprites:
 							if sprite.standingon == mp:
 								sx = int(sprite.x // 16)
@@ -56,6 +56,8 @@ class MovingPlatformManager:
 									sy = int(sprite.y // 16)
 									sz = int(sprite.z // 8)
 									if sy == platform[1] and sz == platform[2] + 2:
+										coords = (int(sprite.x // 16), int(sprite.y // 16), int(sprite.z // 8))
+										render_exceptions.append(RenderException(coords, direction, sprite, False))
 										sprite.x += offset[0] * 16
 										sprite.y += offset[1] * 16
 									
