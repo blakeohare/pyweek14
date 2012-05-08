@@ -8,7 +8,7 @@ class Level:
 		self.max_push_counter = 25
 		self.push_target = None
 		self.newsprites = []
-		
+		self.circuitry = Circuits(self)
 	
 	def get_new_sprites(self):
 		output = self.newsprites
@@ -59,6 +59,8 @@ class Level:
 						tileStack.append(None)
 					else:
 						t = tilestore.get_tile(cell)
+						if t.actual_circuit and cell.endswith('on'):
+							t = tilestore.get_tile(cell[:-2])
 						z = 0
 						while z < t.height:
 							referenceStack.append(len(tileStack))
@@ -70,6 +72,19 @@ class Level:
 			i += 1
 		self.grid = grid
 		self.cellLookup = references
+	
+	def get_tile_at(self, x, y=None, z=None):
+		if y == None:
+			y = x[1]
+			z = x[2]
+			x = x[0]
+		lookup = self.cellLookup[x][y]
+		if len(lookup) <= z:
+			return None
+		index = lookup[z]
+		if index == None:
+			return None
+		return self.grid[x][y][index]
 	
 	def get_platform_below(self, col, row, z, blocking_only):
 	
@@ -177,9 +192,14 @@ class Level:
 				if not standingon.blocking:
 					should_spritify = True
 				else:
-					if standingon.id == 'po' and block.id == '46':# and standingon.hascharge:
+					if standingon.id == 'po' and block.id == '46' and self.circuitry.is_charged(end_col, end_row, below_layer):
 						play_sound('battery_charge.wav')
 						self.modify_block(end_col, end_row, layer, get_tile_store().get_tile('45'))
+					if standingon.id == 'pi':
+						if block.id == '45':
+							#play_sound('electricity_flows.wav')
+							self.circuitry.refresh_charges()
+						
 		else:
 			should_spritify = True
 		

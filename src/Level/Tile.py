@@ -26,7 +26,11 @@ class Tile:
 		self.no_blocks = False
 		self.pushable = flags_contains(flags, 's')
 		self.blocking = flags_contains(flags, 'x')
+		self.circuit = flags_contains(flags, 'eh')
+		self.actual_circuit = flags_contains(flags, 'e')
 		self.stairs = flags_contains(flags, '12345678')
+		self.power_input = id == 'pi'
+		self.power_output = id == 'po'
 		self.blocking = self.blocking or self.stairs or self.pushable
 		if self.stairs:
 			self.no_blocks = True
