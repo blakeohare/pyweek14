@@ -14,7 +14,7 @@ class MovingPlatformManager:
 			directions.append(['P'])
 		self.directions = directions
 			
-	def update(self):
+	def update(self, sprites, render_exceptions):
 		self.ticker += 1
 		if self.ticker % 60 == 0:
 			level = self.level
@@ -43,5 +43,6 @@ class MovingPlatformManager:
 						level.modify_block(target[0], target[1], target[2], mp)
 						directions.append(directions.pop(0))
 						self.platforms[i] = target
+						render_exceptions.append(RenderException(platform, direction, mp))
 				i += 1
 

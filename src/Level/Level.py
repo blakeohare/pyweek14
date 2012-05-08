@@ -166,7 +166,7 @@ class Level:
 				col -= 1
 			i += 1
 		
-		self.update()
+		self.update(sprites)
 	
 	def render_sprite(self, screen, sprite, xOffset, yOffset, render_counter):
 		platform = sprite.standingon
@@ -334,9 +334,9 @@ class Level:
 			i += 1
 		copy_array(self.cellLookup[col][row], lookup)
 	
-	def update(self):
-		self.moving_platforms.update()
+	def update(self, sprites):
 		new_re = []
+		self.moving_platforms.update(sprites, new_re)
 		for re in self.render_exceptions:
 			re.update()
 			if not re.expired:
