@@ -9,6 +9,7 @@ class Level:
 		self.push_target = None
 		self.newsprites = []
 		self.circuitry = Circuits(self)
+		self.render_exceptions = []
 	
 	def get_new_sprites(self):
 		output = self.newsprites
@@ -122,8 +123,21 @@ class Level:
 				list = []
 				sprite_lookup[key] = list
 			list.append(sprite)
-		#print sprite_lookup
 		empty_list = []
+		
+		re_on_keys = {}
+		re_off_keys = {}
+		for re in self.render_exceptions:
+			re_on_keys[re.on_key] = re_on_keys.get(re.on_key, [])
+			re_on_keys[re.on_key].append(re)
+			re_off_keys[re.off_key] = re_off_keys.get(re.off_key, [])
+			re_off_keys[re.off_key].append(re)
+		
+		z_sorter = lambda a,b: a.z < b.z
+		for k in re_on_keys.keys():
+			re_on_keys[k] = safe_sorted(re_on_keys[k], z_sorter)
+		for k in re_off_keys.keys():
+			re_off_keys[k] = safe_sorted(re_off_keys[k], z_sorter)
 		
 		i = 0
 		while i < width + height:
@@ -133,11 +147,21 @@ class Level:
 			while row < height and col >= 0:
 				if col < width:
 					sprite_list = sprite_lookup.get(str(col) + '_' + str(row))
+					k = str(col) + '|' + str(row)
+					re_on = re_on_keys.get(k)
+					re_off = re_off_keys.get(k)
 					
-					self.render_tile_stack(screen, col, row, xOffset, yOffset, render_counter, sprite_list)
+					if re_on != None:
+						re_on = re_on[:]
+					if re_off != None:
+						re_off = re_off[:]
+					
+					self.render_tile_stack(screen, col, row, xOffset, yOffset, render_counter, sprite_list, re_on, re_off)
 				row += 1
 				col -= 1
 			i += 1
+		
+		self.update()
 	
 	def render_sprite(self, screen, sprite, xOffset, yOffset, render_counter):
 		platform = sprite.standingon
@@ -145,25 +169,43 @@ class Level:
 		coords = sprite.pixel_position(xOffset, yOffset, img)
 		screen.blit(img, coords)
 	
-	def render_tile_stack(self, screen, col, row, xOffset, yOffset, render_counter, sprites):
+	def render_tile_stack(self, screen, col, row, xOffset, yOffset, render_counter, sprites, re_on, re_off):
+		
+		prefix = str(col) + '|' + str(row) + '|'
+		
 		stack = self.grid[col][row]
-		cumulative_height = 0
+		z = 0
 		x = xOffset + col * 16 - row * 16 - 16
 		y = yOffset + col * 8 + row * 8
-		for tile in stack:
+		i = 0
+		while i < len(stack):
+			tile = stack[i]
 			if sprites != None:
 				new_sprites = []
 				for sprite in sprites:
-					if sprite.z < cumulative_height:
+					if sprite.z < z * 8:
 						self.render_sprite(screen, sprite, xOffset, yOffset, render_counter)
 					else:
 						new_sprites.append(sprite)
 				sprites = new_sprites
 			if tile == None:
-				cumulative_height += 8
+				if re_on != None and len(re_on) > 0 and re_on[0].z == z:
+					re = re_on.pop(0)
+					offset = re.get_offset()
+					re.tile.render(screen, x + offset[0], y - z * 8 + offset[1], render_counter)
+					z += re.tile.height - 1
+				z += 1
 			else:
-				tile.render(screen, x, y - cumulative_height, render_counter)
-				cumulative_height += tile.height * 8
+				if re_off != None and len(re_off) > 0 and re_off[0].z == z:
+					re = re_off.pop(0)
+				elif re_on != None and len(re_on) > 0 and re_on[0].z == z:
+					re = re_on.pop(0)
+					offset = re.get_offset()
+					tile.render(screen, x + offset[0], y - z * 8 + offset[1], render_counter)
+				else:
+					tile.render(screen, x, y - z * 8, render_counter)
+				z += tile.height
+			i += 1
 		if sprites != None and len(sprites) > 0:
 			sprites = safe_sorted(sprites, self.sprite_z_sorter)
 			for sprite in sprites:
@@ -178,6 +220,18 @@ class Level:
 		
 		block = self.modify_block(start_col, start_row, layer, None)
 		self.modify_block(end_col, end_row, layer, block)
+		
+		if start_row == end_row:
+			if start_col < end_col:
+				dir = 'SE'
+			else:
+				dir = 'NW'
+		elif start_row < end_row:
+			dir = 'SW'
+		else:
+			dir = 'NE'
+			
+		self.render_exceptions.append(RenderException((start_col, start_row, layer), dir, block))
 		
 		below_layer = layer - 1
 		
@@ -274,4 +328,11 @@ class Level:
 				lookup += [i] * item.height
 			i += 1
 		copy_array(self.cellLookup[col][row], lookup)
-		
+	
+	def update(self):
+		new_re = []
+		for re in self.render_exceptions:
+			re.update()
+			if not re.expired:
+				new_re.append(re)
+		self.render_exceptions = new_re
