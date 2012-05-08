@@ -1,3 +1,12 @@
+_debug_message = None
+def set_user_debug_message(text):
+	global _debug_message
+	_debug_message = text
+
+def get_user_debug_message():
+	global _debug_message
+	return _debug_message
+
 def go_fast(): return True
 
 class MyEvent:
@@ -72,7 +81,7 @@ def main():
 	real_screen = pygame.display.set_mode((800, 600))
 	fake_screen = pygame.Surface((400, 300))
 	fps = 60 if go_fast() else 30
-	
+	#fps = 30
 	pressed = {
 		'start': False,
 		'left': False,
@@ -108,6 +117,10 @@ def main():
 		
 		fake_screen.fill((0, 0, 0))
 		active_scene.render(fake_screen, counter)
+		
+		debug_message = get_user_debug_message()
+		if debug_message != None:
+			fake_screen.blit(get_text(debug_message, 20, (255, 0, 0)), (10, 10))
 		
 		pygame.transform.scale(fake_screen, (real_screen.get_width(), real_screen.get_height()), real_screen)
 		
