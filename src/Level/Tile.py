@@ -15,6 +15,7 @@ class Tile:
 		if self.is_num(images[0][0]):
 			self.framerate = int(images[0])
 			images = images[1:]
+		self.hascharge = False
 		self.images = safe_map(lambda x:get_image('tiles/' + x), images)
 		self.still = len(self.images) == 1
 		self.still_image = self.images[0]

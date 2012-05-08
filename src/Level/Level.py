@@ -176,6 +176,10 @@ class Level:
 				standingon = stack[standingon]
 				if not standingon.blocking:
 					should_spritify = True
+				else:
+					if standingon.id == 'po' and block.id == '46':# and standingon.hascharge:
+						play_sound('battery_charge.wav')
+						self.modify_block(end_col, end_row, layer, get_tile_store().get_tile('45'))
 		else:
 			should_spritify = True
 		
