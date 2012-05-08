@@ -179,9 +179,12 @@ class Level:
 		block = self.modify_block(start_col, start_row, layer, None)
 		self.modify_block(end_col, end_row, layer, block)
 		
+		below_layer = layer - 1
+		
+		was_standing_on = self.get_tile_at(start_col, start_row, below_layer)
+		
 		target_lookup = self.cellLookup[end_col][end_row]
 		stack = self.grid[end_col][end_row]
-		below_layer = layer - 1
 		should_spritify = False
 		if below_layer < len(target_lookup):
 			standingon = target_lookup[below_layer]
@@ -199,6 +202,10 @@ class Level:
 						if block.id == '45':
 							#play_sound('electricity_flows.wav')
 							self.circuitry.refresh_charges()
+					if was_standing_on != None and was_standing_on.id == 'pi' and block.id == '45':
+						play_sound('battery_deplete.wav')
+						self.modify_block(end_col, end_row, layer, get_tile_store().get_tile('46'))
+						self.circuitry.refresh_charges()
 						
 		else:
 			should_spritify = True
