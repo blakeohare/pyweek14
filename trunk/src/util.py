@@ -107,3 +107,8 @@ def copy_array(target, source):
 	while i < len(source):
 		target[i] = source[i]
 		i += 1
+def debug_dict(dictionary):
+	return '\n'.join(safe_map(lambda k:str(k) + ": " + str(dictionary[k]), dictionary.keys()))
+
+def debug_list(list):
+	return '\n'.join(safe_map(str, list))
