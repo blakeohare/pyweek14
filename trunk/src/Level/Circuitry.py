@@ -11,6 +11,8 @@ class Circuits:
 		
 	def refresh_charges(self):
 		on_circuits = get_hacks_for_level(self.level.name, 'on_circuits')
+		if on_circuits == None:
+			on_circuits = []
 		active_input_panels = []
 		for input_panel in self.power_in:
 			x = input_panel[0]
