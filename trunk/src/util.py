@@ -70,6 +70,9 @@ def safe_range(x):
 	return output
 
 def safe_sorted(list, compare):
+	return safe_sorted_helper(list, compare)
+	
+def safe_sorted_helper(list, compare):
 	if len(list) <= 1:
 		return list
 	if len(list) == 2:
@@ -77,7 +80,9 @@ def safe_sorted(list, compare):
 			return list
 		else:
 			return list[::-1]
-	pivot = list[len(list) // 2]
+	pivot_i = len(list) // 2
+	pivot = list[pivot_i]
+	list = list[:pivot_i] + list[pivot_i + 1:]
 	left = []
 	right = []
 	for item in list:
@@ -86,8 +91,9 @@ def safe_sorted(list, compare):
 		else:
 			right.append(item)
 	
-	left = safe_sorted(left, compare)
-	right = safe_sorted(right, compare)
+	left = safe_sorted_helper(left, compare)
+	left.append(pivot)
+	right = safe_sorted_helper(right, compare)
 	return left + right
 
 _assertions_break = True
