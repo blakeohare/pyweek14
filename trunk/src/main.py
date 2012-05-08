@@ -81,7 +81,7 @@ def main():
 	real_screen = pygame.display.set_mode((800, 600))
 	fake_screen = pygame.Surface((400, 300))
 	fps = 60 if go_fast() else 30
-	#fps = 30
+
 	pressed = {
 		'start': False,
 		'left': False,
