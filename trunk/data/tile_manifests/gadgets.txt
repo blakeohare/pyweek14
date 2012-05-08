@@ -1,7 +1,7 @@
 4	teslacoil1.png|teslacoil2.png|teslacoil3.png|teslacoil4.png	4	xhe
 5	oscilloscope1.png	1	x
 6	oscilloscope2.png	1	x
-16	movingplatform1.png|movingplatform2.png|movingplatform3.png|movingplatform4.png	2	
+16	movingplatform1.png|movingplatform2.png|movingplatform3.png|movingplatform4.png	2	x
 t1	teleport.png	1	x
 t2	teleportreceiver.png	1	x
 t3	teleportoff.png	1	x
