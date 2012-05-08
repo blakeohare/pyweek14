@@ -10,6 +10,7 @@ class Level:
 		self.newsprites = []
 		self.circuitry = Circuits(self)
 		self.render_exceptions = []
+		self.moving_platforms = MovingPlatformManager(self)
 	
 	def get_new_sprites(self):
 		output = self.newsprites
@@ -38,6 +39,7 @@ class Level:
 		height = self.height
 		grid = make_grid(self.width, self.height, None)
 		references = make_grid(self.width, self.height, None)
+		moving_platforms = []
 		
 		tilestore = get_tile_store()
 		i = 0
@@ -60,6 +62,8 @@ class Level:
 						tileStack.append(None)
 					else:
 						t = tilestore.get_tile(cell)
+						if t.id == '16': # moving platform
+							moving_platforms.append((x, y, len(referenceStack)))
 						if t.actual_circuit and cell.endswith('on'):
 							t = tilestore.get_tile(cell[:-2])
 						z = 0
@@ -73,7 +77,8 @@ class Level:
 			i += 1
 		self.grid = grid
 		self.cellLookup = references
-	
+		self.moving_platforms = moving_platforms
+		
 	def get_tile_at(self, x, y=None, z=None):
 		if y == None:
 			y = x[1]
@@ -330,9 +335,14 @@ class Level:
 		copy_array(self.cellLookup[col][row], lookup)
 	
 	def update(self):
+		self.moving_platforms.update()
 		new_re = []
 		for re in self.render_exceptions:
 			re.update()
 			if not re.expired:
 				new_re.append(re)
 		self.render_exceptions = new_re
+		
+	
+	def get_moving_platforms(self):
+		return self.moving_platforms
