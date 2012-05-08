@@ -204,6 +204,7 @@ class Level:
 		prefix = str(col) + '|' + str(row) + '|'
 		
 		stack = self.grid[col][row]
+			
 		z = 0
 		x = xOffset + col * 16 - row * 16 - 16
 		y = yOffset + col * 8 + row * 8
@@ -214,6 +215,7 @@ class Level:
 				new_sprites = []
 				for sprite in sprites:
 					if sprite.z <= z * 8:
+						#print 'weeeeeeeeeeeeeeeeee'
 						if re_sprite_off != None and len(re_sprite_off) > 0 and re_sprite_off[0].z == z and re_sprite_off[0].tile == sprite:
 							re = re_sprite_off.pop(0)
 						else:
@@ -232,7 +234,7 @@ class Level:
 						new_sprites.append(sprite)
 				sprites = new_sprites
 			
-			while re_sprite_on != None and len(re_sprite_on) > 0 and re_sprite_on[0].z <= z:
+			while re_sprite_on != None and len(re_sprite_on) > 0 and re_sprite_on[0].z < z:
 				re = re_sprite_on.pop(0)
 				offset = re.get_offset()
 				_x = xOffset + offset[0]
@@ -242,14 +244,13 @@ class Level:
 				xdiff_pixel = xdiff * 16 - ydiff * 16
 				ydiff_pixel = xdiff * 8 + ydiff * 8
 				self.render_sprite(screen, re.tile, _x + xdiff_pixel, _y + ydiff_pixel, render_counter)
-				
 			
 			if tile == None:
 				if re_block_on != None and len(re_block_on) > 0 and re_block_on[0].z == z:
 					re = re_block_on.pop(0)
 					offset = re.get_offset()
 					re.tile.render(screen, x + offset[0], y - z * 8 + offset[1], render_counter)
-					z += re.tile.height - 1
+					#z += re.tile.height - 1
 				z += 1
 			else:
 				if re_block_off != None and len(re_block_off) > 0 and re_block_off[0].z == z:
@@ -262,13 +263,60 @@ class Level:
 					tile.render(screen, x, y - z * 8, render_counter)
 				z += tile.height
 			i += 1
-		if sprites != None and len(sprites) > 0:
-			sprites = safe_sorted(sprites, self.sprite_z_sorter)
-			for sprite in sprites:
-				if re_sprite_on != None and len(re_sprite_on) > 0 and re_sprite_on[0].tile == sprite:
-					re = re_sprite_on.pop(0)
+		if (sprites != None and len(sprites) > 0) or (re_sprite_on != None and len(re_sprite_on) > 0):
+			sprites = [] if sprites == None else safe_sorted(sprites, self.sprite_z_sorter)
+			sprite_i = 0
+			re_i = 0
+			if re_sprite_on == None:
+				re_sprite_on = []
+			
+			rendered_sprites = []
+			for re in re_sprite_on:
+				for sprite in sprites:
+					if re.tile == sprite:
+						rendered_sprites.append(sprite)
+			if len(rendered_sprites) > 0:
+				new_sprites = []
+				for sprite in rendered_sprites:
+					if sprite in rendered_sprites:
+						pass
+					else:
+						new_sprites.append(sprite)
+				sprites = new_sprites
+			
+			while sprite_i < len(sprites) or re_i < len(re_sprite_on):
+				sprite = None
+				re = None
+				if sprite_i == len(sprites):
+					re = re_sprite_on[re_i]
+					re_i += 1
+				elif re_i == len(re_sprite_on):
+					sprite = sprites[sprite_i]
+					sprite_i += 1
+				else:
+					re = re_sprite_on[re_i]
+					sprite = sprites[sprite_i]
+					if re.z < int(sprite.z // 8):
+						sprite = None
+						re_i += 1
+					else:
+						re = None
+						sprite_i += 1
+				
+				if re != None:
 					offset = re.get_offset()
-					self.render_sprite(screen, sprite, xOffset + offset[0], yOffset + offset[1], render_counter)
+					_x = xOffset + offset[0]
+					_y = yOffset + offset[1]
+					if re.direction == 'NE' or re.direction == 'NW':
+						xdiff = re.do_show[0] - re.dont_show[0]
+						ydiff = re.do_show[1] - re.dont_show[1]
+						xdiff_pixel = xdiff * 16 - ydiff * 16
+						ydiff_pixel = xdiff * 8 + ydiff * 8
+						_x += xdiff_pixel
+						_y += ydiff_pixel
+					
+					self.render_sprite(screen, re.tile, _x, _y, render_counter)
+					print '------'
 				else:
 					suppress = False
 					if re_sprite_off != None:
@@ -281,6 +329,16 @@ class Level:
 							else:
 								rei += 1
 					if not suppress:
+						'''x = xOffset
+						y = yOffset
+						new_re = []
+						for re in re_sprite_on:
+							if re.tile == sprite:
+								re.offset
+							else:
+								new_re.append(re)
+						re_sprite_on = new_re'''
+						print 'xxxxxxxxxxxxxxxxxx'
 						self.render_sprite(screen, sprite, xOffset, yOffset, render_counter)
 	
 	# there are no blockages. It's already been verified by the time this function
