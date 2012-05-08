@@ -17,6 +17,8 @@ class Sprite:
 		self.ismain = type == 'main'
 		self.height = 4
 		self.isblock = type.startswith('block|')
+		self.last_direction_of_movement = 's'
+		self.is_moving = False
 		
 		if _block_images_for_sprites == None:
 			tile_store = get_tile_store()
@@ -33,7 +35,11 @@ class Sprite:
 	def get_image(self, render_counter):
 		img = None
 		if self.ismain:
-			img = get_image('temp_sprite.png')
+			path = 'protagonist/' + self.last_direction_of_movement
+			if self.is_moving:
+				path += str([1, 2, 3, 4, 3, 2][(render_counter // 6) % 6])
+			path += '.png'
+			img = get_image(path)
 		elif self.isblock:
 			img = self.block_tile.get_image(render_counter)
 		return img
@@ -44,6 +50,9 @@ class Sprite:
 		x = x - img.get_width() / 2
 		y = y - self.z - img.get_height() + 8
 		if self.isblock:
+			y += 8
+		
+		if self.ismain:
 			y += 8
 		
 		platform = self.standingon
@@ -275,7 +284,33 @@ class Sprite:
 				new_row = int(self.y // 16)
 				if old_col != new_col or old_row != new_row:
 					on_new_coordinates_now = True
-		
+			
+			d = None
+			self.is_moving = True
+			if self.dx == 0:
+				if self.dy == 0:
+					self.is_moving = False
+				elif self.dy < 0:
+					d = 'ne'
+				else:
+					d = 'sw'
+			elif self.dx < 0:
+				if self.dy == 0:
+					d = 'nw'
+				elif self.dy < 0:
+					d = 'n'
+				else:
+					d = 'w'
+			else:
+				if self.dy == 0:
+					d = 'se'
+				elif self.dy < 0:
+					d = 'e'
+				else:
+					d = 's'
+			if d != None:
+				self.last_direction_of_movement = d
+			
 		if new_platform != None and new_platform.stairs and on_new_coordinates_now:
 			if direction == new_platform.entrance:
 				self.z -= new_platform.height * 8
