@@ -215,7 +215,6 @@ class Level:
 				new_sprites = []
 				for sprite in sprites:
 					if sprite.z <= z * 8:
-						#print 'weeeeeeeeeeeeeeeeee'
 						if re_sprite_off != None and len(re_sprite_off) > 0 and re_sprite_off[0].z == z and re_sprite_off[0].tile == sprite:
 							re = re_sprite_off.pop(0)
 						else:
@@ -316,7 +315,7 @@ class Level:
 						_y += ydiff_pixel
 					
 					self.render_sprite(screen, re.tile, _x, _y, render_counter)
-					print '------'
+
 				else:
 					suppress = False
 					if re_sprite_off != None:
@@ -329,16 +328,6 @@ class Level:
 							else:
 								rei += 1
 					if not suppress:
-						'''x = xOffset
-						y = yOffset
-						new_re = []
-						for re in re_sprite_on:
-							if re.tile == sprite:
-								re.offset
-							else:
-								new_re.append(re)
-						re_sprite_on = new_re'''
-						print 'xxxxxxxxxxxxxxxxxx'
 						self.render_sprite(screen, sprite, xOffset, yOffset, render_counter)
 	
 	# there are no blockages. It's already been verified by the time this function
