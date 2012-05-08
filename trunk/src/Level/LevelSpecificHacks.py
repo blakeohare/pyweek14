@@ -10,12 +10,24 @@ on_circuits:
 	Format is a list of tuples that are (x, y, and z) coordinates. 
 	You can get these from the map editor title bar
 
+moving_platforms:
+	directions map to platforms in tile parser order.
+	lowest y first, then lowest x, then lowest z
+	
+	P is pause
 """
 
 _level_specific_hacks = {
 	'9-0': {
 		'on_circuits': [
 			(1, 2, 0)
+		]
+	},
+	
+	'15-0': {
+		'moving_platforms': [
+			'NW P P SE SE SE P P NW NW', 
+			'SW P P NE NE NE P P SW SW'
 		]
 	}
 }
