@@ -157,6 +157,7 @@ class Level:
 	# there are no blockages. It's already been verified by the time this function
 	# has been called.
 	def push_block(self, start_col, start_row, end_col, end_row, layer):
+		play_sound('blockpush.wav')
 		self.push_counter = -1
 		self.push_target = None
 		
