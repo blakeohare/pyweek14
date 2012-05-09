@@ -9,14 +9,16 @@ def canonicalize_path(path):
 	return path.replace('\\', os.sep).replace('/', os.sep)
 
 def read_file(path):
-
-	c = open(canonicalize_path(path), 'rt')
-	t = c.read()
-	c.close()
-	return t
+	path = canonicalize_path(path)
+	if os.path.exists(path):
+		c = open(canonicalize_path(path), 'rt')
+		t = c.read()
+		c.close()
+		return t
+	return None
 	
 def write_file(path, contents):
-	c = open(canonicalize_path(path), 'wt')
+	c = open(path, 'wt')
 	c.write(contents)
 	c.close()
 
