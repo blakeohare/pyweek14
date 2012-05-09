@@ -7,7 +7,7 @@ def make_ckey(c):
 class Circuits:
 	def __init__(self, level):
 		self.level = level
-		self.refresh_groups()
+		self.refresh_groups(True)
 		
 	def refresh_charges(self):
 		on_circuits = get_hacks_for_level(self.level.name, 'on_circuits')
@@ -25,7 +25,7 @@ class Circuits:
 					t = self.level.grid[x][y][ti]
 					if t != None and t.id == '45':
 						active_input_panels.append(input_panel)
-		on_groups = safe_map(lambda x: self.groups_by_coords[make_ckey(x)], on_circuits + active_input_panels)
+		on_groups = safe_map(lambda x: self.groups_by_coords[make_ckey(x)], on_circuits + active_input_panels + self.permanently_on)
 		group_id = 1
 		max_group_id = len(self.coords_by_group) - 1
 		while group_id <= max_group_id:
@@ -39,13 +39,12 @@ class Circuits:
 					id = ((id + 'on') if is_group_on else id)
 					tile = get_tile_store().get_tile(id)
 					self.level.modify_block(coord[0], coord[1], coord[2], tile)
-					#print "Turning " + str(coord) + ' '+ ("on" if is_group_on else "off")
 			group_id += 1
 		self.on_groups = on_groups
 		
-	def refresh_groups(self):
+	def refresh_groups(self, first_time=False):
 		self.groups = []
-		
+		permanently_on = []
 		grid = self.level.grid
 		width = self.level.width
 		height = self.level.height
@@ -65,6 +64,8 @@ class Circuits:
 						if item.circuit:
 							circuits.append((x, y, z))
 							circuits_by_loc[str(x)+'|' + str(y) + '|' + str(z)] = []
+							if first_time and item.id.endswith('on'):
+								permanently_on.append((x, y, z))
 						if item.power_input:
 							self.power_in.append((x, y, z))
 						z += item.height
@@ -116,7 +117,8 @@ class Circuits:
 			groups_to_coords[group_id].append((coords[0], coords[1], coords[2]))
 		self.coords_by_group = groups_to_coords
 		self.groups_by_coords = tags
-		
+		if first_time:
+			self.permanently_on = permanently_on
 		self.refresh_charges()
 	
 	def is_charged(self, x, y, z):
