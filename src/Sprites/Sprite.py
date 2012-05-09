@@ -487,3 +487,19 @@ class Sprite:
 		self.dy = 0
 		self.dz = 0
 		
+		if self.ismain:
+			self.try_pick_up_powerups(level)
+	
+	def try_pick_up_powerups(self, level):
+		col = int(self.x // 16)
+		row = int(self.y // 16)
+		layer = int(self.z // 8)
+		if layer < 0: return
+		tile = level.get_tile_at(col, row, layer)
+		if tile != None and tile.powerup:
+			level.modify_block(col, row, layer, None)
+			if tile.goo:
+				increment_persisted_level_int('decontaminant', tile.goo_size)
+			else:
+				increment_persisted_level_int('research', 1)
+				

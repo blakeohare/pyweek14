@@ -42,6 +42,9 @@ def set_persisted_session_string(name, value):
 def set_persisted_level_string(name, value):
 	return get_persistent_state().set_string_level(name, value)
 
+def increment_persisted_level_int(name, amount):
+	set_persisted_level_int(name, get_persisted_level_int(name) + amount)
+
 class PersistentState:
 	def __init__(self):
 		self.forever = {}
