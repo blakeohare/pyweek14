@@ -497,6 +497,7 @@ class Sprite:
 		if layer < 0: return
 		tile = level.get_tile_at(col, row, layer)
 		if tile != None and tile.powerup:
+			play_sound('pickup.wav')
 			level.modify_block(col, row, layer, None)
 			if tile.goo:
 				increment_persisted_level_int('decontaminant', tile.goo_size)

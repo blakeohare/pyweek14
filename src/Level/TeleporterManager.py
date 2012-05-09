@@ -81,6 +81,7 @@ class TeleporterManager:
 		self.teleport_sprite(sprite, target)
 	
 	def teleport_sprite(self, sprite, target):
+		play_sound('teleport.wav')
 		sprite.immobilized = True
 		self.remove_sprites.append(sprite)
 		
