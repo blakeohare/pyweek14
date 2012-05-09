@@ -384,8 +384,11 @@ class Level:
 			should_spritify = True
 		
 		if should_spritify:
-			self.modify_block(end_col, end_row, layer, None)
-			self.newsprites.append(Sprite(end_col * 16 + 8, end_row * 16 + 8, layer * 8, 'block|' + block.id))
+			self.spritify_block(end_col, end_row, layer)
+	
+	def spritify_block(self, col, row, layer):
+		block = self.modify_block(col, row, layer, None)
+		self.newsprites.append(Sprite(col * 16 + 8, row * 16 + 8, layer * 8, 'block|' + block.id))
 		
 	
 	def modify_block(self, col, row, layer, type):
