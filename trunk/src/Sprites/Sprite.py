@@ -19,7 +19,7 @@ class Sprite:
 		self.isblock = type.startswith('block|')
 		self.last_direction_of_movement = 's'
 		self.is_moving = False
-		
+		self.pushing = None
 		if self.isblock:
 			self.height = 2
 		
@@ -38,7 +38,10 @@ class Sprite:
 	def get_image(self, render_counter):
 		img = None
 		if self.ismain:
-			path = 'protagonist/' + self.last_direction_of_movement
+			dir = self.last_direction_of_movement
+			if self.pushing != None:
+				dir = self.pushing.lower() + 'push'
+			path = 'protagonist/' + dir
 			if self.is_moving:
 				path += str([1, 2, 3, 4, 3, 2][(render_counter // 6) % 6])
 			path += '.png'
@@ -86,6 +89,7 @@ class Sprite:
 		
 	
 	def update(self, level):
+		self.pushing = None
 		if self.standingon == None:
 			self.dz = -1
 
@@ -183,27 +187,30 @@ class Sprite:
 									blocked = True
 									push_key = str(col) + '^' + str(row) + '^' + str(tz)
 									level.push_target = push_key
+
+									if direction == 'NW':
+										tcol = col - 1
+										trow = row
+									elif direction == 'NE':
+										tcol = col
+										trow = row - 1
+									elif direction == 'SW':
+										tcol = col
+										trow = row + 1
+									elif direction == 'SE':
+										tcol = col + 1
+										trow = row
+									else:
+										assertion("ERROR: bad direction while pushing block.")
+									
+									self.pushing = direction
+									
 									if push_key == prev_push_target:
 										level.push_counter -= 1
 									else:
 										level.push_counter = level.max_push_counter
 									if level.push_counter == 0:
 										# Try to do the push
-										if direction == 'NW':
-											tcol = col - 1
-											trow = row
-										elif direction == 'NE':
-											tcol = col
-											trow = row - 1
-										elif direction == 'SW':
-											tcol = col
-											trow = row + 1
-										elif direction == 'SE':
-											tcol = col + 1
-											trow = row
-										else:
-											assertion("ERROR: bad direction while pushing block.")
-										
 										if tcol >= 0 and tcol < level.width and trow >= 0 and trow < level.height:
 											tlookup = level.cellLookup[tcol][trow]
 											tstack = level.grid[tcol][trow]
