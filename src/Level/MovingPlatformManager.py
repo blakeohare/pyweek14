@@ -51,16 +51,34 @@ class MovingPlatformManager:
 						row = platform[1]
 						lookupStack = level.cellLookup[col][row]
 						stack = level.grid[col][row]
-						
+						spritification = []
 						while z < len(lookupStack):
 							if lookupStack[z] != None:
 								tile = stack[lookupStack[z]]
 								if tile != None:
 									if tile.pushable:
 										
-										
-										if True:# TODO: check for impediments
-											move_us.append([col, row, z])
+										neighbor_lookup = level.cellLookup[col + offset[0]][row + offset[1]]
+										neighbor_stack = level.grid[col + offset[0]][row + offset[1]]
+										blocked = False
+										if len(spritification) == 0:
+											for z_offset in (z + 0, z + 1):
+												if len(neighbor_lookup) < z_offset:
+													pass
+												else:
+													ntile = neighbor_lookup[z_offset]
+													if ntile != None:
+														ntile = neighbor_stack[ntile]
+														if ntile != None and ntile.blocking:
+															blocked = True
+															break
+										else:
+											blocked = True
+										loc = [col, row, z]
+										if blocked:
+											spritification.append(loc)
+										else:
+											move_us.append(loc)
 											
 										z += tile.height - 1
 									else:
@@ -70,6 +88,9 @@ class MovingPlatformManager:
 							else:
 								break
 							z += 1
+						
+						for block in spritification:
+							level.spritify_block(block[0], block[1], block[2])
 						
 						first = True
 						for move_me in move_us:
