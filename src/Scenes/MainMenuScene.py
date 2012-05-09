@@ -9,7 +9,7 @@ class MainMenuScene:
 			('Exit', lambda x:GoodbyeScene())
 			]
 
-	def process_input(self, events, pressed):
+	def process_input(self, events, pressed, axes):
 		go = False
 		for event in events:
 			if event.down:

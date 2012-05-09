@@ -120,3 +120,18 @@ def debug_dict(dictionary):
 
 def debug_list(list):
 	return '\n'.join(safe_map(str, list))
+
+def parseInt(string):
+	string = trim(string)
+	flip = 1
+	if len(string) > 0 and string[0] == '-':
+		flip = -1
+		string = string[1:]
+	for c in string:
+		if not c in '0123456789':
+			return 0
+	return flip * int(string)
+	
+def abs(num):
+	if num < 0: return -num
+	return num

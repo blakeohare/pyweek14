@@ -5,17 +5,13 @@ class PlayScene:
 		self.level = Level(level_name)
 		self.player = Sprite(17, 177, 32, 'main')
 		self.sprites = [self.player]
-		# axis values are +/- 0, 1, 2, or 3
-		self.v = [0, 0.5, 1, 1.5]
-		self.v += safe_map(lambda x:-x, self.v[1:][::-1])
 		self.overlay = PlaySceneOverlay(self, self.level)
-
-	def process_input(self, events, pressed):
+	def process_input(self, events, pressed, axes):
 		if not self.player.immobilized:
-			dx = pressed['x-axis']
-			dy = pressed['y-axis']
-			self.player.dx = self.v[dx]
-			self.player.dy = self.v[dy]
+			dx = axes[0]
+			dy = axes[1]
+			self.player.dx = dx
+			self.player.dy = dy
 	
 	def update(self, counter):
 		level = self.level

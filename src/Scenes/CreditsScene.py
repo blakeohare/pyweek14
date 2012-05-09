@@ -3,7 +3,7 @@ class CreditsScene:
 		self.next = self
 		self.canSkip = canSkip
 		
-	def process_input(self, events, pressed):
+	def process_input(self, events, pressed, axes):
 		for event in events:
 			self.next = None
 	

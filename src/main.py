@@ -7,22 +7,7 @@ def get_user_debug_message():
 	global _debug_message
 	return _debug_message
 
-class MyEvent:
-	def __init__(self, key, down):
-		self.key = key
-		self.down = down
-		self.up = not down
-
-_key_mapping = {
-	pygame.K_RETURN: 'start',
-	pygame.K_LEFT: 'left',
-	pygame.K_RIGHT: 'right',
-	pygame.K_UP: 'up',
-	pygame.K_DOWN: 'down',
-	pygame.K_SPACE: 'action'
-}
-
-def get_inputs(event_list, pressed, isometric):
+"""def get_inputs(event_list, pressed, isometric):
 	global _key_mapping
 	pg_pressed = pygame.key.get_pressed()
 	for event in pygame.event.get():
@@ -71,6 +56,7 @@ def get_inputs(event_list, pressed, isometric):
 	pressed['x-axis'] = x_axis
 	pressed['y-axis'] = y_axis
 	return False
+	"""
 			
 
 def main():
@@ -106,17 +92,20 @@ def main():
 	else:
 		active_scene = PlayScene('7-0')
 	counter = 0
+	
+	input_manager = get_input_manager()
+	
 	while active_scene != None:
-		
 		start = time.time()
 		
 		counter += 1
 		
-		event_list = []
+		event_list = input_manager.get_events()
+		pressed = input_manager.my_pressed
+		try_quit = input_manager.quitAttempt
+		axes = input_manager.axes
 		
-		try_quit = get_inputs(event_list, pressed, isinstance(active_scene, PlayScene))
-		
-		active_scene.process_input(event_list, pressed)
+		active_scene.process_input(event_list, pressed, axes)
 		active_scene.update(counter)
 		
 		fake_screen.fill((0, 0, 0))
