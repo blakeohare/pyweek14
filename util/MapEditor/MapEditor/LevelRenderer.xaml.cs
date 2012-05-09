@@ -217,7 +217,7 @@ namespace MapEditor
 				this.tile_upper.Children.Add(g);
 			}
 
-			BlitTile(bucketKey, this.foundationImage, 0, px, py + 1, cumulativeHeight, RenderTarget.Lower);
+			BlitTile(bucketKey, this.foundationImage, 0, px, py + 19, cumulativeHeight, RenderTarget.Lower);
 
 			foreach (Tile tile in tileStack)
 			{
