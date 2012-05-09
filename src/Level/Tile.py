@@ -29,6 +29,7 @@ class Tile:
 		self.circuit = flags_contains(flags, 'eh')
 		self.actual_circuit = flags_contains(flags, 'e')
 		self.stairs = flags_contains(flags, '12345678')
+		self.teleporter = id == 't1'
 		self.power_input = id == 'pi'
 		self.power_output = id == 'po'
 		self.blocking = self.blocking or self.stairs or self.pushable
@@ -48,9 +49,7 @@ class Tile:
 			elif flags_contains(flags, '48'):
 				self.topography = [-topo, -topo, 0, 0]
 				self.entrance = 'NE'
-				
-		# TODO: go through manifest and add them all
-	
+			
 	# Code duplicated below
 	def get_image(self, render_counter):
 		if self.still:
