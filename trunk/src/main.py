@@ -95,10 +95,14 @@ def main():
 	
 	if os.path.exists('start.txt'):
 		lines = trim(read_file('start.txt').split('\n'))
-		active_scene = PlayScene(lines[0])
-		coords = safe_map(int, lines[1].split(','))
-		active_scene.player.x = coords[0] * 16 + 8
-		active_scene.player.y = coords[1] * 16 + 8
+		
+		if lines[0] == 'normal':
+			active_scene = MainMenuScene()
+		else:
+			active_scene = PlayScene(lines[0])
+			coords = safe_map(int, lines[1].split(','))
+			active_scene.player.x = coords[0] * 16 + 8
+			active_scene.player.y = coords[1] * 16 + 8
 	else:
 		active_scene = PlayScene('7-0')
 	counter = 0
