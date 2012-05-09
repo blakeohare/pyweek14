@@ -1,4 +1,43 @@
 _block_images_for_sprites = None
+_surface_cache = {}
+
+def get_surface(width, height):
+	global _surface_cache
+	k = str(width) + '|' + str(height)
+	surface = _surface_cache.get(k, None)
+	if surface == None:
+		surface = pygame.Surface((width, height)).convert()
+		_surface_cache[k] = surface
+	return surface
+	
+def get_teleporter_image(going_out, counter):
+	counter = min(60, max(0, counter))
+	if going_out:
+		counter = 60 - counter
+	
+	if counter < 30:
+		ao = 255 - counter * 255 / 30
+		bo = 255
+	else:
+		ao = 0
+		bo = (60 - counter) * 255 / 30
+	return (
+		ao,
+		bo,
+		get_image('protagonist/s.png'),
+		get_image('static/character' + str((int(counter // 2) % 4) + 1) + '.png')
+		)
+	
+
+def copy_surface(surface):
+	return pygame.Surface(surface)
+
+def blit_at_opacity(target, source, x, y, opacity):
+	t = get_surface(source.get_width(), source.get_height())
+	t.blit(screen, (-x, -y))
+	t.blit(source)
+	t.set_alpha(opacity)
+	screen.blit(t, (x, y))
 
 class Sprite:
 	# sprite coordinates are assuming the grid is 16x16 tiles
@@ -14,8 +53,16 @@ class Sprite:
 		self.dy = 0
 		self.dz = 0
 		self.standingon = None
+		self.type = type
+		self.immobilized = False
 		self.ismain = type == 'main'
 		self.height = 4
+		self.tsend = type.startswith('teleport|')
+		self.trecv = type.startswith('receiving|')
+		self.staticy = self.tsend or self.trecv
+		self.ttl = None
+		if self.staticy:
+			self.ttl = 60
 		self.isblock = type.startswith('block|')
 		self.last_direction_of_movement = 's'
 		self.is_moving = False
@@ -35,6 +82,33 @@ class Sprite:
 			self.block_tile = get_tile_store().get_tile(self.block_id)
 		
 	
+	
+	def render_me(self, screen, xOffset, yOffset, render_counter):
+		img = self.get_image(render_counter)
+		coords = self.pixel_position(xOffset, yOffset, img)
+		
+		if self.staticy:
+			things = get_teleporter_image(self.tsend, self.ttl)
+			ao = things[0]
+			bo = things[1]
+			ai = things[2]
+			bi = things[3]
+			
+			for x in ((bo, bi), (ao, ai)):
+				o = x[0]
+				img = x[1]
+				
+				if o > 0:
+					t = get_surface(img.get_width(), img.get_height())
+					t.blit(screen, (-coords[0], -coords[1]))
+					t.blit(img, (0, 0))
+					t.set_alpha(o)
+					screen.blit(t, (coords[0], coords[1]))	
+		else:
+			screen.blit(img, coords)
+		
+	
+	
 	def get_image(self, render_counter):
 		img = None
 		if self.ismain:
@@ -46,6 +120,8 @@ class Sprite:
 				path += str([1, 2, 3, 4, 3, 2][(render_counter // 6) % 6])
 			path += '.png'
 			img = get_image(path)
+		elif self.staticy:
+			img = get_image('static/character' + str(((render_counter // 6) % 4) + 1) + '.png')
 		elif self.isblock:
 			img = self.block_tile.get_image(render_counter)
 		return img
@@ -58,9 +134,9 @@ class Sprite:
 		if self.isblock:
 			y += 8
 		
-		if self.ismain:
+		if self.ismain or self.staticy:
 			y += 8
-		
+
 		platform = self.standingon
 		if platform != None and platform.stairs:
 			left = platform.topography[3] * 8 #platform.height * 8.0
@@ -88,8 +164,28 @@ class Sprite:
 			'dz:', self.dz]))
 		
 	
+	def get_replacement_sprite(self):
+		if self.trecv and self.garbage_collect:
+			self.prototype.garbage_collect = False
+			return self.prototype
+		return self
+	
 	def update(self, level):
 		self.pushing = None
+		if self.ttl != None:
+			self.ttl -= 1
+			if self.ttl <= 0:
+				self.garbage_collect = True
+				if self.trecv:
+					self.prototype.x = self.x
+					self.prototype.y = self.y
+					self.prototype.z = self.z
+					self.prototype.is_moving = False
+					self.prototype.immobilized = False
+					#self.prototype.standingon = self.standingon
+		
+		if self.immobilized:
+			return
 		if self.standingon == None:
 			self.dz = -1
 
@@ -110,9 +206,20 @@ class Sprite:
 		on_new_coordinates_now = False
 		new_platform = self.standingon
 		
+		starting_col = int(self.x) // 16
+		starting_row = int(self.y) // 16
+		
+		if self.standingon != None and self.standingon.teleporter and not self.staticy:
+			destination = level.teleporters.get_destination(starting_col, starting_row, int(self.z // 8) - 1)
+			
+			if destination != None:
+				if destination == 'blocked':
+					pass
+					# TODO: play blocked sound
+				else:
+					level.teleporters.teleport_sprite(self, destination)
+		
 		if self.dz == 0:
-			starting_col = int(self.x) // 16
-			starting_row = int(self.y) // 16
 			
 			ending_col = int(self.x + self.dx) // 16
 			ending_row = int(self.y + self.dy) // 16

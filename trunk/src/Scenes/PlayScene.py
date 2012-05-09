@@ -10,20 +10,28 @@ class PlayScene:
 		self.v += safe_map(lambda x:-x, self.v[1:][::-1])
 
 	def process_input(self, events, pressed):
-		dx = pressed['x-axis']
-		dy = pressed['y-axis']
-		self.player.dx = self.v[dx]
-		self.player.dy = self.v[dy]
+		if not self.player.immobilized:
+			dx = pressed['x-axis']
+			dy = pressed['y-axis']
+			self.player.dx = self.v[dx]
+			self.player.dy = self.v[dy]
 	
 	def update(self, counter):
 		level = self.level
 		filtered = []
 		for sprite in self.sprites:
 			sprite.update(level)
+			sprite = sprite.get_replacement_sprite()
 			if not sprite.garbage_collect:
 				filtered.append(sprite)
 		self.sprites = filtered + level.get_new_sprites()
 	
 	def render(self, screen, counter):
-		self.level.render(screen, screen.get_width() / 2, 50, self.sprites, counter)
+		sprites_to_add = []
+		sprites_to_remove = []
+		self.level.render(screen, screen.get_width() / 2, 50, self.sprites, counter, sprites_to_add, sprites_to_remove)
+		for sprite in sprites_to_remove:
+			sprite.garbage_collect = True
+		for sprite in sprites_to_add:
+			self.sprites.append(sprite)
 		

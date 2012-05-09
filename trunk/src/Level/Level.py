@@ -11,6 +11,7 @@ class Level:
 		self.circuitry = Circuits(self)
 		self.render_exceptions = []
 		self.moving_platforms = MovingPlatformManager(self)
+		self.teleporters = TeleporterManager(self)
 	
 	def get_new_sprites(self):
 		output = self.newsprites
@@ -40,7 +41,7 @@ class Level:
 		grid = make_grid(self.width, self.height, None)
 		references = make_grid(self.width, self.height, None)
 		moving_platforms = []
-		
+		self.teleporter_tiles = []
 		tilestore = get_tile_store()
 		i = 0
 		for tile in tiles:
@@ -64,6 +65,8 @@ class Level:
 						t = tilestore.get_tile(cell)
 						if t.id == '16': # moving platform
 							moving_platforms.append((x, y, len(referenceStack)))
+						if t.id in ('t1', 't2', 't3'):
+							self.teleporter_tiles.append((x, y, len(referenceStack), t.id))
 						if t.actual_circuit and cell.endswith('on'):
 							t = tilestore.get_tile(cell[:-2])
 						z = 0
@@ -115,7 +118,7 @@ class Level:
 					return ((i + 1) * 8, tile)
 			i -= 1
 	
-	def render(self, screen, xOffset, yOffset, sprites, render_counter):
+	def render(self, screen, xOffset, yOffset, sprites, render_counter, sprites_to_add, sprites_to_delete):
 		self.allsprites = sprites
 		
 		width = self.width
@@ -168,14 +171,15 @@ class Level:
 				col -= 1
 			i += 1
 		
-		self.update(sprites)
+		self.update(sprites, sprites_to_add, sprites_to_delete)
 	
 	def render_sprite(self, screen, sprite, xOffset, yOffset, render_counter):
-		platform = sprite.standingon
+		sprite.render_me(screen, xOffset, yOffset, render_counter)
+		'''
 		img = sprite.get_image(render_counter)
 		coords = sprite.pixel_position(xOffset, yOffset, img)
 		screen.blit(img, coords)
-	
+		'''	
 	def render_tile_stack(self, screen, col, row, xOffset, yOffset, render_counter, sprites, re_on, re_off):
 		
 		re_sprite_on = None
@@ -451,9 +455,17 @@ class Level:
 			i += 1
 		copy_array(self.cellLookup[col][row], lookup)
 	
-	def update(self, sprites):
+	def update(self, sprites, sprite_additions, sprite_removals):
 		new_re = []
 		self.moving_platforms.update(sprites, new_re)
+		self.teleporters.update()
+		
+		for sprite in self.teleporters.get_new_sprites():
+			sprite_additions.append(sprite)
+		for sprite in self.teleporters.get_removed_sprites():
+			sprite_removals.append(sprite)
+		
+		
 		for re in self.render_exceptions:
 			re.update()
 			if not re.expired:
@@ -463,3 +475,7 @@ class Level:
 	
 	def get_moving_platforms(self):
 		return self.moving_platforms
+	
+	def get_teleporters(self):
+		return self.teleporter_tiles
+	
