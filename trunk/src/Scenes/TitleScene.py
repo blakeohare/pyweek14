@@ -10,7 +10,7 @@ class TitleScene:
 		self.x = 0
 		self.y = 0
 
-	def process_input(self, events, pressed):
+	def process_input(self, events, pressed, axes):
 		pass
 	
 	def update(self, counter):

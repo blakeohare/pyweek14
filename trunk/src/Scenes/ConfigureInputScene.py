@@ -2,7 +2,7 @@ class ConfigureInputScene:
 	def __init__(self):
 		self.next = self
 		
-	def process_input(self, events, pressed):
+	def process_input(self, events, pressed, axes):
 		for event in events:
 			self.next = None
 	
