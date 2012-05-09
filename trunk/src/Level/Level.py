@@ -67,8 +67,6 @@ class Level:
 							moving_platforms.append((x, y, len(referenceStack)))
 						if t.id in ('t1', 't2', 't3'):
 							self.teleporter_tiles.append((x, y, len(referenceStack), t.id))
-						if t.actual_circuit and cell.endswith('on'):
-							t = tilestore.get_tile(cell[:-2])
 						z = 0
 						while z < t.height:
 							referenceStack.append(len(tileStack))
