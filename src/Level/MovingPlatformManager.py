@@ -113,9 +113,21 @@ class MovingPlatformManager:
 									sz = int(sprite.z // 8)
 									if sy == move_us[-1][1] and sz == move_us[-1][2] + 2:
 										coords = (int(sprite.x // 16), int(sprite.y // 16), int(sprite.z // 8))
-										render_exceptions.append(RenderException(coords, direction, sprite, False))
-										sprite.x += offset[0] * 16
-										sprite.y += offset[1] * 16
+										target = [coords[0] + offset[0], coords[1] + offset[1], coords[2]]
+										lookup = level.cellLookup[target[0]][target[1]]
+										stack = level.grid[target[0]][target[1]]
+										blocked = False
+										for i in range(sprite.height):
+											check = [target[0], target[1], target[2] + i]
+											t = level.get_tile_at(check)
+											if t != None and t.blocking:
+												blocked = True
+										if not blocked:
+											render_exceptions.append(RenderException(coords, direction, sprite, False))
+											sprite.x += offset[0] * 16
+											sprite.y += offset[1] * 16
+										else:
+											sprite.standingon = None
 						
 				i += 1
 

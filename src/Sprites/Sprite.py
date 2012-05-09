@@ -20,6 +20,9 @@ class Sprite:
 		self.last_direction_of_movement = 's'
 		self.is_moving = False
 		
+		if self.isblock:
+			self.height = 2
+		
 		if _block_images_for_sprites == None:
 			tile_store = get_tile_store()
 			ids = tile_store.get_all_block_tiles()
