@@ -196,7 +196,8 @@ namespace MapEditor
 
 		private void BlitTile(string bucket, ImageSource image, int height, int pixelX, int pixelY, int cumulativeHeight, RenderTarget target)
 		{
-			this.Blit(bucket, image, pixelX - 16, pixelY - cumulativeHeight * 8 - height * 8, target);
+			double wackyass_scaling = (image is BitmapImage && ((BitmapImage)image).DpiX != 96) ? 72 / 96.0 : 1;
+			this.Blit(bucket, image, pixelX - 16, pixelY - cumulativeHeight * 8 + 25 - ((int)(image.Height * wackyass_scaling + .5)), target);
 		}
 
 		private void RenderTileStack(int col, int row, int px, int py, int layerCutoff)
