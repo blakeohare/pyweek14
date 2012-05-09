@@ -11,3 +11,5 @@
 52	chairsw.png	2	x
 53	chairne.png	2	x
 54	chairnw.png	2	x
+com1	computerr1.png|computerr2.png	2	x
+com2	computerl1.png|computerl2.png	2	x
