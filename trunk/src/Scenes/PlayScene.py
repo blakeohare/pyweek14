@@ -8,6 +8,7 @@ class PlayScene:
 		# axis values are +/- 0, 1, 2, or 3
 		self.v = [0, 0.5, 1, 1.5]
 		self.v += safe_map(lambda x:-x, self.v[1:][::-1])
+		self.overlay = PlaySceneOverlay(self, self.level)
 
 	def process_input(self, events, pressed):
 		if not self.player.immobilized:
@@ -35,3 +36,4 @@ class PlayScene:
 		for sprite in sprites_to_add:
 			self.sprites.append(sprite)
 		
+		self.overlay.render(screen, counter)

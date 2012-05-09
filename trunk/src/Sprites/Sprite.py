@@ -348,13 +348,15 @@ class Sprite:
 											
 											if len(tlookup) > bottom_index:
 												bottom_index = tlookup[bottom_index]
-												if bottom_index != None and tstack[bottom_index].blocking:
-													bottom_free = False
+												if bottom_index != None:
+													if tstack[bottom_index].blocking or tstack[bottom_index].cant_push_over:
+														bottom_free = False
 											
 											if len(tlookup) > top_index:
 												top_index = tlookup[top_index]
-												if top_index != None and tstack[top_index].blocking:
-													top_free = False
+												if top_index != None:
+													if tstack[top_index].blocking or tstack[top_index].cant_push_over:
+														top_free = False
 											
 											if bottom_free and top_free:
 												# TODO: make sure you're not pushing onto a ramp

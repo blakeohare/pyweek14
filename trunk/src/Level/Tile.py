@@ -32,6 +32,13 @@ class Tile:
 		self.teleporter = id == 't1'
 		self.power_input = id == 'pi'
 		self.power_output = id == 'po'
+		self.cant_push_over = flags_contains(flags, 'n')
+		self.research = id == '41'
+		self.goo = id in ('42', '43', '44')
+		self.powerup = self.research or self.goo
+		self.goo_size = 0
+		if self.goo:
+			self.goo_size = int(id) - 41
 		self.blocking = self.blocking or self.stairs or self.pushable
 		if self.stairs:
 			self.no_blocks = True
