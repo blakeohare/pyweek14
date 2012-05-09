@@ -60,6 +60,7 @@ class Sprite:
 		self.dx = 0
 		self.dy = 0
 		self.dz = 0
+		self.falling = False
 		self.standingon = None
 		self.type = type
 		self.immobilized = False
@@ -126,13 +127,16 @@ class Sprite:
 	def get_image(self, render_counter):
 		img = None
 		if self.ismain:
-			dir = self.last_direction_of_movement
-			if self.pushing != None:
-				dir = self.pushing.lower() + 'push'
-			path = 'protagonist/' + dir
-			if self.is_moving:
-				path += str([1, 2, 3, 4, 3, 2][(render_counter // 6) % 6])
-			path += '.png'
+			if self.standingon == None:
+				path = 'protagonist/fall' + str((int(render_counter // 3) % 4) + 1) + '.png'
+			else:
+				dir = self.last_direction_of_movement
+				if self.pushing != None:
+					dir = self.pushing.lower() + 'push'
+				path = 'protagonist/' + dir
+				if self.is_moving:
+					path += str([1, 2, 3, 4, 3, 2][(render_counter // 6) % 6])
+				path += '.png'
 			img = get_image(path)
 		elif self.staticy:
 			img = get_image('static/character' + str(((render_counter // 6) % 4) + 1) + '.png')
@@ -189,6 +193,7 @@ class Sprite:
 	
 	def update(self, level):
 		self.pushing = None
+		self.falling = False
 		if self.ttl != None:
 			self.ttl -= 1
 			if self.ttl <= 0:
@@ -212,6 +217,7 @@ class Sprite:
 				platform = platform_data[1]
 				if z < self.dz + self.z:
 					self.z += self.dz
+					self.falling = True
 				else:
 					self.z = z
 					self.standingon = platform
