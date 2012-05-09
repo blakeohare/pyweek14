@@ -10,7 +10,7 @@ def get_surface(width, height):
 		_surface_cache[k] = surface
 	return surface
 	
-def get_teleporter_image(going_out, counter):
+def get_teleporter_image(going_out, counter, type):
 	counter = min(60, max(0, counter))
 	if going_out:
 		counter = 60 - counter
@@ -21,12 +21,20 @@ def get_teleporter_image(going_out, counter):
 	else:
 		ao = 0
 		bo = (60 - counter) * 255 / 30
-	return (
-		ao,
-		bo,
-		get_image('protagonist/s.png'),
-		get_image('static/character' + str((int(counter // 2) % 4) + 1) + '.png')
-		)
+	if type == 'main':
+		imgs = (
+			get_image('protagonist/s.png'),
+			get_image('static/character' + str((int(counter // 2) % 4) + 1) + '.png'))
+	else:
+		block_id = type[len('block|'):]
+		if going_out and counter < 6:
+			return None
+		ts = get_tile_store()
+		imgs = (
+			ts.get_tile(block_id).get_image(counter),
+			get_image('static/block' + str((int(counter // 2) % 4) + 1) + '.png'))
+
+	return (ao, bo, imgs[0], imgs[1])
 	
 
 def copy_surface(surface):
@@ -56,14 +64,19 @@ class Sprite:
 		self.type = type
 		self.immobilized = False
 		self.ismain = type == 'main'
+		self.isblock = type.startswith('block|')
 		self.height = 4
+		if self.isblock:
+			self.height = 2
 		self.tsend = type.startswith('teleport|')
 		self.trecv = type.startswith('receiving|')
 		self.staticy = self.tsend or self.trecv
+		self.ttype = None
+		if self.staticy:
+			self.ttype = '|'.join(type.split('|')[1:])
 		self.ttl = None
 		if self.staticy:
 			self.ttl = 60
-		self.isblock = type.startswith('block|')
 		self.last_direction_of_movement = 's'
 		self.is_moving = False
 		self.pushing = None
@@ -88,7 +101,8 @@ class Sprite:
 		coords = self.pixel_position(xOffset, yOffset, img)
 		
 		if self.staticy:
-			things = get_teleporter_image(self.tsend, self.ttl)
+			things = get_teleporter_image(self.tsend, self.ttl, self.ttype)
+			if things == None: return
 			ao = things[0]
 			bo = things[1]
 			ai = things[2]
@@ -124,6 +138,7 @@ class Sprite:
 			img = get_image('static/character' + str(((render_counter // 6) % 4) + 1) + '.png')
 		elif self.isblock:
 			img = self.block_tile.get_image(render_counter)
+
 		return img
 	
 	def pixel_position(self, xOffset, yOffset, img):
@@ -135,12 +150,14 @@ class Sprite:
 			y += 8
 		
 		if self.ismain or self.staticy:
+			if self.staticy and self.ttype.startswith('block|'):
+				y += 16
 			y += 8
 
 		platform = self.standingon
 		if platform != None and platform.stairs:
-			left = platform.topography[3] * 8 #platform.height * 8.0
-			right = platform.topography[1] * 8 #platform.height * 8.0
+			left = platform.topography[3] * 8
+			right = platform.topography[1] * 8
 			if platform.entrance == 'SW' or platform.entrance == 'NE':
 				ap = self.y % 16 + 0.0
 				p = 16.0 - ap
@@ -182,7 +199,6 @@ class Sprite:
 					self.prototype.z = self.z
 					self.prototype.is_moving = False
 					self.prototype.immobilized = False
-					#self.prototype.standingon = self.standingon
 		
 		if self.immobilized:
 			return
@@ -209,15 +225,19 @@ class Sprite:
 		starting_col = int(self.x) // 16
 		starting_row = int(self.y) // 16
 		
-		if self.standingon != None and self.standingon.teleporter and not self.staticy:
-			destination = level.teleporters.get_destination(starting_col, starting_row, int(self.z // 8) - 1)
+		if self.standingon != None:
+			if self.standingon.teleporter and not self.staticy:
+				destination = level.teleporters.get_destination(starting_col, starting_row, int(self.z // 8) - 1)
+				
+				if destination != None:
+					if destination == 'blocked':
+						pass
+						# TODO: play blocked sound
+					else:
+						level.teleporters.teleport_sprite(self, destination)
 			
-			if destination != None:
-				if destination == 'blocked':
-					pass
-					# TODO: play blocked sound
-				else:
-					level.teleporters.teleport_sprite(self, destination)
+		
+		
 		
 		if self.dz == 0:
 			

@@ -175,13 +175,8 @@ class Level:
 	
 	def render_sprite(self, screen, sprite, xOffset, yOffset, render_counter):
 		sprite.render_me(screen, xOffset, yOffset, render_counter)
-		'''
-		img = sprite.get_image(render_counter)
-		coords = sprite.pixel_position(xOffset, yOffset, img)
-		screen.blit(img, coords)
-		'''	
+	
 	def render_tile_stack(self, screen, col, row, xOffset, yOffset, render_counter, sprites, re_on, re_off):
-		
 		re_sprite_on = None
 		re_sprite_off = None
 		re_block_on = None
@@ -438,10 +433,30 @@ class Level:
 				z += item.height
 			i += 1
 		
-		copy_array(stack, newstack)
+		teleported = False
+		if type != None and type.pushable:
+			# check to see if we just placed a pushable block onto a teleporter platform
+			t = self.get_tile_at(col, row, layer - 1)
+			if t != None and t.teleporter:
+				d = self.teleporters.get_destination(col, row, layer - 1)
+				if d == 'blocked':
+					self.announce_teleporter_blocked()
+				elif d == None:
+					pass
+				else:
+					teleported = True
+					source = (col, row, layer)
+					self.teleporters.teleport_block(type, source, d)
 		
-		self.canonicalize_stack(col, row)
+		if not teleported:
+			copy_array(stack, newstack)
+			self.canonicalize_stack(col, row)
+		
 		return output
+	
+	def announce_teleporter_blocked(self):
+		pass
+		# TODO: play sound
 	
 	def canonicalize_stack(self, col, row):
 		stack = self.grid[col][row]

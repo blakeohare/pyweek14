@@ -69,9 +69,17 @@ class TeleporterManager:
 				tile = self.level.get_tile_at(output[0], output[1], z)
 				if tile != None and tile.blocking:
 					return 'blocked'
+			if self.in_use[final] < 200:
+				return None
+			self.in_use[final] = 0
 			return output
 		return None
 
+	def teleport_block(self, blocktype, source, target):
+		
+		sprite = Sprite(source[0] * 16 + 8, source[1] * 16 + 8, source[2] * 8, 'block|'+blocktype.id)
+		self.teleport_sprite(sprite, target)
+	
 	def teleport_sprite(self, sprite, target):
 		sprite.immobilized = True
 		self.remove_sprites.append(sprite)
@@ -80,7 +88,8 @@ class TeleporterManager:
 		self.new_sprites[self.counter + 1].append(Sprite(sprite.x, sprite.y, sprite.z, 'teleport|' + sprite.type))
 		
 		self.new_sprites[self.counter + 120] = self.new_sprites.get(self.counter + 120, [])
-		clone = Sprite(target[0] * 16 + 8, target[1] * 16 + 8, target[2] * 8, 'receiving|' + sprite.type)
+		z = (target[2] + 1) * 8
+		clone = Sprite(target[0] * 16 + 8, target[1] * 16 + 8, z, 'receiving|' + sprite.type)
 		clone.standingon = get_tile_store().get_tile('t2')
 		clone.prototype = sprite
 		
@@ -102,9 +111,6 @@ class TeleporterManager:
 				return i
 			i += 1
 		return None
-	
-	def teleport_block(self, loc):
-		pass
 	
 	def get_new_sprites(self):
 		new_sprites = self.new_sprites.get(self.counter, None)
