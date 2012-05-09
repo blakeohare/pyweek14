@@ -7,8 +7,6 @@ def get_user_debug_message():
 	global _debug_message
 	return _debug_message
 
-def go_fast(): return True
-
 class MyEvent:
 	def __init__(self, key, down):
 		self.key = key
@@ -80,7 +78,7 @@ def main():
 	pygame.init()
 	real_screen = pygame.display.set_mode((800, 600))
 	fake_screen = pygame.Surface((400, 300))
-	fps = 60 if go_fast() else 30
+	fps = 60
 
 	pressed = {
 		'start': False,
@@ -92,6 +90,8 @@ def main():
 		'x-axis': 0,
 		'y-axis': 0
 	}
+	
+	load_persistent_state()
 	
 	if os.path.exists('start.txt'):
 		lines = trim(read_file('start.txt').split('\n'))
