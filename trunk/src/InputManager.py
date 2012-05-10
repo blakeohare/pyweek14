@@ -15,6 +15,7 @@ def get_input_manager():
 
 class InputManager:
 	def __init__(self):
+		self.mouse_events = []
 		self.joysticks = []
 		self.active_joystick = -1
 		self.read_config_save()
@@ -49,7 +50,12 @@ class InputManager:
 		self.axes = [0.0, 0.0]
 		pg_pressed = pygame.key.get_pressed()
 		for event in pygame.event.get():
-			if event.type in (pygame.KEYDOWN, pygame.KEYUP):
+			if event.type in (pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP):
+				if event.button == 1:
+					down = event.type == pygame.MOUSEBUTTONDOWN
+					x, y = event.pos
+					self.mouse_events.append((x, y, down))
+			elif event.type in (pygame.KEYDOWN, pygame.KEYUP):
 				down = event.type == pygame.KEYDOWN
 				if down and event.key == pygame.K_F4:
 					if pg_pressed[pygame.K_LALT] or pg_pressed[pygame.K_RALT]:
@@ -282,3 +288,7 @@ class InputManager:
 							self.active_joystick = len(self.joysticks)
 						self.joysticks.append(data)
 	
+	def get_mouse_events(self):
+		output = self.mouse_events
+		self.mouse_events = []
+		return output

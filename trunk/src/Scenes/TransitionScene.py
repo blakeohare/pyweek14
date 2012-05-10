@@ -6,7 +6,7 @@ class TransitionScene:
 		self.counter = 0
 		self.blackness = None
 		
-	def process_input(self, events, pressed, axes):
+	def process_input(self, events, pressed, axes, mouse):
 		pass
 	
 	def update(self, counter):

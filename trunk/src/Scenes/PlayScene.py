@@ -6,7 +6,8 @@ class PlayScene:
 		self.player = Sprite(17, 177, 32, 'main')
 		self.sprites = [self.player]
 		self.overlay = PlaySceneOverlay(self, self.level)
-	def process_input(self, events, pressed, axes):
+
+	def process_input(self, events, pressed, axes, mouse):
 		if not self.player.immobilized:
 			dx = axes[0]
 			dy = axes[1]

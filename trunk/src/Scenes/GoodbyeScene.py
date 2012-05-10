@@ -2,7 +2,7 @@ class GoodbyeScene:
 	def __init__(self):
 		self.next = self
 		
-	def process_input(self, events, pressed, axes):
+	def process_input(self, events, pressed, axes, mouse):
 		for event in events:
 			self.next = None
 	
