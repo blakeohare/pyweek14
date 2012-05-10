@@ -1,3 +1,73 @@
+i|supervisor
+s|s|Hey, how's it going?
+s|s|You've been with us for...
+cc
+i|protagonist-happy
+s|p|Two months.
+cc
+i|supervisor
+s|s|Two months, now. That's quite a while
+s|s|and I think you've done well, Miss, uh...
+c
+s|s|...yes, very well!
+cc
+s|s|To show how much we appreciate your
+s|s|hard work, I’d like to give you a 
+s|s|very crucial assignment because you’re-
+cc
+i|janitor
+s|j|Expendable.
+cc
+i|supervisor
+s|s|-extremely talented!
+cc
+i|protagonist
+s|p|Um, thanks, I guess. What is this
+s|p|assignment?
+cc
+i|supervisor
+s|s|Well, Dr. Flügenmeister has, uh, gone
+s|s|on an unannounced leave of absence-
+cc
+i|janitor
+s|j|Disappeared.
+cc
+i|supervisor
+s|s|Leaving his research notes behind.
+cc
+s|s|Unfortunately, his lab is, shall we say,
+p|30
+s|s|cluttered.
+cc
+i|janitor
+s|j|Seen rats in there that walk like men.
+cc
+i|supervisor
+s|s|Recently, he made a very important, 
+s|s|even critical, discovery.
+c
+s|s|I can not stress enough how vitally
+s|s|important his work is, not only to our
+s|s|company, but to mankind!
+c
+s|s|We must retrieve this research at all
+s|s|costs; fortunately, we have you.
+c
+s|s|Your records indicate that you’re
+s|s|extremely talented, intelligent,
+s|s|dedicated-
+cc
+i|janitor
+s|j|Desperate.
+cc
+end
+Supervisor: You’ll do a superb job! Now, there might be some slightly hazardous materials in the lab...
+*Janitor hands the Intern a can of ACME All-Purpose Radiation Decontaminant*
+Janitor: You’re going to need this, sunshine.
+Intern: Hazardous materials?Like what?
+Supervisor: Oh, they’re really only mildly hazardous; probably won’t cause any mutations at all. Incidentally, you’ll need to sign this waiver first. Also, I’d like to mention that, if you do succeed, I believe I can get you that letter of recommendation you need-
+
+
 i|janitor
 s|0|255|0|Good morning
 s|0|255|0|Lorem ipsum dolar sit amet
