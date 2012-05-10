@@ -148,8 +148,14 @@ class Sprite:
 	def pixel_position(self, xOffset, yOffset, img):
 		x = self.x - self.y
 		y = (self.x + self.y) / 2
-		x = x - img.get_width() / 2
-		y = y - self.z - img.get_height() + 8
+		if img == None:
+			w = 16
+			h = 32
+		else:
+			w = img.get_width()
+			h = img.get_height()
+		x = x - w / 2
+		y = y - self.z - h + 8
 		if self.isblock:
 			y += 8
 		
