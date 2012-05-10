@@ -17,3 +17,4 @@ com3	computerback1.png	2	x
 com4	computerback2.png	2	x
 cam1	camerar.png	2	x
 cam2	cameral.png	2	x
+moon	cheese.png	1	x
