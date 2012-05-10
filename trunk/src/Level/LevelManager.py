@@ -1,7 +1,7 @@
 _level_manager = [None, None]
 
 def is_story_mode():
-	quiet_mode = 1 == get_persistent_state().get_persisted_session_int('quiet_mode')
+	quiet_mode = 1 == get_persisted_session_int('quiet_mode')
 	return not quiet_mode
 
 def get_level_manager():
@@ -15,46 +15,52 @@ def get_level_manager():
 class LevelManager:
 	def __init__(self, story_mode):
 		self.ordering = [
-			'1-2',
-			'1-3',
-			'2-3',
-			'3-0',
-			'3-1',
-			'4-0',
-			'5-0',
-			'6-0',
-			'7-0',
-			'8-0',
-			'9-0',
-			'10-0',
-			'10-1',
-			'10-2',
-			'11-0',
-			'12-0',
-			'13-0',
-			'14-0',
-			'15-0',
-			'16-0',
-			'17-0',
-			'17-1',
-			'17-2',
-			'17-3',
-			'18-0',
-			'19-0',
-			'19a-0',
-			'20-0',
-			'24-0']
-		if self.story_mode:
-			self.ordering = ['intro'] + self.ordering
+			('1-2', None),
+			('1-3', None),
+			('2-3', None),
+			('3-0', None),
+			('3-1', None),
+			('4-0', None),
+			('5-0', None),
+			('6-0', None),
+			('7-0', None),
+			('8-0', None),
+			('9-0', None),
+			('10-0', None),
+			('10-1', None),
+			('10-2', None),
+			('11-0', None),
+			('12-0', None),
+			('13-0', None),
+			('14-0', None),
+			('15-0', None),
+			('16-0', None),
+			('17-0', None),
+			('17-1', None),
+			('17-2', None),
+			('17-3', None),
+			('18-0', None),
+			('19-0', None),
+			('19a-0', None),
+			('20-0', None),
+			('24-0', None)]
+		if story_mode:
+			self.ordering = [('intro', "Your Office")] + self.ordering
+	
+	def get_current_level_index(self, current_level_name):
+		for i in range(len(self.ordering)):
+			if self.ordering[i][0] == current_level_name:
+				return i
+		return None
+	
+	def get_current_room_name(self, current_level_name):
+		return self.ordering[self.get_current_level_index(current_level_name)][1]
 	
 	def get_next_level(self, current_level_name):
-		for i in range(self.ordering):
-			if self.ordering[i] == current_level_name:
-				next_i = i + 1
-				if next_i < len(self.ordering):
-					return next_i
-				else:
-					break
+		i = self.get_current_level_index(current_level_name)
+		next_i = i + 1
+		if next_i < len(self.ordering):
+			return next_i
 		return None
 	
 	def get_starting_level(self):
