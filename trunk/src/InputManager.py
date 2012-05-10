@@ -114,7 +114,7 @@ class InputManager:
 				output = "Button " + str(value[1])
 				
 			return output
-		return None
+		return "---"
 	
 	def get_cursor_position(self):
 		return self.cursor
@@ -138,6 +138,9 @@ class InputManager:
 					y = y // 2
 					self.mouse_events.append((x // 2, y // 2, move, down))
 					self.cursor = (x, y)
+			elif event.type == pygame.QUIT:
+				self.quitAttempt = True
+				return []
 			elif event.type in (pygame.KEYDOWN, pygame.KEYUP):
 				down = event.type == pygame.KEYDOWN
 				if down and event.key == pygame.K_F4:
