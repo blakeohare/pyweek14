@@ -60,11 +60,14 @@ class Sprite:
 		self.dx = 0
 		self.dy = 0
 		self.dz = 0
+		self.automation = None
 		self.falling = False
 		self.standingon = None
 		self.type = type
 		self.immobilized = False
 		self.ismain = type == 'main'
+		self.isjanitor = type == 'janitor'
+		self.issupervisor = type == 'supervisor'
 		self.isblock = type.startswith('block|')
 		self.height = 4
 		if self.isblock:
@@ -96,6 +99,9 @@ class Sprite:
 			self.block_id = type.split('|')[-1] # should be the tile ID
 			self.block_tile = get_tile_store().get_tile(self.block_id)
 		
+	
+	def set_automation(self, automation):
+		self.automation = automation
 	
 	
 	def render_me(self, screen, xOffset, yOffset, render_counter):
@@ -138,6 +144,29 @@ class Sprite:
 				if self.is_moving:
 					path += str([1, 2, 3, 4, 3, 2][(render_counter // 6) % 6])
 				path += '.png'
+			img = get_image(path)
+		elif self.isjanitor:
+			dir = self.last_direction_of_movement
+			if dir == 's' or dir == 'n':
+				dir += 'e'
+			elif dir == 'e' or dir == 'w':
+				dir = 's' + dir
+			path = 'janitor/' + dir
+			if self.is_moving:
+				path += str([1, 2, 3, 4, 3, 2][(render_counter // 6) % 6])
+			path += '.png'
+			img = get_image(path)
+		elif self.issupervisor:
+			dir = self.last_direction_of_movement
+			#TODO: get n, s, e, w images of supervisor|janitor
+			if dir == 's' or dir == 'n':
+				dir += 'e'
+			elif dir == 'e' or dir == 'w':
+				dir = 's' + dir
+			path = 'supervisor/' + dir
+			if self.is_moving:
+				path += str([1, 2, 3, 4, 3, 2][(render_counter // 6) % 6])
+			path += '.png'
 			img = get_image(path)
 		elif self.staticy:
 			img = get_image('static/character' + str(((render_counter // 6) % 4) + 1) + '.png')
@@ -199,6 +228,12 @@ class Sprite:
 		return self
 	
 	def update(self, level):
+		
+		if self.automation != None:
+			auto_xy = self.automation.get_next_values()
+			self.dx += auto_xy[0]
+			self.dy += auto_xy[1]
+		
 		self.pushing = None
 		self.falling = False
 		if self.ttl != None:
@@ -248,9 +283,6 @@ class Sprite:
 						# TODO: play blocked sound
 					else:
 						level.teleporters.teleport_sprite(self, destination)
-			
-		
-		
 		
 		if self.dz == 0:
 			
@@ -426,7 +458,7 @@ class Sprite:
 								break
 				if blocked:
 					break
-				
+			
 			if not blocked:
 				old_col = int(self.x // 16)
 				old_row = int(self.y // 16)
@@ -437,7 +469,12 @@ class Sprite:
 				if old_col != new_col or old_row != new_row:
 					on_new_coordinates_now = True
 			
-			if self.dx != 0 and self.dy != 0:
+			if self.automation == None:
+				omg_hax = self.dx != 0 and self.dy != 0
+			else:
+				omg_hax = self.dx != 0 or self.dy != 0
+			
+			if omg_hax:
 				distance = (self.dx * self.dx + self.dy * self.dy) ** .5
 				ndx = self.dx / distance
 				ndy = self.dy / distance

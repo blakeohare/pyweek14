@@ -12,6 +12,8 @@ class Level:
 		self.render_exceptions = []
 		self.moving_platforms = MovingPlatformManager(self)
 		self.teleporters = TeleporterManager(self)
+		self.sprite_introducer = get_hacks_for_level(name, 'introduce_sprites')
+		self.counter = 0
 	
 	def get_new_sprites(self):
 		output = self.newsprites
@@ -469,6 +471,18 @@ class Level:
 		copy_array(self.cellLookup[col][row], lookup)
 	
 	def update(self, sprites, sprite_additions, sprite_removals):
+		created = None
+		if self.sprite_introducer != None:
+			created = self.sprite_introducer(self, self.counter)
+		
+		if created != None:
+			for c in created:
+				col = int(c.x // 16)
+				row = int(c.y // 16)
+				layer = int(c.z // 8)
+				c.standingon = self.get_tile_at(col, row, layer - 1)
+				sprite_additions.append(c)
+		
 		new_re = []
 		self.moving_platforms.update(sprites, new_re)
 		self.teleporters.update()
@@ -484,6 +498,7 @@ class Level:
 			if not re.expired:
 				new_re.append(re)
 		self.render_exceptions = new_re
+		self.counter += 1
 		
 	
 	def get_moving_platforms(self):

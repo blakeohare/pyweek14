@@ -17,7 +17,32 @@ moving_platforms:
 	P is pause
 """
 
+def make_sprite(type, col, row, layer):
+	return Sprite(col * 16 + 8, row * 16 + 8, layer * 8, type)
+
+def _hack_introduce_sprites_intro(level, counter):
+	
+	if counter == 120:
+		s = make_sprite('supervisor', 14, 0, 1)
+		s.set_automation(Automation(level, 'intro_supervisor'))
+		return [s]
+	elif counter == 150:
+		s = make_sprite('janitor', 14, 0, 1)
+		s.set_automation(Automation(level, 'intro_janitor'))
+		return [s]
+	return []
+
+def _hack_do_stuff_intro(playscene, level, counter):
+	if counter == -1:
+		playscene.player.set_automation(Automation(level, 'intro_protagonist'))
+
+
 _level_specific_hacks = {
+	'intro': {
+		'introduce_sprites': _hack_introduce_sprites_intro,
+		'do_stuff': _hack_do_stuff_intro
+	},
+	
 	'9-0': {
 		'on_circuits': [
 			(1, 2, 0)
