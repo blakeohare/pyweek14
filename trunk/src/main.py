@@ -99,7 +99,7 @@ def main():
 		start = time.time()
 		
 		counter += 1
-		
+		event_list = []
 		event_list = input_manager.get_events()
 		pressed = input_manager.my_pressed
 		try_quit = input_manager.quitAttempt
@@ -127,7 +127,13 @@ def main():
 		end = time.time()
 		
 		diff = end - start
+		if diff == 0:
+			rate = 'inf'
+		else:
+			rate = 1.0 / diff
 		delay = 1.0 / fps - diff
 		if delay > 0:
 			time.sleep(delay)
-		# TODO: print FPS when in debug mode
+		else:
+			pass #print "----FRAME RATE DIPPING!!!!-----"
+		#print rate

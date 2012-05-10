@@ -10,6 +10,7 @@ class PlayScene:
 		if not self.player.immobilized:
 			dx = axes[0]
 			dy = axes[1]
+			#print(dx, dy)
 			self.player.dx = dx
 			self.player.dy = dy
 	

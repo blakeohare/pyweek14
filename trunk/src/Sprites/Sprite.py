@@ -430,31 +430,44 @@ class Sprite:
 				if old_col != new_col or old_row != new_row:
 					on_new_coordinates_now = True
 			
-			d = None
-			self.is_moving = True
-			if self.dx == 0:
-				if self.dy == 0:
-					self.is_moving = False
-				elif self.dy < 0:
-					d = 'ne'
+			if self.dx != 0 and self.dy != 0:
+				distance = (self.dx * self.dx + self.dy * self.dy) ** .5
+				ndx = self.dx / distance
+				ndy = self.dy / distance
+				
+				tolerance = .35
+				dy_off = ndy > -tolerance and ndy < tolerance
+				dx_off = ndx < tolerance and ndx > -tolerance
+				
+				d = None
+				self.is_moving = True
+				
+				if dx_off:
+					if dy_off:
+						pass
+					elif ndy < 0:
+						d = 'ne'
+					else:
+						d = 'sw'
+				elif ndx < 0:
+					if dy_off:
+						d = 'nw'
+					elif ndy < 0:
+						d = 'n'
+					else:
+						d = 'w'
 				else:
-					d = 'sw'
-			elif self.dx < 0:
-				if self.dy == 0:
-					d = 'nw'
-				elif self.dy < 0:
-					d = 'n'
-				else:
-					d = 'w'
+					if dy_off:
+						d = 'se'
+					elif ndy < 0:
+						d = 'e'
+					else:
+						d = 's'
+				if d != None:
+					self.last_direction_of_movement = d
+				
 			else:
-				if self.dy == 0:
-					d = 'se'
-				elif self.dy < 0:
-					d = 'e'
-				else:
-					d = 's'
-			if d != None:
-				self.last_direction_of_movement = d
+				self.is_moving = False
 			
 		if new_platform != None and new_platform.stairs and on_new_coordinates_now:
 			if direction == new_platform.entrance:
