@@ -13,7 +13,7 @@ class ClickyButton:
 		self.top = y
 		size = 14
 		self.size = size
-
+		self.enabled = True
 		if text != None:
 			self.on_img = get_text(text, size, on_color)
 			self.off_img = get_text(text, size, off_color)
@@ -40,7 +40,10 @@ class ClickyButton:
 	def render(self, screen):
 		if self.get_label != None:
 			label = self.get_label(self.id)
-			
+			if label == '---': # horrible hack
+				self.enabled = False
+			else:
+				self.enabled = True
 			if label != self.last_text:
 				self.pressed_img = get_text(label, self.size, self.pressed_color)
 				self.on_img = get_text(label, self.size, self.on_color)
@@ -48,7 +51,9 @@ class ClickyButton:
 				self.bottom = self.on_img.get_height() + self.top
 				self.right = self.on_img.get_width() + self.left
 		
-		if self.is_pressing():
+		if not self.enabled:
+			img = self.off_img
+		elif self.is_pressing():
 			img = self.pressed_img
 		elif self.is_mouse_over():
 			img = self.on_img
@@ -58,7 +63,8 @@ class ClickyButton:
 		screen.blit(img, (self.left, self.top))
 	
 	def on_click(self):
-		self.action(self.id)
+		if self.enabled:
+			self.action(self.id)
 
 class ConfigureInputScene:
 	def __init__(self):
@@ -196,16 +202,6 @@ class ConfigureInputScene:
 				200 - self.use_mouse_label.get_width() // 2,
 				300 - self.use_mouse_label.get_height()))
 		
-		'''i = 0
-		for key in self.keys:
-			
-			if key != None and key[0] != None:
-				k = key[0]
-				config = im.get_config_label_for_key_for_active(k)
-				if config != None:
-					img = get_text(config, 14, self.key_command_color)
-					screen.blit(img, (self.js_config_x, self.js_config_y[i]))
-			i += 1'''
 		if im.active_actual_joystick == -1:
 			i = 0
 		else:
