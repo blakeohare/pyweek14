@@ -35,6 +35,9 @@ def _hack_introduce_sprites_intro(level, counter):
 def _hack_do_stuff_intro(playscene, level, counter):
 	if counter == -1:
 		playscene.player.set_automation(Automation(level, 'intro_protagonist'))
+	
+	if counter == 329 + 14:
+		playscene.next = DialogScene(playscene, 'intro')
 
 
 _level_specific_hacks = {

@@ -47,6 +47,10 @@ class PlayScene:
 	
 	def update(self, counter):
 		level = self.level
+		
+		if self.do_stuff != None:
+			self.do_stuff(self, level, self.counter)
+		
 		filtered = []
 		for sprite in self.sprites:
 			sprite.update(level)
@@ -54,6 +58,7 @@ class PlayScene:
 			if not sprite.garbage_collect:
 				filtered.append(sprite)
 		self.sprites = filtered + level.get_new_sprites()
+		
 		self.counter += 1
 	
 	def render(self, screen, counter):

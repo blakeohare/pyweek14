@@ -1,0 +1,7 @@
+i|janitor
+s|0|255|0|Good morning
+s|0|255|0|Lorem ipsum dolar sit amet
+i|protagonist-happy
+p|120
+i|protagonist-crying
+p|120
