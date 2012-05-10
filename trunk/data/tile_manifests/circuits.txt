@@ -10,5 +10,13 @@ c5	circuit5.png	1	ex
 c5on	circuit5on.png	1	ex
 c6	circuit6.png	1	ex
 c6on	circuit6on.png	1	ex
+c7	circuit7.png	1	ex
+c7on	circuit7on.png	1	ex
+c8	circuit8.png	1	ex
+c8on	circuit8on.png	1	ex
+c9	circuit9.png	1	ex
+c9on	circuit9on.png	1	ex
+c10	circuit10.png	1	ex
+c10on	circuit10on.png	1	ex
 pi	powerinput.png	1	hx
 po	powerout.png	1	hx
