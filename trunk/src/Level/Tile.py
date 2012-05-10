@@ -38,7 +38,7 @@ class Tile:
 		self.powerup = self.research or self.goo
 		self.goo_size = 0
 		if self.goo:
-			self.goo_size = int(id) - 41
+			self.goo_size = ((int(id) - 41) - 1) * 2 + 1 # 1, 3, 5 OMGHAX
 		self.blocking = self.blocking or self.stairs or self.pushable
 		if self.stairs:
 			self.no_blocks = True
