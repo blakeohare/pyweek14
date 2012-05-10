@@ -31,10 +31,17 @@ def main():
 		if lines[0] == 'normal':
 			active_scene = MainMenuScene()
 		else:
-			active_scene = PlayScene(lines[0])
-			coords = safe_map(int, lines[1].split(','))
-			active_scene.player.x = coords[0] * 16 + 8
-			active_scene.player.y = coords[1] * 16 + 8
+			level_name = lines[0]
+			active_scene = PlayScene(level_name)
+			if not active_scene.do_not_override_start:
+				coords = safe_map(int, lines[1].split(','))
+				x = coords[0]
+				y = coords[1]
+				z = 8
+				active_scene.player.x = x * 16 + 8
+				active_scene.player.y = y * 16 + 8
+				active_scene.player.z = z * 8
+			
 	else:
 		active_scene = MainMenuScene()
 	counter = 0

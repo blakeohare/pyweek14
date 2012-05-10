@@ -45,7 +45,7 @@ class LevelManager:
 			('20-0', None),
 			('24-0', None)]
 		if story_mode:
-			self.ordering = [('intro', "Your Office")] + self.ordering
+			self.ordering = [('intro', "Your Office", (12, 14, 1, 'nw'))] + self.ordering
 	
 	def get_current_level_index(self, current_level_name):
 		for i in range(len(self.ordering)):
@@ -61,6 +61,12 @@ class LevelManager:
 		next_i = i + 1
 		if next_i < len(self.ordering):
 			return next_i
+		return None
+	
+	def get_starting_point_for_level(self, name):
+		i = self.get_current_level_index(name)
+		if len(self.ordering[i]) >= 3:
+			return self.ordering[i][2]
 		return None
 	
 	def get_starting_level(self):

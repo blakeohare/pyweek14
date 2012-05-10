@@ -6,6 +6,26 @@ class PlayScene:
 		self.player = Sprite(17, 177, 32, 'main')
 		self.sprites = [self.player]
 		self.overlay = PlaySceneOverlay(self, self.level)
+		self.do_not_override_start = False
+		level_manager = get_level_manager()
+		self.counter = 0
+		start = level_manager.get_starting_point_for_level(level_name)
+		self.do_stuff = get_hacks_for_level(level_name, 'do_stuff')
+		
+		if start != None:
+			x = start[0]
+			y = start[1]
+			z = start[2]
+			dir = 's'
+			if len(start) >= 4:
+				dir = start[3]
+			self.do_not_override_start = True
+		
+			self.player.x = x * 16 + 8
+			self.player.y = y * 16 + 8
+			self.player.z = z * 8
+			self.player.last_direction_of_movement = dir
+			self.player.standingon = self.level.get_tile_at(x, y, z - 1)
 		
 		level_pixel_width = self.level.height * 16 + self.level.width * 16
 		level_pixel_height = level_pixel_width // 2 + 12 * 8
@@ -15,9 +35,11 @@ class PlayScene:
 		self.target_camera_y = None
 		self.camera_x = None
 		self.camera_y = None
-		
+		if self.do_stuff != None:
+			self.do_stuff(self, self.level, -1)
+	
 	def process_input(self, events, pressed, axes, mouse):
-		if not self.player.immobilized:
+		if not self.player.immobilized and self.player.automation == None:
 			dx = axes[0]
 			dy = axes[1]
 			self.player.dx = dx
@@ -32,6 +54,7 @@ class PlayScene:
 			if not sprite.garbage_collect:
 				filtered.append(sprite)
 		self.sprites = filtered + level.get_new_sprites()
+		self.counter += 1
 	
 	def render(self, screen, counter):
 		sprites_to_add = []
