@@ -44,6 +44,12 @@ class DialogScene:
 		self.phase_counter = 0
 		self.active_portrait = None
 		self.buffer = []
+		self.clear_on_continue = False
+		self.colors = {
+			's':(220, 180, 140),
+			'j':(120, 160, 200),
+			'p':(255, 120, 180)
+		}
 		self.buffer_clear_counter = -42
 		self.frame_yielding = -42
 		self.buffer_shift_offset = 0
@@ -65,10 +71,13 @@ class DialogScene:
 			if event.key in ('start', 'spray', 'walkie') and event.down:
 				pushed = True
 		
-		if pushed:
+		if pushed and self.prompt_for_continue:
 			# TODO: this can be improved so it isn't quite as jumpy
 			# should also flush all text_printer queues
 			self.prompt_for_continue = False
+			if self.clear_on_continue:
+				self.buffer = []
+				
 		
 	
 	def update(self, counter):
@@ -124,11 +133,16 @@ class DialogScene:
 								self.buffer_clear_counter = 10
 								keep_going = False
 							else:
-								color = (int(parts[1]), int(parts[2]), int(parts[3]))
+								color = self.colors[parts[1]]
+								text = parts[2]
 								self.buffer.append(['', color])
-								self.text_printer = TextPrinter(parts[4], None)
+								self.text_printer = TextPrinter(text, None)
 						elif command == 'c':
 							self.prompt_for_continue = True
+							self.clear_on_continue = False
+						elif command == 'cc':
+							self.prompt_for_continue = True
+							self.clear_on_continue = True
 						elif command == 'h':
 							hack_function = get_hacks_for_level(self.playscene.level.name, 'dialog_hack')[command[1]]
 							hack_function(self.playscene, self.playscene.level)
@@ -208,7 +222,7 @@ class DialogScene:
 		if surface == None:
 			surface = pygame.Surface((width, height)).convert()
 			surface.fill((0, 0, 0))
-			surface.set_alpha(150)
+			surface.set_alpha(180)
 			self.surfaces[key] = surface
 		
 		x = screen.get_width() // 2 - width // 2
@@ -228,15 +242,21 @@ class DialogScene:
 			
 			font_size = 18
 			line_height = 23
-			y = 75
+			last_color = (255, 255, 255)
+			y = 70
+			
+			cursor_height = y + line_height * 3
 			
 			if self.buffer_clear_counter > 0:
 				y -= self.buffer_clear_counter * line_height // 10
 			for line in self.buffer:
 				text = line[0]
 				color = line[1]
+				last_color = color
 				img = get_text(text, font_size, color)
-				screen.blit(img, (85, y))
+				screen.blit(img, (89, y))
 				y += line_height
 			
-			
+			if self.prompt_for_continue and (counter // 10) % 2 == 0:
+				y = cursor_height
+				pygame.draw.polygon(screen, last_color, [(300, y), (308, y), (304, y + 5)])
