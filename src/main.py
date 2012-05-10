@@ -104,8 +104,9 @@ def main():
 		pressed = input_manager.my_pressed
 		try_quit = input_manager.quitAttempt
 		axes = input_manager.axes
+		mouse_events = input_manager.get_mouse_events()
 		
-		active_scene.process_input(event_list, pressed, axes)
+		active_scene.process_input(event_list, pressed, axes, mouse_events)
 		active_scene.update(counter)
 		
 		fake_screen.fill((0, 0, 0))
