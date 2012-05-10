@@ -1,0 +1,1 @@
+rat	rat.png	4	x
