@@ -56,17 +56,32 @@ class PlayScene:
 		if self.camera_y == None:
 			self.camera_y = self.target_camera_y
 		
+		max_pan_speed = 4
 		if self.camera_x != self.target_camera_x:
 			if abs(self.camera_x - self.target_camera_x) == 1:
 				self.camera_x = self.target_camera_x
 			else:
-				self.camera_x = (self.camera_x + self.target_camera_x) // 2
+				new_camera_x = (self.camera_x + self.target_camera_x) // 2
+				if abs(new_camera_x - self.camera_x) > max_pan_speed:
+					if self.camera_x < new_camera_x:
+						self.camera_x += max_pan_speed
+					else:
+						self.camera_x -= max_pan_speed
+				else:
+					self.camera_x = new_camera_x
 		
 		if self.camera_y != self.target_camera_y:
 			if abs(self.camera_y - self.target_camera_y) == 1:
 				self.camera_y = self.target_camera_y
 			else:
-				self.camera_y = (self.camera_y + self.target_camera_y) // 2
+				new_camera_y = (self.camera_y + self.target_camera_y) // 2
+				if abs(new_camera_y - self.camera_y) > max_pan_speed:
+					if self.camera_y < new_camera_y:
+						self.camera_y += max_pan_speed
+					else:
+						self.camera_y -= max_pan_speed
+				else:
+					self.camera_y = new_camera_y
 		
 		self.level.render(screen, self.camera_x, self.camera_y, self.sprites, counter, sprites_to_add, sprites_to_remove)
 		for sprite in sprites_to_remove:
