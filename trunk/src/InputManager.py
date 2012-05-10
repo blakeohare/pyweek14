@@ -20,9 +20,10 @@ class InputManager:
 		self.mouse_events = []
 		self.joysticks = []
 		self.active_joystick = -1
+		self.raw_keyups = []
 		self.read_config_save()
-		self.activate_joysticks()
 		self.active_actual_joystick = -1
+		self.activate_joysticks()
 		self.events = []
 		self.quitAttempt = False
 		self.init_default_key_config()
@@ -49,6 +50,7 @@ class InputManager:
 			pygame.K_w: 'walkie'
 		}
 		t = read_file('data/key_config.txt')
+		
 		things = 'start left right up down spray walkie'.split()
 		if t != None:
 			for line in t.split('\n'):
@@ -56,10 +58,28 @@ class InputManager:
 				if len(parts) == 2:
 					action = parts[0]
 					value = parseInt(parts[1])
+					
 					if value > 0 and action in things:
+						for k in self._key_mapping.keys():
+							if self._key_mapping[k] == action:
+								self._key_mapping.pop(k)
+								break
 						self._key_mapping[value] = action
+		
+	
+	def save_key_config(self):
+		output = []
+		for key in self._key_mapping.keys():
+			action = self._key_mapping[key]
+			output.append(action + ':' + str(key))
+		output = '\r\n'.join(output)
+		write_file('data/key_config.txt', output)
 	
 	def set_key_config(self, action, key):
+		for k in self._key_mapping.keys():
+			if self._key_mapping[k] == action:
+				self._key_mapping.pop(k)
+				break
 		self._key_mapping[key] = action
 	
 	def set_active_actual_joystick(self, id):
@@ -124,6 +144,7 @@ class InputManager:
 	
 	def get_events(self):
 		events = []
+		self.raw_keyups = []
 		keyboard_only = True
 		self.axes = [0.0, 0.0]
 		pg_pressed = pygame.key.get_pressed()
@@ -143,6 +164,8 @@ class InputManager:
 				return []
 			elif event.type in (pygame.KEYDOWN, pygame.KEYUP):
 				down = event.type == pygame.KEYDOWN
+				if not down:
+					self.raw_keyups.append(event.key)
 				if down and event.key == pygame.K_F4:
 					if pg_pressed[pygame.K_LALT] or pg_pressed[pygame.K_RALT]:
 						self.quitAttempt = True
@@ -302,12 +325,14 @@ class InputManager:
 		self.actual_joysticks = []
 		active_joystick_name = None
 		if self.active_joystick != -1:
-			active_joystick_name = self.joysticks[self.active_joystick].get('name')
+			active_joystick_name = trim(self.joysticks[self.active_joystick].get('name', '')).lower()
 		for i in range(pygame.joystick.get_count()):
 			js = pygame.joystick.Joystick(i)
 			js.init()
 			self.actual_joysticks.append(js)
-			name = trim(js.get_name())
+			name = trim(js.get_name()).lower()
+			if name == active_joystick_name:
+				self.active_actual_joystick = i
 			
 	def verify_axis_value(self, x):
 		return len(x) == 2 and x[0] in 'xy' and x[1] in '-+'
@@ -322,15 +347,21 @@ class InputManager:
 			output.append(self._save_joystick(joystick))
 		output = '$'.join(output)
 		write_file('data/input_config.txt', output)
-		
+	
+	
 	def _save_joystick(self, config):
 		output = []
 		for key in config.keys():
-			value = ' '.join(safe_map(str, config[key]))
+			if key == 'name':
+				value = config[key]
+			else:
+				value = ' '.join(safe_map(str, config[key]))
+			
 			row = '#' + key + ': ' + value
+			
 			output.append(row)
 			
-		return '\n'.join(output)
+		return '\r\n'.join(output)
 	
 	def read_config_save(self):
 		prev = read_file('data/input_config.txt')

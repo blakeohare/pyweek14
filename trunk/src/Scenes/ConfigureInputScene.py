@@ -40,6 +40,7 @@ class ClickyButton:
 	def render(self, screen):
 		if self.get_label != None:
 			label = self.get_label(self.id)
+			
 			if label != self.last_text:
 				self.pressed_img = get_text(label, self.size, self.pressed_color)
 				self.on_img = get_text(label, self.size, self.on_color)
@@ -83,7 +84,9 @@ class ConfigureInputScene:
 		y = 10 + 10 + js_label.get_height()
 		x = 20
 		js_option_y_coords.append(y)
+		
 		self.buttons = [ClickyButton('no joystick', x, y, "None", a, b, c, hb, None)]
+		self.buttons.append(ClickyButton('exit', 300, 5, "Return to Main Menu", a, b, c, hb, None))
 		im = get_input_manager()
 		i = 1
 		self.im = im
@@ -139,13 +142,30 @@ class ConfigureInputScene:
 				
 		return " "
 	
+	def save_changes(self):
+		im = get_input_manager()
+		im.save_config()
+		im.save_key_config()
+	
 	def handle_button(self, id):
 		im = get_input_manager()
-		if id == 'no joystick':
+		if id == 'exit':
+			self.save_changes()
+			self.next = TransitionScene(self, MainMenuScene())
+		elif id == 'no joystick':
 			im.set_active_actual_joystick(-1)
-		parts = id.split(' ')
-		if parts[0] == 'joystick':
-			im.set_active_actual_joystick(int(parts[1]) - 1)
+		else:
+			parts = id.split(' ')
+			if parts[0] == 'joystick':
+				im.set_active_actual_joystick(int(parts[1]) - 1)
+			elif parts[0] == 'keyconfig':
+				action = parts[1]
+				self.next = SetInputScene(action, True, self)
+			elif parts[0] == 'jsconfig':
+				action = parts[1]
+				self.next = SetInputScene(action, False, self)
+			else:
+				self.next = TransitionScene(MainMenuScene(), self)
 	
 	def process_input(self, events, pressed, axes, mouse):
 		for mouse_event in mouse:
