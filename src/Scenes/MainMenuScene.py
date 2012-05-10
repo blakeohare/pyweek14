@@ -2,11 +2,14 @@ class MainMenuScene:
 	def __init__(self):
 		self.next = self
 		self.index = 0
+		has_save_data = get_persisted_forever_int('has_save_data') == 1
 		self.options = [
-			('Play Game', lambda x:PlayScene('intro')),
-			('Configure Input', lambda x:ConfigureInputScene()),
-			('Credits', lambda x:CreditsScene(True)),
-			('Exit', lambda x:GoodbyeScene())
+			('Start New Game', True, lambda x:PlayScene('intro')),
+			('Resume Saved Game', has_save_data, lambda x:PlayScene(None)),
+			('Configure Input', True, lambda x:ConfigureInputScene()),
+			('Settings', True, lambda x:SettingsScene()),
+			('Credits', True, lambda x:CreditsScene(True)),
+			('Exit', True, lambda x:GoodbyeScene())
 			]
 
 	def process_input(self, events, pressed, axes, mouse):
@@ -15,8 +18,12 @@ class MainMenuScene:
 			if event.down:
 				if event.key == 'down':
 					self.index += 1
+					if not self.options[self.index][1]:
+						self.index += 1
 				elif event.key == 'up':
 					self.index -= 1
+					if not self.options[self.index][1]:
+						self.index -= 1
 				elif event.key == 'start':
 					go = True
 		
@@ -24,7 +31,7 @@ class MainMenuScene:
 		self.index = min(self.index, len(self.options) - 1)
 		
 		if go:
-			next_scene = self.options[self.index][1](None)
+			next_scene = self.options[self.index][2](None)
 			self.next = TransitionScene(self, next_scene)
 	
 	def update(self, counter):
@@ -44,6 +51,8 @@ class MainMenuScene:
 			if self.index == i:
 				color = (255, 255, 255)
 				pygame.draw.rect(screen, color, pygame.Rect(x, y + 5, 5, 5))
+			elif not option[1]:
+				color = (80, 80, 80)
 			x = 110
 			text = get_text(option[0], 18, color)
 			screen.blit(text, (x, y))
