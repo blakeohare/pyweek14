@@ -79,6 +79,7 @@ class Sprite:
 		if self.staticy:
 			self.ttl = 60
 		self.last_direction_of_movement = 's'
+		self.direction_queue = ['s']
 		self.is_moving = False
 		self.pushing = None
 		if self.isblock:
@@ -471,6 +472,12 @@ class Sprite:
 						d = 's'
 				if d != None:
 					self.last_direction_of_movement = d
+					self.direction_queue = [d] + self.direction_queue[:4]
+					if len(self.direction_queue) == 5:
+						a,b,c,d,e = self.direction_queue
+						if len(a) == 1 and d == e and len(d) == len(e) and a in d: #BWAHAHAHA
+							if (b == c and (b == a or b == d)) or (b == a and c == d):
+								self.last_direction_of_movement = d
 				
 			else:
 				self.is_moving = False
