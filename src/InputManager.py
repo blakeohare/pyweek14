@@ -71,6 +71,7 @@ class InputManager:
 
 		joystick = None
 		config = None
+		any_axes_found = False
 		if self.active_joystick != -1:
 			config = self.joysticks[self.active_joystick]
 			name = config.get('name', '')
@@ -93,11 +94,9 @@ class InputManager:
 						x = cached_poll.get('a' + str(n))
 						if x == None:
 							x = joystick.get_axis(n)
+							if abs(x) < 0.01:
+								x = 0
 							cached_poll['a' + str(n)] = x
-						if c[2][0] == 'x':
-							x = x[0]
-						else:
-							x = x[1]
 						
 						if c[2][1] == '+':
 							if x < 0:
@@ -108,6 +107,12 @@ class InputManager:
 							else:
 								x *= -1
 						x = abs(x)
+						
+						if x > 0.01:
+							keyboard_only = False
+							if not any_axes_found:
+								any_axes_found = True
+								self.axes = [0.0, 0.0]
 						
 					elif c[0] == 'hat':
 						direction = True
@@ -130,7 +135,11 @@ class InputManager:
 								x *= -1
 						x = abs(x)
 					elif c[0] == 'button':
-						x = joystick.get_button(n)
+						x = cached_poll.get('b' + str(n))
+						if x == None:
+							x = joystick.get_button(n)
+							cached_poll['b' + str(n)] = x
+						
 					
 					if action in ('start', 'spray', 'walkie'):
 						pushed = x
@@ -140,32 +149,42 @@ class InputManager:
 							self.my_pressed[action] = pushed
 							events.append(MyEvent(action, pushed))
 					elif action in ('left', 'right', 'down', 'up'):
+						
 						toggled = False
-						pushed = x + 0.0
-						if not direction:
+						if direction:
+							pushed = x + 0.0
+						else:
 							pushed = 0.0 if (pushed < .5) else 1.0
 						toggled = pushed > .2
+						if pushed < 0.01:
+							pushed = 0
 						
-						keyboard_only = keyboard_only and not toggled
 						if toggled != self.my_pressed[action]:
 							self.my_pressed[action] = toggled
 							events.append(MyEvent(action, toggled))
 						
 						if action == 'left':
-							self.axes[0] = -pushed
+							if abs(self.axes[0]) < 0.01 and pushed > 0.01:
+								self.axes[0] = -2 * pushed
+						
 						elif action == 'right':
-							self.axes[0] = pushed
+							if abs(self.axes[0]) < 0.01 and pushed > 0.01:
+								self.axes[0] = 2 * pushed
+								
 						elif action == 'up':
-							self.axes[1] = -pushed
+							if abs(self.axes[1]) < 0.01 and pushed > 0.01:
+								self.axes[1] = -2 * pushed
+								
 						elif action == 'down':
-							self.axes[1] = pushed
+							if abs(self.axes[1]) < 0.01 and pushed > 0.01:
+								self.axes[1] = 2 * pushed
 		
-		self.axes[0] = self.axes[0] / 1.7
+		self.axes[0] = self.axes[0] / 1.8
 		
 		x = self.axes[0]
 		y = self.axes[1]
 		
-		if keyboard_only and x != 0 and y != 0:
+		if not any_axes_found and x != 0 and y != 0:
 			xsign = 1 if (x > 0) else -1
 			ysign = 1 if (y > 0) else -1
 			x = 1.2 * xsign
@@ -189,11 +208,15 @@ class InputManager:
 			
 	def activate_joysticks(self):
 		self.actual_joysticks = []
+		active_joystick_name = None
+		if self.active_joystick != -1:
+			active_joystick_name = self.joysticks[self.active_joystick].get('name')
 		for i in range(pygame.joystick.get_count()):
 			js = pygame.joystick.Joystick(i)
+			js.init()
 			self.actual_joysticks.append(js)
 			name = trim(js.get_name())
-	
+			
 	def verify_axis_value(self, x):
 		return len(x) == 2 and x[0] in 'xy' and x[1] in '-+'
 	
@@ -225,7 +248,7 @@ class InputManager:
 				active = trim(data[0])
 				parts = active.split(':')
 				active_joystick_name = None
-				if len(parts) >= 2 and parts[0] == '#active':
+				if len(parts) >= 2 and trim(parts[0]) == '#active':
 					active_joystick_name = trim(':'.join(parts[1:]))
 				for config in data[1:]:
 					lines = config.split('\n')
@@ -248,15 +271,14 @@ class InputManager:
 										data[key] = ('button', n)
 								elif value[0] == 'hat':
 									if len(value) == 3:
-										n = parse(value[1])
+										n = parseInt(value[1])
 										if self.verify_axis_value(value[2]):
 											data[key] = ('hat', n, value[2])
-								elif value[0] == 'name':
+								elif key == 'name':
 									data[key] = trim(' '.join(value))
 					name = data.get('name', None)
 					if name != None and len(name) > 0:
 						if active_joystick_name != None and active_joystick_name.lower() == name.lower():
 							self.active_joystick = len(self.joysticks)
-						self.joysticks.append(name, data)
-	
+						self.joysticks.append(data)
 	
