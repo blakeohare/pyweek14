@@ -1,0 +1,16 @@
+Legend:
+i - switch to a portrait image
+r - remove portrait image
+p - pause for n frames
+s - prints one line, takes r, g, b, text
+c - continue and clear prompt
+h - run dialog_hack hack function with ID in level specific hacks
+y - yeild n frames to the underlying playscene updater
+label - a label
+goto - go to a label
+if - if a number is set and non-zero in the persisted variables, then go to the label
+choice - choice picker, takes two labels, takes two strings
+end - ends the dialog
+
+Do not yield updates to playscene if choices can alter behavior!
+
