@@ -333,6 +333,9 @@ class InputManager:
 			name = trim(js.get_name()).lower()
 			if name == active_joystick_name:
 				self.active_actual_joystick = i
+		
+		if self.active_actual_joystick == -1:
+			self.active_joystick = -1
 			
 	def verify_axis_value(self, x):
 		return len(x) == 2 and x[0] in 'xy' and x[1] in '-+'
