@@ -16,6 +16,7 @@ def get_input_manager():
 class InputManager:
 	def __init__(self):
 		self.cursor = (0, 0)
+		self.mouse_pressed = False
 		self.mouse_events = []
 		self.joysticks = []
 		self.active_joystick = -1
@@ -24,15 +25,7 @@ class InputManager:
 		self.active_actual_joystick = -1
 		self.events = []
 		self.quitAttempt = False
-		self._key_mapping = {
-			pygame.K_RETURN: 'start',
-			pygame.K_LEFT: 'left',
-			pygame.K_RIGHT: 'right',
-			pygame.K_UP: 'up',
-			pygame.K_DOWN: 'down',
-			pygame.K_SPACE: 'spray',
-			pygame.K_w: 'walkie'
-		}
+		self.init_default_key_config()
 		self.my_pressed = {
 			'start': False,
 			'left': False,
@@ -45,8 +38,89 @@ class InputManager:
 		
 		self.axes = [0.0, 0.0]
 	
+	def init_default_key_config(self):
+		self._key_mapping = {
+			pygame.K_RETURN: 'start',
+			pygame.K_LEFT: 'left',
+			pygame.K_RIGHT: 'right',
+			pygame.K_UP: 'up',
+			pygame.K_DOWN: 'down',
+			pygame.K_SPACE: 'spray',
+			pygame.K_w: 'walkie'
+		}
+		t = read_file('data/key_config.txt')
+		things = 'start left right up down spray walkie'.split()
+		if t != None:
+			for line in t.split('\n'):
+				parts = line.split(':')
+				if len(parts) == 2:
+					action = parts[0]
+					value = parseInt(parts[1])
+					if value > 0 and action in things:
+						self._key_mapping[value] = action
+	
+	def set_key_config(self, action, key):
+		self._key_mapping[key] = action
+	
+	def set_active_actual_joystick(self, id):
+		if id == -1:
+			self.active_actual_joystick = -1
+			self.active_joystick = -1
+		elif len(self.actual_joysticks) > id:
+			self.active_actual_joystick = id
+			name = trim(self.actual_joysticks[self.active_actual_joystick].get_name())
+			found = False
+			i = 0
+			for js in self.joysticks:
+				if js.get('name', '').lower() == name.lower():
+					found = True
+					self.active_joystick = i
+				i += 1
+			if not found:
+				self.active_joystick = len(self.joysticks)
+				self.joysticks.append({'name': name})
+	
+	def get_config_label_for_key_for_keyboard(self, key):
+		for k in self._key_mapping.keys():
+			if self._key_mapping[k] == key:
+				output = pygame.key.name(k)
+				return output[0].upper() + output[1:]
+		return "Not configured!"
+	
+	def get_config_label_for_key_for_active(self, key):
+		if self.active_joystick != -1:
+			js = self.joysticks[self.active_joystick]
+			value = js.get(key, None)
+			if value == None:
+				return "Not configured!"
+			if value[0] == 'axis':
+				output = "Axis " + str(value[1])
+				if value[2].endswith('+'):
+					output = "Positive " + output
+				else:
+					output = "Negative " + output
+				
+			elif value[0] == 'hat':
+				output = "Hat " + str(value[1])
+				if value[2].startswith('x'):
+					output = "X " + output
+				else:
+					output = "Y " + output
+				if value[2].endswith('-'):
+					output = "Negative " + output
+				else:
+					output = "Positive " + output
+			else:
+				output = "Button " + str(value[1])
+				
+			return output
+		return None
+	
 	def get_cursor_position(self):
 		return self.cursor
+	
+	def get_mouse_status(self):
+		return self.mouse_pressed
 	
 	def get_events(self):
 		events = []
@@ -58,6 +132,7 @@ class InputManager:
 				move = event.type == pygame.MOUSEMOTION
 				if move or event.button == 1:
 					down = event.type == pygame.MOUSEBUTTONDOWN
+					self.mouse_pressed = down
 					x, y = event.pos
 					x = x // 2
 					y = y // 2
