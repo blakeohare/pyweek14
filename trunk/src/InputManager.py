@@ -15,6 +15,7 @@ def get_input_manager():
 
 class InputManager:
 	def __init__(self):
+		self.cursor = (0, 0)
 		self.mouse_events = []
 		self.joysticks = []
 		self.active_joystick = -1
@@ -44,17 +45,24 @@ class InputManager:
 		
 		self.axes = [0.0, 0.0]
 	
+	def get_cursor_position(self):
+		return self.cursor
+	
 	def get_events(self):
 		events = []
 		keyboard_only = True
 		self.axes = [0.0, 0.0]
 		pg_pressed = pygame.key.get_pressed()
 		for event in pygame.event.get():
-			if event.type in (pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP):
-				if event.button == 1:
+			if event.type in (pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP, pygame.MOUSEMOTION):
+				move = event.type == pygame.MOUSEMOTION
+				if move or event.button == 1:
 					down = event.type == pygame.MOUSEBUTTONDOWN
 					x, y = event.pos
-					self.mouse_events.append((x, y, down))
+					x = x // 2
+					y = y // 2
+					self.mouse_events.append((x // 2, y // 2, move, down))
+					self.cursor = (x, y)
 			elif event.type in (pygame.KEYDOWN, pygame.KEYUP):
 				down = event.type == pygame.KEYDOWN
 				if down and event.key == pygame.K_F4:
