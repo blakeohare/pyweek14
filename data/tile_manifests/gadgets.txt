@@ -7,3 +7,5 @@ t2	receiver1.png|receiver2.png|receiver3.png|receiver4.png	1	x
 t3	teleportoff.png	1	x
 glow	glowybit1.png|glowybit2.png|glowybit3.png|glowybit4.png	4	
 glow2	blueglow1.png|blueglow2.png|blueglow3.png|blueglow4.png	4	
+clone	cloningscanner.png	1	x
+clone2	cloneappearifier.png	1	x
