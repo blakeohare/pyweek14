@@ -475,9 +475,8 @@ class Sprite:
 					self.direction_queue = [d] + self.direction_queue[:4]
 					if len(self.direction_queue) == 5:
 						a,b,c,d,e = self.direction_queue
-						if len(a) == 1 and d == e and len(d) == len(e) and a in d: #BWAHAHAHA
-							if (b == c and (b == a or b == d)) or (b == a and c == d):
-								self.last_direction_of_movement = d
+						if len(a) == 1 and d == e and len(d) == len(e) and a in d and ((b == c and (b == a or b == d)) or (b == a and c == d)): # BWAHAHAHAHAHA
+							self.last_direction_of_movement = d
 				
 			else:
 				self.is_moving = False
