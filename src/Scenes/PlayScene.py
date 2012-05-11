@@ -1,5 +1,10 @@
 class PlayScene:
 	def __init__(self, level_name):
+		
+		persistence_change_level()
+		if level_name == '1-3':
+			set_persisted_level_int('decontaminant', 3)
+		
 		self.next = self
 		self.level_name = level_name
 		self.level = Level(level_name)
