@@ -39,9 +39,9 @@ class LevelManager:
 				('20-0', None),
 				('21-0', None, (9, 13, 2, 'ne')),
 				('flipmaze', None),
-				('25-0', None),
-				('24-0', None),
-				('26-0', None),
+				('25-0', None, (1, 12, 1, 'se')),
+				('24-0', None, (1, 20, 3, 'ne')),
+				('26-0', None, (1, 9, 1, 'se')),
 				('27-0', None),
 				('90-0', None)]
 		if story_mode:

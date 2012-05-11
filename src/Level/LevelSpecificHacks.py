@@ -71,7 +71,30 @@ _level_specific_hacks = {
 		'moving_platforms': [
 			'NW NW P P SE SE SE SE P P NW NW'
 		]
-	}
+	},
+	
+	'25-0': {
+		'moving_platforms': [
+			'SE SE NW NW NW NW NW SE SE SE',
+			'SE SE SE SE NW NW NW NW NW SE',
+			'NW NW NW NW NW SE SE SE SE SE',
+			'SE SE NW NW NW NW NW SE SE SE',
+			'SE SE SE SE SE NW NW NW NW NW',
+			'SE NW NW NW NW NW SE SE SE SE',
+			'SE SE SE SE NW NW NW NW NW SE',
+			'SE SE SE NW NW NW NW NW SE SE',
+			'NW NW NW NW NW SE SE SE SE SE'
+		]
+	},
+	
+	'24-0': {
+		'moving_platforms': [
+			'P P SE SE SE SE SE SE P P NW NW NW NW NW NW',
+			'NE P P SW SW P P NE',
+			'NE NE NE NE NE NE NE NE P P SW SW SW SW SW SW SW SW P P',
+			'P SW SW P P NE NE P'
+		]
+	},
 }
 
 def get_hacks_for_level(name, category):
