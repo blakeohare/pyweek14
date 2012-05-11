@@ -73,11 +73,22 @@ class Sprite:
 		self.holding_walkie = False
 		self.issupervisor = type == 'supervisor'
 		self.isblock = type.startswith('block|')
-		self.israt = type.startswith('rat')
+		self.israt = type.startswith('rat|')
+		self.impeded_last_go_round = False
 		self.rat_trot_mode = None
+		self.rat_blocked_counter = -42
 		if self.israt:
+			if type.endswith('nw'):
+				self.rat_trot_mode = 'nw'
+			elif type.endswith('ne'):
+				self.rat_trot_mode = 'ne'
+			elif type.endswith('sw'):
+				self.rat_trot_mode = 'sw'
+			else:
+				self.rat_trot_mode = 'se'
 			self.type = 'rat'
-			
+		self.rat_move_max = 27
+		self.rat_move_counter = self.rat_move_max
 		
 		self.death_counter = -1
 		self.death_type = None
@@ -165,6 +176,12 @@ class Sprite:
 					path += str([1, 2, 3, 4, 3, 2][(render_counter // 6) % 6])
 				path += '.png'
 			img = get_image(path)
+		elif self.israt:
+			path = 'rat/' + self.rat_trot_mode
+			if self.is_moving:
+				path += str([1, 2, 3, 4, 3, 2][(render_counter // 6) % 6])
+			path += '.png'
+			img = get_image(path)
 		elif self.isjanitor:
 			if self.holding_spray:
 				path = 'janitor/spray2.png'
@@ -214,7 +231,7 @@ class Sprite:
 		if self.isblock:
 			y += 8
 		
-		if self.ismain or self.staticy:
+		if self.ismain or self.staticy or self.isjanitor or self.issupervisor or self.israt:
 			if self.staticy and self.ttype.startswith('block|'):
 				y += 16
 			y += 8
@@ -252,9 +269,55 @@ class Sprite:
 			return self.prototype
 		return self
 	
+	def flip_rat_trot_mode(self):
+		rtm = self.rat_trot_mode
+		if rtm == 'nw':
+			self.rat_trot_mode = 'se'
+		elif rtm == 'se':
+			self.rat_trot_mode = 'nw'
+		elif rtm == 'ne':
+			self.rat_trot_mode = 'sw'
+		else:
+			self.rat_trot_mode = 'ne'
+	
+	
+	def move_rat(self, level):
+		self.rat_blocked_counter -= 1
+		rtm = self.rat_trot_mode
+		if self.rat_blocked_counter == 0:
+			self.flip_rat_trot_mode()
+		
+		if self.rat_blocked_counter < 0:
+			if self.impeded_last_go_round:
+				self.rat_blocked_counter = 60
+			else:
+				v = 0.8
+				if rtm == 'nw':
+					self.dx = -v
+				elif rtm == 'ne':
+					self.dy = -v
+				elif rtm == 'sw':
+					self.dy = v
+				else:
+					self.dx = v
+				
+				newx = self.x + self.dx
+				newy = self.y + self.dy
+				col = int(newx // 16)
+				row = int(newy // 16)
+				layer = int(self.z // 8) - 1
+				tile = level.get_tile_at(col, row, layer)
+				if tile == None or not tile.blocking:
+					self.rat_blocked_counter = 60
+					self.dx = 0
+					self.dy = 0
+	
 	def update(self, level):
 		self.death_counter -= 1
 		self.spray_counter -= 1
+		
+		if self.israt:
+			self.move_rat(level)
 		
 		if self.death_counter == 1:
 			self.garbage_collect = True
@@ -373,6 +436,7 @@ class Sprite:
 				row = check[1]
 				if col < 0 or col >= level.width or row < 0 or row >= level.height:
 					blocked = True
+					self.impeded_last_go_round = True
 					break
 				lookup = cellLookup[col][row]
 				tiles = tilestack[col][row]
@@ -489,11 +553,13 @@ class Sprite:
 				if blocked:
 					break
 			
+			
 			if not blocked:
 				old_col = int(self.x // 16)
 				old_row = int(self.y // 16)
 				self.x += self.dx
 				self.y += self.dy
+				self.impeded_last_go_round = False
 				new_col = int(self.x // 16)
 				new_row = int(self.y // 16)
 				if old_col != new_col or old_row != new_row:
@@ -507,12 +573,16 @@ class Sprite:
 					self.death_type = 'goo'
 					self.immobilized = True
 					play_sound("irradiated.wav")
+			self.impeded_last_go_round = blocked
 					
-			
+			omg_hax = self.dx != 0 or self.dy != 0
+			self.is_moving = omg_hax
 			if self.automation == None:
 				omg_hax = self.dx != 0 and self.dy != 0
-			else:
-				omg_hax = self.dx != 0 or self.dy != 0
+			
+				
+			
+			
 			
 			if omg_hax:
 				distance = (self.dx * self.dx + self.dy * self.dy) ** .5
@@ -524,7 +594,6 @@ class Sprite:
 				dx_off = ndx < tolerance and ndx > -tolerance
 				
 				d = None
-				self.is_moving = True
 				
 				if dx_off:
 					if dy_off:
@@ -555,8 +624,6 @@ class Sprite:
 						if len(a) == 1 and d == e and len(d) == len(e) and a in d and ((b == c and (b == a or b == d)) or (b == a and c == d)): # BWAHAHAHAHAHA
 							self.last_direction_of_movement = d
 				
-			else:
-				self.is_moving = False
 			
 		if new_platform != None and new_platform.stairs and on_new_coordinates_now:
 			if direction == new_platform.entrance:
