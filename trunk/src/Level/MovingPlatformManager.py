@@ -121,8 +121,8 @@ class MovingPlatformManager:
 										lookup = level.cellLookup[target[0]][target[1]]
 										stack = level.grid[target[0]][target[1]]
 										blocked = False
-										for i in range(sprite.height):
-											check = [target[0], target[1], target[2] + i]
+										for _i in range(sprite.height):
+											check = [target[0], target[1], target[2] + _i]
 											t = level.get_tile_at(check)
 											if t != None and t.blocking:
 												blocked = True
