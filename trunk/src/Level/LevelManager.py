@@ -42,8 +42,8 @@ class LevelManager:
 				('25-0', None, (1, 12, 1, 'se')),
 				('24-0', None, (1, 20, 3, 'ne')),
 				('26-0', None, (1, 9, 1, 'se')),
-				('27-0', None),
-				('90-0', None)]
+				('27-0', None, (1, 9, 1, 'se')),
+				('90-0', None, (1, 9, 3, 'se'))]
 		if story_mode:
 			self.ordering = [('intro', "Your Office", (12, 14, 1, 'nw'))] + self.ordering
 	
