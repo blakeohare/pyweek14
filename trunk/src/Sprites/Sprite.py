@@ -73,6 +73,11 @@ class Sprite:
 		self.holding_walkie = False
 		self.issupervisor = type == 'supervisor'
 		self.isblock = type.startswith('block|')
+		self.israt = type.startswith('rat')
+		self.rat_trot_mode = None
+		if self.israt:
+			self.type = 'rat'
+			
 		
 		self.death_counter = -1
 		self.death_type = None
