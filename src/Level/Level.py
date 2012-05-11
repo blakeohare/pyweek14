@@ -1,12 +1,17 @@
+class PushTracker:
+	def __init__(self, sprite):
+		self.push_counter = -1
+		self.max_push_counter = 25
+		self.push_target = None
+		self.owner = sprite
+	
 class Level:
 	
 	def __init__(self, name):
 		self.name = name
 		self.initialize()
 		self.sprite_z_sorter = lambda x,y:x.z < y.z
-		self.push_counter = -1
-		self.max_push_counter = 25
-		self.push_target = None
+		self.push_trackers = []
 		self.newsprites = []
 		self.circuitry = Circuits(self)
 		self.render_exceptions = []
@@ -17,6 +22,14 @@ class Level:
 		self.hologram_manager = HologramManager(self)
 		self.counter = 0
 		self.hologram_pads = []
+	
+	def get_push_tracker(self, sprite):
+		for p in self.push_trackers:
+			if p.owner == sprite:
+				return p
+		p = PushTracker(sprite)
+		self.push_trackers.append(p)
+		return p
 	
 	def get_hologram_pads(self):
 		return self.hologram_pads
@@ -490,10 +503,11 @@ class Level:
 	
 	# there are no blockages. It's already been verified by the time this function
 	# has been called.
-	def push_block(self, start_col, start_row, end_col, end_row, layer):
+	def push_block(self, sprite, start_col, start_row, end_col, end_row, layer):
 		play_sound('blockpush.wav')
-		self.push_counter = -1
-		self.push_target = None
+		pt = self.get_push_tracker(sprite)
+		pt.push_counter = -1
+		pt.push_target = None
 		
 		block = self.modify_block(start_col, start_row, layer, None)
 		self.modify_block(end_col, end_row, layer, block)
