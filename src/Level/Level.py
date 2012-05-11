@@ -182,6 +182,8 @@ class Level:
 	def render(self, screen, xOffset, yOffset, sprites, render_counter, sprites_to_add, sprites_to_delete):
 		self.allsprites = sprites
 		
+		self.re_blits = {}
+		
 		width = self.width
 		height = self.height
 		sprite_lookup = {}
@@ -234,14 +236,37 @@ class Level:
 		
 		self.update(sprites, sprites_to_add, sprites_to_delete)
 	
-	def render_sprite(self, screen, sprite, xOffset, yOffset, render_counter):
-		sprite.render_me(screen, xOffset, yOffset, render_counter)
+	def render_sprite(self, screen, sprite, xOffset, yOffset, render_counter, re_render=False):
+		
+		q = sprite.render_me(screen, xOffset, yOffset, render_counter)
+		if not re_render:
+			if sprite.x % 16 < 6 and sprite.y % 16 > 10:
+				
+				col = int(sprite.x // 16)
+				row = int(sprite.y // 16)
+				layer = int(sprite.z // 8)
+				k = str(col) + '^' + str(row)
+				r = (layer + sprite.height, q)
+				if self.re_blits.get(k) == None:
+					self.re_blits[k] = [r]
+				else:
+					if self.re_blits[k][-1][0] < r[0]:
+						self.re_blits[k].append(r)
+					else:
+						i = 0
+						while i < len(self.re_blits[k]):
+							if self.re_blits[k][i][0] > r[0]:
+								self.re_blits[k] = self.re_blits[k][:i] + [r] + self.re_blits[k][i:]
+								break
+							i += 1
 	
 	def render_tile_stack(self, screen, col, row, xOffset, yOffset, render_counter, sprites, re_on, re_off):
 		re_sprite_on = None
 		re_sprite_off = None
 		re_block_on = None
 		re_block_off = None
+		
+		re_blits = self.re_blits.get(str(col + 1) + '^' + str(row - 1))
 		
 		if re_on != None:
 			re_block_on = []
@@ -270,6 +295,16 @@ class Level:
 		y = yOffset + col * 8 + row * 8
 		i = 0
 		while i < len(stack):
+			
+			# re blit stuff from the right
+			
+			if re_blits != None:
+				while re_blits != None and len(re_blits) > 0 and re_blits[0][0] <= z:
+					q = re_blits[0][1]
+					sprite = q[0]
+					sprite.render_me(screen, q[1], q[2], q[3])
+					re_blits = re_blits[1:]
+			
 			tile = stack[i]
 			if sprites != None:
 				new_sprites = []
@@ -303,7 +338,7 @@ class Level:
 				xdiff_pixel = xdiff * 16 - ydiff * 16
 				ydiff_pixel = xdiff * 8 + ydiff * 8
 				self.render_sprite(screen, re.tile, _x + xdiff_pixel, _y + ydiff_pixel, render_counter)
-			
+				
 			if tile == None:
 				if re_block_on != None and len(re_block_on) > 0 and re_block_on[0].z == z:
 					re = re_block_on.pop(0)
@@ -322,6 +357,17 @@ class Level:
 					tile.render(screen, x, y - z * 8, render_counter)
 				z += tile.height
 			i += 1
+		
+		
+		if re_blits != None:
+			
+			while re_blits != None and len(re_blits) > 0 and re_blits[0][0] <= z:
+				q = re_blits[0][1]
+				sprite = q[0]
+				sprite.render_me(screen, q[1], q[2], q[3])
+				re_blits = re_blits[1:]
+		
+		
 		if (sprites != None and len(sprites) > 0) or (re_sprite_on != None and len(re_sprite_on) > 0):
 			sprites = [] if sprites == None else safe_sorted(sprites, self.sprite_z_sorter)
 			sprite_i = 0
