@@ -45,6 +45,9 @@ def set_persisted_level_string(name, value):
 def increment_persisted_level_int(name, amount):
 	set_persisted_level_int(name, get_persisted_level_int(name) + amount)
 
+def persistence_change_level():
+	get_persistent_state().level = {}
+
 class PersistentState:
 	def __init__(self):
 		self.forever = {}
