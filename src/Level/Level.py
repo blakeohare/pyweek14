@@ -12,6 +12,7 @@ class Level:
 		self.render_exceptions = []
 		self.moving_platforms = MovingPlatformManager(self)
 		self.teleporters = TeleporterManager(self)
+		self.switch_manager = SwitchManager(self)
 		self.sprite_introducer = get_hacks_for_level(name, 'introduce_sprites')
 		self.counter = 0
 	
@@ -114,12 +115,16 @@ class Level:
 			tile = None if (id == '0') else ts.get_tile(id)
 			self.modify_block(col, row, layer, tile)
 	
+	def get_switches(self):
+		return self.switches
+	
 	def initialize_tiles(self, tiles):
 		width = self.width
 		height = self.height
 		grid = make_grid(self.width, self.height, None)
 		references = make_grid(self.width, self.height, None)
 		moving_platforms = []
+		self.switches = []
 		self.teleporter_tiles = []
 		tilestore = get_tile_store()
 		i = 0
@@ -146,6 +151,9 @@ class Level:
 							moving_platforms.append((x, y, len(referenceStack)))
 						if t.id in ('t1', 't2', 't3'):
 							self.teleporter_tiles.append((x, y, len(referenceStack), t.id))
+						
+						if t.isswitch:
+							self.switches.append((x, y, len(referenceStack), t))
 						
 						if t.id in ('rat', 'rat2', 'rat3', 'rat4'):
 							if t.id == 'rat':

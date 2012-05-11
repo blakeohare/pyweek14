@@ -35,6 +35,7 @@ class Tile:
 		self.cant_push_over = flags_contains(flags, 'n')
 		self.research = id == '41'
 		self.goo = id in ('42', '43', '44')
+		self.isswitch = id in ('pi', 'b1', 'b2', 'b3', 'b4', 'b5', 'b6', 'b7')
 		self.powerup = self.research or self.goo
 		self.is_goo = id == '15'
 		self.goo_size = 0
