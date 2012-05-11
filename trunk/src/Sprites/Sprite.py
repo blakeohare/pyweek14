@@ -506,6 +506,7 @@ class Sprite:
 					self.death_counter = 60
 					self.death_type = 'goo'
 					self.immobilized = True
+					play_sound("irradiated.wav")
 					
 			
 			if self.automation == None:
