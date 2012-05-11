@@ -154,6 +154,8 @@ class Sprite:
 		else:
 			screen.blit(img, coords)
 		
+		return (self, xOffset, yOffset, render_counter)
+		
 	
 	
 	def get_image(self, render_counter):
