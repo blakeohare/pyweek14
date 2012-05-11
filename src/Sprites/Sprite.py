@@ -70,6 +70,7 @@ class Sprite:
 		self.main_or_hologram = self.ismain or type == 'hologram|main'
 		self.isjanitor = type == 'janitor'
 		self.holding_spray = False
+		self.clone_creating = False
 		self.holding_walkie = False
 		self.issupervisor = type == 'supervisor'
 		self.isblock = type.startswith('block|')
@@ -162,8 +163,11 @@ class Sprite:
 	def get_image(self, render_counter):
 		img = None
 		if self.main_or_hologram:
-			if not self.ismain and render_counter % 2 == 1:
-				return None #flickering holograms
+			if not self.ismain:
+				if self.clone_creating:
+					return get_image('scan/character'+str(((render_counter // 2) % 4) + 1)+'.png')
+				if render_counter % 2 == 1:
+					return None #flickering holograms
 			
 			if self.death_counter > 0:
 				path = 'protagonist/s.png'
