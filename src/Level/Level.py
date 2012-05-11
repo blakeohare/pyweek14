@@ -15,6 +15,52 @@ class Level:
 		self.sprite_introducer = get_hacks_for_level(name, 'introduce_sprites')
 		self.counter = 0
 	
+	def spray_from(self, sprite):
+		col = int(sprite.x // 16)
+		row = int(sprite.y // 16)
+		layer = int(sprite.z // 8)
+		dir = sprite.last_direction_of_movement
+		x = sprite.x % 16
+		y = sprite.y % 16
+		print col, row, layer, dir
+		
+		if dir == 'n':
+			if y < x:
+				dir = 'ne'
+			else:
+				dir = 'nw'
+		elif dir == 's':
+			if y < x:
+				dir = 'se'
+			else:
+				dir = 'sw'
+		elif dir == 'e':
+			if x + y > 16:
+				dir = 'se'
+			else:
+				dir = 'ne'
+		elif dir == 'w':
+			if x + y > 16:
+				dir = 'sw'
+			else:
+				dir = 'nw'
+		
+		
+		if dir == 'nw':
+			col -= 1
+		elif dir == 'ne':
+			row -= 1
+		elif dir == 'sw':
+			row += 1
+		elif dir == 'se':
+			col += 1
+		
+		print col, row, layer, dir
+		
+		maybe_goo = self.get_tile_at(col, row, layer)
+		if maybe_goo != None and maybe_goo.is_goo:
+			self.modify_block(col, row, layer, None)
+	
 	def get_new_sprites(self):
 		output = self.newsprites
 		self.newsprites = []
