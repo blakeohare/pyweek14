@@ -131,36 +131,40 @@ class Sprite:
 	
 	def render_me(self, screen, xOffset, yOffset, render_counter):
 		img = self.get_image(render_counter)
-		coords = self.pixel_position(xOffset, yOffset, img)
-		
-		if self.staticy:
-			things = get_teleporter_image(self.tsend, self.ttl, self.ttype)
-			if things == None: return
-			ao = things[0]
-			bo = things[1]
-			ai = things[2]
-			bi = things[3]
+		if img != None:
+			coords = self.pixel_position(xOffset, yOffset, img)
 			
-			for x in ((bo, bi), (ao, ai)):
-				o = x[0]
-				img = x[1]
+			if self.staticy:
+				things = get_teleporter_image(self.tsend, self.ttl, self.ttype)
+				if things == None: return
+				ao = things[0]
+				bo = things[1]
+				ai = things[2]
+				bi = things[3]
 				
-				if o > 0:
-					t = get_surface(img.get_width(), img.get_height())
-					t.blit(screen, (-coords[0], -coords[1]))
-					t.blit(img, (0, 0))
-					t.set_alpha(o)
-					screen.blit(t, (coords[0], coords[1]))	
-		else:
-			screen.blit(img, coords)
-		
+				for x in ((bo, bi), (ao, ai)):
+					o = x[0]
+					img = x[1]
+					
+					if o > 0:
+						t = get_surface(img.get_width(), img.get_height())
+						t.blit(screen, (-coords[0], -coords[1]))
+						t.blit(img, (0, 0))
+						t.set_alpha(o)
+						screen.blit(t, (coords[0], coords[1]))	
+			else:
+				screen.blit(img, coords)
+			
 		return (self, xOffset, yOffset, render_counter)
 		
 	
 	
 	def get_image(self, render_counter):
 		img = None
-		if self.ismain:
+		if self.main_or_hologram:
+			if not self.ismain and render_counter % 2 == 1:
+				return None #flickering holograms
+			
 			if self.death_counter > 0:
 				path = 'protagonist/s.png'
 				if self.death_type == 'goo':
@@ -236,7 +240,7 @@ class Sprite:
 		if self.isblock:
 			y += 8
 		
-		if self.ismain or self.staticy or self.isjanitor or self.issupervisor or self.israt:
+		if self.main_or_hologram or self.staticy or self.isjanitor or self.issupervisor or self.israt:
 			if self.staticy and self.ttype.startswith('block|'):
 				y += 16
 			y += 8

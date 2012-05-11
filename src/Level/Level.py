@@ -14,7 +14,12 @@ class Level:
 		self.teleporters = TeleporterManager(self)
 		self.switch_manager = SwitchManager(self)
 		self.sprite_introducer = get_hacks_for_level(name, 'introduce_sprites')
+		self.hologram_manager = HologramManager(self)
 		self.counter = 0
+		self.hologram_pads = []
+	
+	def get_hologram_pads(self):
+		return self.hologram_pads
 	
 	def spray_from(self, sprite):
 		col = int(sprite.x // 16)
@@ -125,6 +130,7 @@ class Level:
 		references = make_grid(self.width, self.height, None)
 		moving_platforms = []
 		self.switches = []
+		self.hologram_pads = []
 		self.teleporter_tiles = []
 		tilestore = get_tile_store()
 		i = 0
@@ -154,6 +160,9 @@ class Level:
 						
 						if t.isswitch:
 							self.switches.append((x, y, len(referenceStack), t))
+						
+						if t.isholopad:
+							self.hologram_pads.append((x, y, len(referenceStack), t.id == 'clone'))
 						
 						if t.id in ('rat', 'rat2', 'rat3', 'rat4'):
 							if t.id == 'rat':
@@ -190,6 +199,7 @@ class Level:
 			y = x[1]
 			z = x[2]
 			x = x[0]
+		if z < 0: return None
 		lookup = self.cellLookup[x][y]
 		if len(lookup) <= z:
 			return None

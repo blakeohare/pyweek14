@@ -30,6 +30,8 @@ class PlayScene:
 			self.player.last_direction_of_movement = dir
 			self.player.standingon = self.level.get_tile_at(x, y, z - 1)
 		
+		self.holograms = []
+		
 		level_pixel_width = self.level.height * 16 + self.level.width * 16
 		level_pixel_height = level_pixel_width // 2 + 12 * 8
 		self.fixed_x = level_pixel_width < 400
@@ -57,7 +59,10 @@ class PlayScene:
 			if self.player.spray_counter < 0:
 				self.player.dx = dx
 				self.player.dy = dy
-		
+				
+				for h in self.holograms:
+					h.dx = dx
+					h.dy = dy
 		
 	
 	def update(self, counter):
@@ -99,7 +104,22 @@ class PlayScene:
 		
 		self.level.switch_manager.update_enabled(self.sprites, False)
 		
+		self.do_hologram_stuff()
+		
+	def do_hologram_stuff(self):
+		self.level.hologram_manager.update(self, self.level, self.player)
+		
+		anim = self.level.hologram_manager.animation_sequence()
+		if anim != None:
+			self.player.immobilized = True
+			if anim == 0:
+				self.player.immobilized = False
+		
+		for sprite in self.level.hologram_manager.get_new_sprites():
+			self.sprites.append(sprite)
+			self.holograms.append(sprite)
 		self.counter += 1
+	
 	
 	def restart_level(self):
 		self.next = TransitionScene(self, PlayScene(self.level.name))

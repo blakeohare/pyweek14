@@ -24,6 +24,7 @@ class Tile:
 		self.image_count = len(self.images)
 		self.height = height
 		self.no_blocks = False
+		self.isholopad = id in ('clone', 'clone2')
 		self.pushable = flags_contains(flags, 's')
 		self.blocking = flags_contains(flags, 'x')
 		self.circuit = flags_contains(flags, 'eh')
