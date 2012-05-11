@@ -1,3 +1,9 @@
+# yields:
+# - 120 frames: janitor hands can to protagonist
+# - 180 frames: supervisor leaves
+# - 60 frames: janitor hands over walkie talkie
+# - 180 frames: janitor leaves
+
 i|supervisor
 s|s|Hey, how's it going?
 s|s|You've been with us for...
@@ -12,8 +18,8 @@ c
 s|s|...yes, very well!
 cc
 s|s|To show how much we appreciate your
-s|s|hard work, I’d like to give you a 
-s|s|very crucial assignment because you’re-
+s|s|hard work, I'd like to give you a 
+s|s|very crucial assignment because you're-
 cc
 i|janitor
 s|j|Expendable.
@@ -36,8 +42,8 @@ i|supervisor
 s|s|Leaving his research notes behind.
 cc
 s|s|Unfortunately, his lab is, shall we say,
-p|30
-s|s|cluttered.
+p|60
+s|s|"cluttered".
 cc
 i|janitor
 s|j|Seen rats in there that walk like men.
@@ -53,25 +59,93 @@ c
 s|s|We must retrieve this research at all
 s|s|costs; fortunately, we have you.
 c
-s|s|Your records indicate that you’re
+s|s|Your records indicate that you're
 s|s|extremely talented, intelligent,
 s|s|dedicated-
 cc
 i|janitor
 s|j|Desperate.
 cc
-end
-Supervisor: You’ll do a superb job! Now, there might be some slightly hazardous materials in the lab...
-*Janitor hands the Intern a can of ACME All-Purpose Radiation Decontaminant*
-Janitor: You’re going to need this, sunshine.
-Intern: Hazardous materials?Like what?
-Supervisor: Oh, they’re really only mildly hazardous; probably won’t cause any mutations at all. Incidentally, you’ll need to sign this waiver first. Also, I’d like to mention that, if you do succeed, I believe I can get you that letter of recommendation you need-
-
-
+i|supervisor
+s|s|You'll do a superb job! Now, there might
+s|s|be some slightly hazardous materials 
+s|s|in the lab...
+cc
+#h|intro_janitor_hand_can
 i|janitor
-s|0|255|0|Good morning
-s|0|255|0|Lorem ipsum dolar sit amet
-i|protagonist-happy
+s|j|You're going to need this, sunshine.
+y|90
+p|90
+cc
+r
+s|w|Received a questionable-looking
+s|w|spraycan.
+cc
+i|protagonist-nervous
+s|p|Hazardous materials?
+p|40
+s|p|Like what?
+cc
+i|supervisor
+s|s|Oh, they're really only mildly
+s|s|hazardous; probably won't cause any
+s|s|mutations at all.
+c
+s|s|Incidentally, you'll need to sign this
+s|s|waiver first. Also, I'd like to mention
+s|s|that, if you do succeed, I believe I can
+c
+s|s|get you that letter of recommendation
+s|s|you need-
+cc
+i|protagonist-exclaim
+s|p|I'll do it!
+cc
+i|supervisor
+s|s|Excellent! You'll be escorted to the
+s|s|entrance to his lab shortly.
+c
+s|s|It's a large space, so be sure to look
+s|s|everywhere. Remember, we need that
+s|s|research!
+cc
+#h|intro_supervisor_leave
+r
+y|180
+p|180
+i|janitor
+s|j|Rats that walk like men, kid.
+cc
+i|protagonist-hmm
+s|p|They don't really exist, do they?
+cc
+i|janitor
+s|j|Wanna bet? Take this.
+cc
+r
+#h|intro_janitor_walkie_talkie
+y|90
+p|90
+s|w|Received a Walkie Talkie.
+cc
+i|janitor
+s|j|This way you can keep me posted about
+s|j|where you are in the lab.
+cc
+i|protagonist-sarcastic
+p|60
+s|p|Why?
+cc
+i|janitor
+s|j|So I don't have to look too hard for
+s|j|your body.
+c
+s|j|Adios!
+cc
+y|180
+i|protagonist-sad
 p|120
-i|protagonist-crying
+i|protagonist-nervous
 p|120
+
+#h|transition_level_one

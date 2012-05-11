@@ -67,6 +67,8 @@ class Sprite:
 		self.immobilized = False
 		self.ismain = type == 'main'
 		self.isjanitor = type == 'janitor'
+		self.holding_spray = False
+		self.holding_walkie = False
 		self.issupervisor = type == 'supervisor'
 		self.isblock = type.startswith('block|')
 		self.height = 4
@@ -102,6 +104,7 @@ class Sprite:
 	
 	def set_automation(self, automation):
 		self.automation = automation
+		automation.sprite = self
 	
 	
 	def render_me(self, screen, xOffset, yOffset, render_counter):
@@ -146,15 +149,20 @@ class Sprite:
 				path += '.png'
 			img = get_image(path)
 		elif self.isjanitor:
-			dir = self.last_direction_of_movement
-			if dir == 's' or dir == 'n':
-				dir += 'e'
-			elif dir == 'e' or dir == 'w':
-				dir = 's' + dir
-			path = 'janitor/' + dir
-			if self.is_moving:
-				path += str([1, 2, 3, 4, 3, 2][(render_counter // 6) % 6])
-			path += '.png'
+			if self.holding_spray:
+				path = 'janitor/spray2.png'
+			elif self.holding_walkie:
+				path = 'janitor/walkietalkie2.png'
+			else:
+				dir = self.last_direction_of_movement
+				if dir == 's' or dir == 'n':
+					dir += 'e'
+				elif dir == 'e' or dir == 'w':
+					dir = 's' + dir
+				path = 'janitor/' + dir
+				if self.is_moving:
+					path += str([1, 2, 3, 4, 3, 2][(render_counter // 6) % 6])
+				path += '.png'
 			img = get_image(path)
 		elif self.issupervisor:
 			dir = self.last_direction_of_movement

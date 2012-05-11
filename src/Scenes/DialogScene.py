@@ -1,5 +1,3 @@
-
-
 class TextPrinter:
 	def __init__(self, text, color):
 		self.text = text
@@ -46,8 +44,9 @@ class DialogScene:
 		self.buffer = []
 		self.clear_on_continue = False
 		self.colors = {
+			'w':(255, 255, 255),
 			's':(220, 180, 140),
-			'j':(120, 160, 200),
+			'j':(140, 180, 230),
 			'p':(255, 120, 180)
 		}
 		self.buffer_clear_counter = -42
@@ -85,6 +84,10 @@ class DialogScene:
 		self.frame_yielding -= 1
 		
 		if self.frame_yielding >= 0:
+			for s in self.playscene.sprites:
+				if s.issupervisor:
+					#print 'supervisor:', s.automation.counter
+					pass
 			self.playscene.update(counter)
 		
 		keep_going = True
@@ -132,6 +135,7 @@ class DialogScene:
 							if len(self.buffer) == 3:
 								self.buffer_clear_counter = 10
 								keep_going = False
+								self.i -= 1
 							else:
 								color = self.colors[parts[1]]
 								text = parts[2]
@@ -140,11 +144,12 @@ class DialogScene:
 						elif command == 'c':
 							self.prompt_for_continue = True
 							self.clear_on_continue = False
+							keep_going = False
 						elif command == 'cc':
 							self.prompt_for_continue = True
 							self.clear_on_continue = True
 						elif command == 'h':
-							hack_function = get_hacks_for_level(self.playscene.level.name, 'dialog_hack')[command[1]]
+							hack_function = get_hacks_for_level(self.playscene.level.name, 'dialog_hack')[parts[1]]
 							hack_function(self.playscene, self.playscene.level)
 						elif command == 'y':
 							self.frame_yielding = int(parts[1])
@@ -166,7 +171,10 @@ class DialogScene:
 					keep_going = False
 	
 	def change_portrait(self, id):
-		self.active_portrait = get_image('portraits/' + id + '.png')
+		if id == None:
+			self.active_portrait = None
+		else:
+			self.active_portrait = get_image('portraits/' + id + '.png')
 		
 	
 	def do_goto(self, label):
@@ -232,6 +240,7 @@ class DialogScene:
 		pygame.draw.rect(screen, (255, 255, 255), pygame.Rect(x, y, width, height), 1)
 		
 	def render(self, screen, counter):
+		
 		self.playscene.render(screen, counter)
 		
 		self.render_box(screen, self.phase, self.phase_counter)
@@ -248,7 +257,7 @@ class DialogScene:
 			cursor_height = y + line_height * 3
 			
 			if self.buffer_clear_counter > 0:
-				y -= self.buffer_clear_counter * line_height // 10
+				y -= (10 - self.buffer_clear_counter) * line_height // 10
 			for line in self.buffer:
 				text = line[0]
 				color = line[1]
