@@ -65,7 +65,9 @@ class Sprite:
 		self.standingon = None
 		self.type = type
 		self.immobilized = False
+		self.spray_counter = -1
 		self.ismain = type == 'main'
+		self.main_or_hologram = self.ismain or type == 'hologram|main'
 		self.isjanitor = type == 'janitor'
 		self.holding_spray = False
 		self.holding_walkie = False
@@ -152,7 +154,9 @@ class Sprite:
 				if self.pushing != None:
 					dir = self.pushing.lower() + 'push'
 				path = 'protagonist/' + dir
-				if self.is_moving:
+				if self.spray_counter >= 0:
+					path += 'spray' + str(((render_counter // 3) % 4) + 1)
+				elif self.is_moving:
 					path += str([1, 2, 3, 4, 3, 2][(render_counter // 6) % 6])
 				path += '.png'
 			img = get_image(path)
@@ -245,6 +249,7 @@ class Sprite:
 	
 	def update(self, level):
 		self.death_counter -= 1
+		self.spray_counter -= 1
 		
 		if self.death_counter == 1:
 			self.garbage_collect = True
@@ -492,7 +497,7 @@ class Sprite:
 				new_layer = int(self.z // 8)
 				
 				occupying = level.get_tile_at(new_col, new_row, new_layer)
-				if occupying != None and occupying.is_goo:
+				if occupying != None and occupying.is_goo and self.main_or_hologram:
 					self.death_counter = 60
 					self.death_type = 'goo'
 					self.immobilized = True
