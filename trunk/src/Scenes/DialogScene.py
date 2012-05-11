@@ -141,6 +141,8 @@ class DialogScene:
 								text = parts[2]
 								self.buffer.append(['', color])
 								self.text_printer = TextPrinter(text, None)
+						elif command == 'snd':
+							play_sound(parts[1])
 						elif command == 'c':
 							self.prompt_for_continue = True
 							self.clear_on_continue = False
