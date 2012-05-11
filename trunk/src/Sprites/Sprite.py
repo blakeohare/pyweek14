@@ -287,6 +287,9 @@ class Sprite:
 		if self.rat_blocked_counter == 0:
 			self.flip_rat_trot_mode()
 		
+		if self.z < -200:
+			self.garbage_collect = True
+		
 		if self.rat_blocked_counter < 0:
 			if self.impeded_last_go_round:
 				self.rat_blocked_counter = 60
@@ -306,7 +309,11 @@ class Sprite:
 				col = int(newx // 16)
 				row = int(newy // 16)
 				layer = int(self.z // 8) - 1
-				tile = level.get_tile_at(col, row, layer)
+				if layer >= 0:
+					tile = level.get_tile_at(col, row, layer)
+				else:
+					tile = None
+					
 				if tile == None or not tile.blocking:
 					self.rat_blocked_counter = 60
 					self.dx = 0
