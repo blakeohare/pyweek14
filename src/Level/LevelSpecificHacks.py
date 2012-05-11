@@ -95,6 +95,12 @@ _level_specific_hacks = {
 			'P SW SW P P NE NE P'
 		]
 	},
+	
+	'90-0': {
+		'moving_platforms': [
+			'SW SW SW P P NE NE NE P P'
+		]
+	}
 }
 
 def get_hacks_for_level(name, category):
