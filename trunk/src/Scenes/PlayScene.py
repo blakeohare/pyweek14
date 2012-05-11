@@ -84,7 +84,6 @@ class PlayScene:
 				dx = sprite.x - player.x
 				dy = sprite.y - player.y
 				distance = dx * dx + dy * dy
-				print distance
 				if distance < 256:
 					player.death_by_rat = 1
 					player.immobilized = True
