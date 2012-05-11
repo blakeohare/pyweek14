@@ -673,7 +673,7 @@ class Sprite:
 		self.dy = 0
 		self.dz = 0
 		
-		if self.ismain:
+		if self.main_or_hologram:
 			self.try_pick_up_powerups(level)
 	
 	def try_pick_up_powerups(self, level):
