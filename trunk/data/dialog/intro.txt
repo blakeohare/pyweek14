@@ -5,108 +5,158 @@
 # - 180 frames: janitor leaves
 
 i|supervisor
+snd|talktalk.wav
 s|s|Hey, how's it going?
 s|s|You've been with us for...
 cc
+snd|talk.wav
 i|protagonist-happy
 s|p|Two months.
 cc
+snd|talktalk.wav
 i|supervisor
 s|s|Two months, now. That's quite a while
+snd|talktalk.wav
 s|s|and I think you've done well, Miss, uh...
 c
+snd|talk.wav
 s|s|...yes, very well!
 cc
+|
+snd|talktalk.wav
 s|s|To show how much we appreciate your
+snd|talktalk.wav
 s|s|hard work, I'd like to give you a 
+snd|talktalk.wav
 s|s|very crucial assignment because you're-
 cc
+snd|talk.wav
 i|janitor
 s|j|Expendable.
 cc
 i|supervisor
+snd|talk.wav
 s|s|-extremely talented!
 cc
+snd|talktalk.wav
 i|protagonist
 s|p|Um, thanks, I guess. What is this
 s|p|assignment?
 cc
 i|supervisor
+snd|talktalk.wav
 s|s|Well, Dr. Flügenmeister has, uh, gone
+snd|talktalk.wav
 s|s|on an unannounced leave of absence-
 cc
 i|janitor
+snd|talk.wav
 s|j|Disappeared.
 cc
 i|supervisor
+snd|talktalk.wav
 s|s|Leaving his research notes behind.
 cc
+snd|talktalk.wav
 s|s|Unfortunately, his lab is, shall we say,
 p|60
+snd|talk.wav
 s|s|"cluttered".
 cc
 i|janitor
+snd|talktalk.wav
 s|j|Seen rats in there that walk like men.
 cc
 i|supervisor
+snd|talktalk.wav
 s|s|Recently, he made a very important, 
+snd|talktalk.wav
 s|s|even critical, discovery.
 c
+snd|talktalk.wav
 s|s|I can not stress enough how vitally
+snd|talktalk.wav
 s|s|important his work is, not only to our
+snd|talktalk.wav
 s|s|company, but to mankind!
 c
+snd|talktalk.wav
 s|s|We must retrieve this research at all
+snd|talktalk.wav
 s|s|costs; fortunately, we have you.
 c
+snd|talktalk.wav
 s|s|Your records indicate that you're
+snd|talktalk.wav
 s|s|extremely talented, intelligent,
+snd|talk.wav
 s|s|dedicated-
 cc
 i|janitor
+snd|talk.wav
 s|j|Desperate.
 cc
 i|supervisor
+snd|talktalk.wav
 s|s|You'll do a superb job! Now, there might
+snd|talktalk.wav
 s|s|be some slightly hazardous materials 
+snd|talk.wav
 s|s|in the lab...
 cc
 #h|intro_janitor_hand_can
 i|janitor
+snd|talktalk.wav
 s|j|You're going to need this, sunshine.
 y|90
 p|90
 cc
 r
+snd|pickup.wav
 s|w|Received a questionable-looking
 s|w|spraycan.
 cc
 i|protagonist-nervous
+snd|talk.wav
 s|p|Hazardous materials?
 p|40
+snd|talk.wav
 s|p|Like what?
 cc
 i|supervisor
+snd|talktalk.wav
 s|s|Oh, they're really only mildly
+snd|talktalk.wav
 s|s|hazardous; probably won't cause any
 s|s|mutations at all.
 c
+snd|talktalk.wav
 s|s|Incidentally, you'll need to sign this
+snd|talktalk.wav
 s|s|waiver first. Also, I'd like to mention
+snd|talktalk.wav
 s|s|that, if you do succeed, I believe I can
 c
+snd|talktalk.wav
 s|s|get you that letter of recommendation
+snd|talk.wav
 s|s|you need-
 cc
+snd|talk.wav
 i|protagonist-exclaim
 s|p|I'll do it!
 cc
 i|supervisor
+snd|talktalk.wav
 s|s|Excellent! You'll be escorted to the
+snd|talktalk.wav
 s|s|entrance to his lab shortly.
 c
+snd|talktalk.wav
 s|s|It's a large space, so be sure to look
+snd|talktalk.wav
 s|s|everywhere. Remember, we need that
+snd|talk.wav
 s|s|research!
 cc
 #h|intro_supervisor_leave
@@ -114,32 +164,42 @@ r
 y|180
 p|180
 i|janitor
+snd|talktalk.wav
 s|j|Rats that walk like men, kid.
 cc
+snd|talktalk.wav
 i|protagonist-hmm
 s|p|They don't really exist, do they?
 cc
 i|janitor
+snd|talktalk.wav
 s|j|Wanna bet? Take this.
 cc
 r
 #h|intro_janitor_walkie_talkie
 y|90
 p|90
+snd|pickup.wav
 s|w|Received a Walkie Talkie.
 cc
 i|janitor
+snd|talktalk.wav
 s|j|This way you can keep me posted about
+snd|talktalk.wav
 s|j|where you are in the lab.
 cc
 i|protagonist-sarcastic
 p|60
+snd|talk.wav
 s|p|Why?
 cc
 i|janitor
+snd|talktalk.wav
 s|j|So I don't have to look too hard for
+snd|talk.wav
 s|j|your body.
 c
+snd|talk.wav
 s|j|Adios!
 cc
 y|180
