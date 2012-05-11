@@ -22,7 +22,6 @@ class Level:
 		dir = sprite.last_direction_of_movement
 		x = sprite.x % 16
 		y = sprite.y % 16
-		print col, row, layer, dir
 		
 		if dir == 'n':
 			if y < x:
@@ -54,8 +53,6 @@ class Level:
 			row += 1
 		elif dir == 'se':
 			col += 1
-		
-		print col, row, layer, dir
 		
 		maybe_goo = self.get_tile_at(col, row, layer)
 		if maybe_goo != None and maybe_goo.is_goo:
