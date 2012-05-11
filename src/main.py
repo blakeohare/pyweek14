@@ -10,6 +10,7 @@ def get_user_debug_message():
 def main():
 
 	pygame.init()
+	pygame.display.set_caption("Sudo Scientific")
 	real_screen = pygame.display.set_mode((800, 600))
 	fake_screen = pygame.Surface((400, 300))
 	fps = 60
@@ -88,6 +89,3 @@ def main():
 		delay = 1.0 / fps - diff
 		if delay > 0:
 			time.sleep(delay)
-		else:
-			pass #print "----FRAME RATE DIPPING!!!!-----"
-		#print rate
