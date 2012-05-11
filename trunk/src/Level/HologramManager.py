@@ -13,6 +13,7 @@ class HologramManager:
 		self.copy_mode_counter = -1
 		self.used = False
 		self.new_sprites = []
+		self.sprites_created = []
 		
 	def get_new_sprites(self):
 		ns = self.new_sprites
@@ -22,6 +23,10 @@ class HologramManager:
 	def animation_sequence(self):
 		if self.copy_mode_counter < 0:
 			return None
+		else:
+			copy_process = self.copy_mode_counter > 0
+			for sprite in self.sprites_created:
+				sprite.clone_creating = copy_process
 		return self.copy_mode_counter
 	
 	def update(self, playscene, level, player):
@@ -48,3 +53,4 @@ class HologramManager:
 				pr = p[1]
 				pl = p[2] + 1
 				self.new_sprites.append(Sprite(pc * 16 + 8, pr * 16 + 8, pl * 8, 'hologram|main'))
+			self.sprites_created = self.new_sprites[:]
