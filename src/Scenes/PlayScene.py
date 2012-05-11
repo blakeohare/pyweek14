@@ -79,9 +79,15 @@ class PlayScene:
 		self.sprites = filtered + level.get_new_sprites()
 		
 		if self.player.death_counter == 1:
-			self.next = TransitionScene(self, PlayScene(self.level.name))
+			self.restart_level()
+		
+		if self.player.z < -140:
+			self.restart_level()
 		
 		self.counter += 1
+	
+	def restart_level(self):
+		self.next = TransitionScene(self, PlayScene(self.level.name))
 	
 	def render(self, screen, counter):
 		sprites_to_add = []
