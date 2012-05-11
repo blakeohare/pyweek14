@@ -64,6 +64,7 @@ class Level:
 		return output
 	
 	def initialize(self):
+		self.rats = []
 		lines = read_file('data/levels/' + self.name + '.txt').split('\n')
 		values = {}
 		for line in lines:
@@ -75,7 +76,6 @@ class Level:
 					value = ':'.join(parts[1:])
 					values[key] = value
 		self.values = values
-		
 		self.width = int(self.values['width'])
 		self.height = int(self.values['height'])
 		self.initialize_tiles(self.values['tiles'].split(','))
@@ -112,12 +112,30 @@ class Level:
 							moving_platforms.append((x, y, len(referenceStack)))
 						if t.id in ('t1', 't2', 't3'):
 							self.teleporter_tiles.append((x, y, len(referenceStack), t.id))
-						z = 0
-						while z < t.height:
-							referenceStack.append(len(tileStack))
-							z += 1
 						
-						tileStack.append(t)
+						if t.id in ('rat', 'rat2', 'rat3', 'rat4'):
+							if t.id == 'rat':
+								dir = 'se'
+							elif t.id == 'rat2':
+								dir = 'ne'
+							elif t.id == 'rat3':
+								dir = 'sw'
+							else:
+								dir = 'nw'
+							sprite = Sprite(x * 16 + 8, y * 16 + 8, len(tileStack) * 8, 'rat|' + dir)
+							self.rats.append(sprite)
+							sprite.standingon = tileStack[-1] # This will explode if a rat is placed on the bottom row of the map
+							
+							referenceStack.append(None)
+							tileStack.append(None)
+						else:
+								
+							z = 0
+							while z < t.height:
+								referenceStack.append(len(tileStack))
+								z += 1
+							
+							tileStack.append(t)
 				
 			
 			i += 1

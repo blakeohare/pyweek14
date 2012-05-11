@@ -5,6 +5,10 @@ class PlayScene:
 		self.level = Level(level_name)
 		self.player = Sprite(17, 177, 32, 'main')
 		self.sprites = [self.player]
+		for rat in self.level.rats:
+			rat.z = 8 * 8
+			rat.standingon = None
+			self.sprites.append(rat)
 		self.overlay = PlaySceneOverlay(self, self.level)
 		self.do_not_override_start = False
 		level_manager = get_level_manager()
