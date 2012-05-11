@@ -10,6 +10,7 @@ class Circuits:
 		self.refresh_groups(True)
 		
 	def refresh_charges(self):
+		goo_was_fried = False
 		on_circuits = get_hacks_for_level(self.level.name, 'on_circuits')
 		if on_circuits == None:
 			on_circuits = []
@@ -39,8 +40,16 @@ class Circuits:
 					id = ((id + 'on') if is_group_on else id)
 					tile = get_tile_store().get_tile(id)
 					self.level.modify_block(coord[0], coord[1], coord[2], tile)
+					if is_group_on:
+						goo_check = self.level.get_tile_at(coord[0], coord[1], coord[2] + 1)
+						if goo_check != None and goo_check.is_goo:
+							self.level.modify_block(coord[0], coord[1], coord[2] + 1, None)
+							goo_was_fried = True
 			group_id += 1
 		self.on_groups = on_groups
+		if goo_was_fried:
+			pass
+			# TODO: play frying goo noise
 		
 	def refresh_groups(self, first_time=False):
 		self.groups = []
