@@ -63,10 +63,14 @@ class MovingPlatformManager:
 										blocked = False
 										if len(spritification) == 0:
 											for z_offset in (z + 0, z + 1):
-												if len(neighbor_lookup) < z_offset:
+												if len(neighbor_lookup) <= z_offset:
 													pass
 												else:
-													ntile = neighbor_lookup[z_offset]
+													
+													if z_offset < 0:
+														ntile = None
+													else:
+														ntile = neighbor_lookup[z_offset]
 													if ntile != None:
 														ntile = neighbor_stack[ntile]
 														if ntile != None and ntile.blocking:
