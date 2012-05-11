@@ -107,7 +107,6 @@ class PlayScene:
 		self.do_hologram_stuff()
 		
 		if self.level.complete:
-			print 'level completed!'
 			next_level = get_level_manager().get_next_level(self.level.name)
 			self.next = TransitionScene(self, PlayScene(next_level))
 		
