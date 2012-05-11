@@ -67,6 +67,36 @@ _level_specific_hacks = {
 		]
 	},
 	
+	'16-0': {
+		'moving_platforms': [
+			'NW NW P P SE SE P P',
+			'NE NE NE NE P P SW SW SW SW P P',
+			'NW NW NW NW P P SE SE SE SE P P'
+		]
+	},
+	
+	'17-3': {
+		'moving_platforms': [
+			'SW SW SW SW SW P P NE NE NE NE NE P P'
+		]
+	},
+	
+	'18-0': {
+		'moving_platforms': [
+			'SE SE NW NW NW NW NW NW NW NW NW NW SE SE SE SE SE SE SE SE',
+			'NW NW SE SE SE SE SE SE SE SE SE SE NW NW NW NW NW NW NW NW',
+			'NW NW NW NW NW NW NW NW NW SE SE SE SE SE SE SE SE SE SE NW',
+			'NW NW NW NW SE SE SE SE SE SE SE SE SE SE NW NW NW NW NW NW',
+			'SE SE SE NW NW NW NW NW NW NW NW NW NW SE SE SE SE SE SE SE',
+			'NW SE SE SE SE SE SE SE SE SE SE NW NW NW NW NW NW NW NW NW',
+			'SE SE SE SE NW NW NW NW NW NW NW NW NW NW SE SE SE SE SE SE',
+			'NW NW NW NW NW NW NW SE SE SE SE SE SE SE SE SE SE NW NW NW',
+			'SE SE SE SE SE SE SE SE SE SE NW NW NW NW NW NW NW NW NW NW',
+			'SE SE SE SE SE SE SE SE NW NW NW NW NW NW NW NW NW NW SE SE',
+			'NW NW NW NW NW NW NW NW NW NW SE SE SE SE SE SE SE SE SE SE'
+		]
+	},
+	
 	'21-0': {
 		'moving_platforms': [
 			'NW NW P P SE SE SE SE P P NW NW'
