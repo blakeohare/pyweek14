@@ -74,6 +74,7 @@ class Sprite:
 		self.issupervisor = type == 'supervisor'
 		self.isblock = type.startswith('block|')
 		self.israt = type.startswith('rat|')
+		self.death_by_rat = 0
 		self.impeded_last_go_round = False
 		self.rat_trot_mode = None
 		self.rat_blocked_counter = -42
@@ -162,7 +163,9 @@ class Sprite:
 				path = 'protagonist/s.png'
 				if self.death_type == 'goo':
 					path = 'protagonist/goo' + str((int(render_counter // 3) % 4) + 1) + '.png'
-				
+			elif self.death_by_rat > 0:
+				path = 'protagonist/rat'
+				path += str((int(self.death_by_rat // 3) % 4) + 1) + '.png'
 			elif self.standingon == None:
 				path = 'protagonist/fall' + str((int(render_counter // 3) % 4) + 1) + '.png'
 			else:
