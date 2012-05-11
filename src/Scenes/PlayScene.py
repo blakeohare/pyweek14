@@ -39,11 +39,21 @@ class PlayScene:
 			self.do_stuff(self, self.level, -1)
 	
 	def process_input(self, events, pressed, axes, mouse):
+		
+		for event in events:
+			if event.key == 'spray' and event.down:
+				self.player.spray_counter = 30
+				# TODO: play spray sound
+			
+		
 		if not self.player.immobilized and self.player.automation == None:
 			dx = axes[0]
 			dy = axes[1]
-			self.player.dx = dx
-			self.player.dy = dy
+			if self.player.spray_counter < 0:
+				self.player.dx = dx
+				self.player.dy = dy
+		
+		
 	
 	def update(self, counter):
 		level = self.level
