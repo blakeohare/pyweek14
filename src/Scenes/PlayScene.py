@@ -56,7 +56,8 @@ class PlayScene:
 					increment_persisted_level_int('decontaminant', -1)
 					self.player.spray_counter = 30
 					self.level.spray_from([self.player] + self.holograms)
-			
+			if event.key == 'start' and event.down:
+				self.next = PauseScene(self)
 		
 		if not self.player.immobilized and self.player.automation == None:
 			dx = axes[0]
