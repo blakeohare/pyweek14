@@ -79,6 +79,40 @@ class Level:
 		self.width = int(self.values['width'])
 		self.height = int(self.values['height'])
 		self.initialize_tiles(self.values['tiles'].split(','))
+		
+		self.initialize_switch_actions(values)
+	
+	def initialize_switch_actions(self, values):
+		pswitches = {}
+		nswitches = {}
+		for key in values.keys():
+			if key.startswith('action|'):
+				sign = 1
+				if key.startswith('action|negative|'):
+					sign = -1
+				name = key.split('|')[-1]
+				value = values[key]
+				if sign == 1:
+					pswitches[name] = value
+				else:
+					nswitches[name] = value
+				
+		self.pswitches = pswitches
+		self.nswitches = nswitches
+	
+	def activate_switch(self, name, is_positive):
+		lookup = self.nswitches
+		if is_positive:
+			lookup = self.pswitches
+		ts = get_tile_store()
+		for change in lookup.get(name).split('%'):
+			parts = change.split('^')
+			col = int(parts[0])
+			row = int(parts[1])
+			layer = int(parts[2])
+			id = parts[3]
+			tile = None if (id == '0') else ts.get_tile(id)
+			self.modify_block(col, row, layer, tile)
 	
 	def initialize_tiles(self, tiles):
 		width = self.width
