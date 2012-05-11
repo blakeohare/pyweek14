@@ -1,0 +1,2 @@
+int1	genericinternfront.png	4	x
+int2	genericinternback.png	4	x
