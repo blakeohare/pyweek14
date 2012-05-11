@@ -1,6 +1,12 @@
 _switch_mapping = {
 	'4-0': [
 		'blue'
+	],
+	
+	'5-0': [
+		'bridge',
+		None,
+		None
 	]
 }
 
@@ -8,6 +14,15 @@ def override_switch_behavior(manager, level, index):
 	enabled = manager.enabled
 	name = level.name
 	
+	if name == '5-0':
+		if index > 0:
+			if enabled[1] and enabled[2]:
+				level.activate_switch('door', True)
+			else:
+				level.activate_switch('door', False)
+				
+			return True
+	return False
 
 
 class SwitchManager:
@@ -125,10 +140,13 @@ class SwitchManager:
 	def do_action(self, level, name, switch_index, positive):
 		global _switch_mapping
 		
+		if override_switch_behavior(self, level, switch_index):
+			return
+		
 		mapping = _switch_mapping.get(name)
 		if mapping != None:
-			m = mapping[switch_index]
-			level.activate_switch(m, positive)
+			action_name = mapping[switch_index]
+			level.activate_switch(action_name, positive)
 		#print "Level", name, switch_index, positive
 		#pass
 		
