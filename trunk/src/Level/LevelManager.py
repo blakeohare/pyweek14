@@ -37,7 +37,7 @@ class LevelManager:
 				('19b-1', None),
 				('19-0', None),
 				('20-0', None),
-				('21-0', None),
+				('21-0', None, (9, 13, 2, 'ne')),
 				('flipmaze', None),
 				('25-0', None),
 				('24-0', None),

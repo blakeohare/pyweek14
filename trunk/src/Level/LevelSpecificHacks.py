@@ -65,6 +65,12 @@ _level_specific_hacks = {
 			'NW P P SE SE SE P P NW NW', 
 			'SW P P NE NE NE P P SW SW'
 		]
+	},
+	
+	'21-0': {
+		'moving_platforms': [
+			'NW NW P P SE SE SE SE P P NW NW'
+		]
 	}
 }
 
