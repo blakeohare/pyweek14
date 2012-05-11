@@ -470,6 +470,10 @@ class Sprite:
 								pt = level.get_push_tracker(self)
 								prev_push_target = pt.push_target
 								pt.push_target = None
+								
+								if self.ismain and t.isexit:
+									level.complete = True
+								
 								if t.pushable and direction != None and len(direction) == 2:
 									blocked = True
 									push_key = str(col) + '^' + str(row) + '^' + str(tz)

@@ -33,6 +33,7 @@ class Tile:
 		self.teleporter = id == 't1'
 		self.power_input = id == 'pi'
 		self.power_output = id == 'po'
+		self.isexit = id in ('37', '38')
 		self.cant_push_over = flags_contains(flags, 'n')
 		self.research = id == '41'
 		self.goo = id in ('42', '43', '44')

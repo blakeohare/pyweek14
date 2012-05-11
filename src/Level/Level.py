@@ -15,6 +15,7 @@ class Level:
 		self.newsprites = []
 		self.circuitry = Circuits(self)
 		self.render_exceptions = []
+		self.complete = False
 		self.moving_platforms = MovingPlatformManager(self)
 		self.teleporters = TeleporterManager(self)
 		self.switch_manager = SwitchManager(self)
