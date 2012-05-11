@@ -7,6 +7,12 @@ _switch_mapping = {
 		'bridge',
 		None,
 		None
+	],
+	
+	'10-2': [
+		'bridgene',
+		'bridgenw',
+		'bridgese'
 	]
 }
 
