@@ -63,9 +63,15 @@ class PlayScene:
 	
 	def update(self, counter):
 		level = self.level
+		player = self.player
 		
 		if self.do_stuff != None:
 			self.do_stuff(self, level, self.counter)
+		
+		if player.death_by_rat > 0:
+			player.death_by_rat += 1
+			if player.death_by_rat == 90:
+				self.restart_level()
 		
 		filtered = []
 		for sprite in self.sprites:
@@ -73,9 +79,18 @@ class PlayScene:
 			sprite = sprite.get_replacement_sprite()
 			if not sprite.garbage_collect:
 				filtered.append(sprite)
-			else:
-				pass
-				#print 'garbage_collected!'
+			
+			if sprite.israt and not player.death_by_rat:
+				dx = sprite.x - player.x
+				dy = sprite.y - player.y
+				distance = dx * dx + dy * dy
+				print distance
+				if distance < 256:
+					player.death_by_rat = 1
+					player.immobilized = True
+		
+		
+		
 		self.sprites = filtered + level.get_new_sprites()
 		
 		if self.player.death_counter == 1:
