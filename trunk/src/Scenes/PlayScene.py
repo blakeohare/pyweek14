@@ -39,11 +39,13 @@ class PlayScene:
 			self.do_stuff(self, self.level, -1)
 	
 	def process_input(self, events, pressed, axes, mouse):
-		
 		for event in events:
-			if event.key == 'spray' and event.down:
-				self.player.spray_counter = 30
-				# TODO: play spray sound
+			if event.key == 'spray' and event.down and self.player.spray_counter < 0:
+				if get_persisted_level_int('decontaminant') > 0:
+					self.player.spray_counter = 30
+					self.level.spray_from(self.player)
+					play_sound('spray.wav')
+					increment_persisted_level_int('decontaminant', -1)
 			
 		
 		if not self.player.immobilized and self.player.automation == None:
