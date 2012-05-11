@@ -97,6 +97,8 @@ class PlayScene:
 		if self.player.z < -140:
 			self.restart_level()
 		
+		self.level.switch_manager.update_enabled(self.sprites, False)
+		
 		self.counter += 1
 	
 	def restart_level(self):
