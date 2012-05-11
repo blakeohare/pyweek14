@@ -38,12 +38,20 @@ def _hack_do_stuff_intro(playscene, level, counter):
 	
 	if counter == 329 + 14:
 		playscene.next = DialogScene(playscene, 'intro')
+	
+	if counter == 1000:
+		playscene.next = TransitionScene(playscene, PlayScene(get_level_manager().get_next_level('intro')))
+	
+def _hack_dialog_intro_transition_level_one(playscene, level):
+	dialog_scene = playscene.next
+	dialog_scene.next = TransitionScene(dialog_scene, PlayScene('1-1'))
 
 
 _level_specific_hacks = {
 	'intro': {
 		'introduce_sprites': _hack_introduce_sprites_intro,
-		'do_stuff': _hack_do_stuff_intro
+		'do_stuff': _hack_do_stuff_intro,
+		'dialog': { 'transition_level_one': _hack_dialog_intro_transition_level_one }
 	},
 	
 	'9-0': {

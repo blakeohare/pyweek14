@@ -57,6 +57,9 @@ class PlayScene:
 			sprite = sprite.get_replacement_sprite()
 			if not sprite.garbage_collect:
 				filtered.append(sprite)
+			else:
+				pass
+				#print 'garbage_collected!'
 		self.sprites = filtered + level.get_new_sprites()
 		
 		self.counter += 1

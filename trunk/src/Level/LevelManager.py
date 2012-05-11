@@ -15,7 +15,7 @@ def get_level_manager():
 class LevelManager:
 	def __init__(self, story_mode):
 		self.ordering = [
-			('1-2', None),
+			#('1-2', None),
 			('1-3', None),
 			('2-3', None),
 			('3-0', None),
@@ -60,7 +60,7 @@ class LevelManager:
 		i = self.get_current_level_index(current_level_name)
 		next_i = i + 1
 		if next_i < len(self.ordering):
-			return next_i
+			return self.ordering[next_i][0]
 		return None
 	
 	def get_starting_point_for_level(self, name):
