@@ -62,6 +62,9 @@ class PlayScene:
 				#print 'garbage_collected!'
 		self.sprites = filtered + level.get_new_sprites()
 		
+		if self.player.death_counter == 1:
+			self.next = TransitionScene(self, PlayScene(self.level.name))
+		
 		self.counter += 1
 	
 	def render(self, screen, counter):

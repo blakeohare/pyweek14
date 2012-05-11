@@ -16,7 +16,7 @@ class LevelManager:
 	def __init__(self, story_mode):
 		self.ordering = [
 			#('1-2', None),
-			('1-3', None),
+			('1-3', "Lab Entrance", (4, 9, 1, 'ne')),
 			('2-3', None),
 			('3-0', None),
 			('3-1', None),

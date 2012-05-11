@@ -71,6 +71,9 @@ class Sprite:
 		self.holding_walkie = False
 		self.issupervisor = type == 'supervisor'
 		self.isblock = type.startswith('block|')
+		
+		self.death_counter = -1
+		self.death_type = None
 		self.height = 4
 		if self.isblock:
 			self.height = 2
@@ -137,7 +140,12 @@ class Sprite:
 	def get_image(self, render_counter):
 		img = None
 		if self.ismain:
-			if self.standingon == None:
+			if self.death_counter > 0:
+				path = 'protagonist/s.png'
+				if self.death_type == 'goo':
+					path = 'protagonist/goo' + str((int(render_counter // 3) % 4) + 1) + '.png'
+				
+			elif self.standingon == None:
 				path = 'protagonist/fall' + str((int(render_counter // 3) % 4) + 1) + '.png'
 			else:
 				dir = self.last_direction_of_movement
@@ -236,6 +244,10 @@ class Sprite:
 		return self
 	
 	def update(self, level):
+		self.death_counter -= 1
+		
+		if self.death_counter == 1:
+			self.garbage_collect = True
 		
 		if self.automation != None:
 			auto_xy = self.automation.get_next_values()
@@ -476,6 +488,15 @@ class Sprite:
 				new_row = int(self.y // 16)
 				if old_col != new_col or old_row != new_row:
 					on_new_coordinates_now = True
+				
+				new_layer = int(self.z // 8)
+				
+				occupying = level.get_tile_at(new_col, new_row, new_layer)
+				if occupying != None and occupying.is_goo:
+					self.death_counter = 60
+					self.death_type = 'goo'
+					self.immobilized = True
+					
 			
 			if self.automation == None:
 				omg_hax = self.dx != 0 and self.dy != 0

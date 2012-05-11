@@ -36,6 +36,7 @@ class Tile:
 		self.research = id == '41'
 		self.goo = id in ('42', '43', '44')
 		self.powerup = self.research or self.goo
+		self.is_goo = id == '15'
 		self.goo_size = 0
 		if self.goo:
 			self.goo_size = ((int(id) - 41) - 1) * 2 + 1 # 1, 3, 5 OMGHAX
