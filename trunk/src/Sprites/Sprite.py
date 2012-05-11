@@ -462,13 +462,14 @@ class Sprite:
 						t = tiles[tz]
 						
 						if t.blocking:
-							if self.ismain:
-								prev_push_target = level.push_target
-								level.push_target = None
+							if self.main_or_hologram:
+								pt = level.get_push_tracker(self)
+								prev_push_target = pt.push_target
+								pt.push_target = None
 								if t.pushable and direction != None and len(direction) == 2:
 									blocked = True
 									push_key = str(col) + '^' + str(row) + '^' + str(tz)
-									level.push_target = push_key
+									pt.push_target = push_key
 
 									if direction == 'NW':
 										tcol = col - 1
@@ -488,10 +489,10 @@ class Sprite:
 									self.pushing = direction
 									
 									if push_key == prev_push_target:
-										level.push_counter -= 1
+										pt.push_counter -= 1
 									else:
-										level.push_counter = level.max_push_counter
-									if level.push_counter == 0:
+										pt.push_counter = pt.max_push_counter
+									if pt.push_counter == 0:
 										# Try to do the push
 										if tcol >= 0 and tcol < level.width and trow >= 0 and trow < level.height:
 											tlookup = level.cellLookup[tcol][trow]
@@ -543,17 +544,17 @@ class Sprite:
 													_t -= 1
 												
 												if valid:
-													level.push_block(col, row, tcol, trow, target_level)
+													level.push_block(self, col, row, tcol, trow, target_level)
 												else:
-													level.push_counter = -1
-													level.push_target = None
+													pt.push_counter = -1
+													pt.push_target = None
 											else:
-												level.push_counter = -1
-												level.push_target = None
+												pt.push_counter = -1
+												pt.push_target = None
 											break
 										else:
-											level.push_counter = -1
-											level.push_target = None
+											pt.push_counter = -1
+											pt.push_target = None
 									
 								
 							# The target tile will always be last in check_these
