@@ -36,9 +36,13 @@ i|flugenmeister-after
 s|f|ARRRGH!
 p|50
 cc
-y|180
-p|180
+y|74
+p|74
+snd|spray
+p|50
+y|20
 i|flugenmeister-before
+p|50
 s|f|Dear me. Are you alright,
 c
 s|f|my dear?
@@ -67,7 +71,7 @@ i|flugenmeister-before
 s|f|No, I believe I shall instead
 s|f|seek out a more peaceful life
 s|f|with my rodent brethren.
-c
+cc
 i|protagonist-exclaim
 s|p|What?
 cc
@@ -75,7 +79,11 @@ i|flugenmeister-before
 s|f|I wonder what the basis of
 s|f|their language is...
 cc
-p|180
+i|janitor
+s|j|****static***
+s|j|Hey, sunshine, haven't heard
+s|j|status in a while. Find anything?
+cc
 i|protagonist-sad
 s|p|I found Dr. Flügenmeister.
 cc
@@ -90,7 +98,6 @@ i|janitor
 s|j|Better bring back the research, then.
 s|j|Use the backdoor to get here faster.
 cc
-p|180
 i|protagonist-exclaim
 s|p|Backdoor? You mean this whole time-
 cc

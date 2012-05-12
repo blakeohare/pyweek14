@@ -11,15 +11,37 @@ class Automation:
 		sprite = self.sprite
 		self.counter += 1
 		o = None
-		if self.type == 'intro_janitor':
-			o = self.do_intro_janitor(self.level, c, sprite)
-		elif self.type == 'intro_supervisor':
-			o = self.do_intro_supervisor(self.level, c, sprite)
-		elif self.type == 'intro_protagonist':
-			o = self.do_intro_protagonist(self.level, c, sprite)
-		if o == None:
-			return (0, 0)
+		if self.level == '99-0':
+			o = self.do_99_player(self.level, c, sprite)
+		else:
+			if self.type == 'intro_janitor':
+				o = self.do_intro_janitor(self.level, c, sprite)
+			elif self.type == 'intro_supervisor':
+				o = self.do_intro_supervisor(self.level, c, sprite)
+			elif self.type == 'intro_protagonist':
+				o = self.do_intro_protagonist(self.level, c, sprite)
+			if o == None:
+				return (0, 0)
 		return o
+	
+	def do_99_player(self, level, counter, sprite):
+		
+		if counter < 15:
+			return (0, 0)
+		elif counter < 23:
+			return (-1.5, 0)
+		elif counter < 40:
+			return (0, 1.5)
+		elif counter < 57:
+			return (0, -1.5)
+		elif counter < 69:
+			return (-1.5, 0)
+		elif counter == 80:
+			print 'here'
+			
+			drf2 = get_tile_store().get_tile('drf2')
+			sprite.level.modify_block(4, 4, 1, drf2)
+		return (0, 0)
 	
 	def do_intro_janitor(self, level, counter, sprite):
 		
