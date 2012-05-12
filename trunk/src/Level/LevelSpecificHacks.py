@@ -93,6 +93,12 @@ _level_specific_hacks = {
 		]
 	},
 	
+	'19c-0': {
+		'moving_platforms': [
+			'SW SW SW SW SW P P NE NE NE NE NE P P'
+		]
+	},
+	
 	'21-0': {
 		'moving_platforms': [
 			'NW NW P P SE SE SE SE P P NW NW'

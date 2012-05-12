@@ -48,6 +48,9 @@ _switch_mapping = {
 		'power'
 	],
 	
+	'19c-0':
+	[ 'button' ],
+	
 	'20-0': [
 		'blue',
 		'power'
