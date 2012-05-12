@@ -112,6 +112,9 @@ class PlayScene:
 		
 		self.do_hologram_stuff()
 		
+		self.level.coil_manager.set_fresh_coils(self.level.get_coils())
+		self.level.coil_manager.find_zapped_sprites(self.sprites)
+		
 		if self.level.complete:
 			next_level = get_level_manager().get_next_level(self.level.name)
 			self.next = TransitionScene(self, PlayScene(next_level))

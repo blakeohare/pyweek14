@@ -173,6 +173,8 @@ class Sprite:
 				path = 'protagonist/s.png'
 				if self.death_type == 'goo':
 					path = 'protagonist/goo' + str((int(render_counter // 3) % 4) + 1) + '.png'
+				elif self.death_type == 'bazat':
+					path = 'protagonist/zap' + str((int(render_counter // 3) % 4) + 1) + '.png'
 			elif self.death_by_rat > 0:
 				path = 'protagonist/rat'
 				path += str((int(self.death_by_rat // 3) % 4) + 1) + '.png'
