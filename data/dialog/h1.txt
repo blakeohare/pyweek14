@@ -1,3 +1,23 @@
+i|protagonist-exclaim
+s|p|The room changed!
+cc
 i|janitor
-s|j|Placeholder
+s|j|Sunshine, you need to get used to
+s|j|suprises if you're going to work here.
+cc
+i|protagonist-hmm
+s|p|I don't know; I mean,
+s|p|I'm just an intern, you know?
+cc
+i|janitor
+s|j|Bet this beats doing paperwork.
+cc
+i|protagonist-sarcastic
+s|p|Because risking my life is so much fun.
+cc
+i|janitor
+s|j|Feel alive, though, don't ya?
+cc
+i|protagonist-pout
+s|p|Maybe...
 cc
