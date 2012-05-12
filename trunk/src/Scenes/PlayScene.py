@@ -132,7 +132,7 @@ class PlayScene:
 		
 		if self.level.complete:
 			next_level = get_level_manager().get_next_level(self.level.name)
-			if next_level == None:
+			if next_level == None or (self.level.name == '90-0' and self.story_mode == False):
 				self.next = TransitionScene(self, EndSceneNonStory())
 			else:
 				increment_persisted_session_int('research', get_persisted_level_int('research'))
