@@ -32,5 +32,6 @@ s|j|I don't have time for-
 s|j|Code mauve!Code mauve!
 s|j|****static****
 cc
-i|protagonist-exclaim
+i|protagonist-crying
+s|p|I guess I'm on my own.
 cc

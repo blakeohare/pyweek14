@@ -1,3 +1,33 @@
 i|janitor
-s|j|Placeholder
+s|j|You there, kid?
+cc
+i|protagonist-exclaim
+s|p|No thanks to you! I'm in
+s|p|Room B-1, and there's another
+s|p|weird spot on the floor, and a 
+s|p|big blue block to match.
+cc
+i|janitor
+s|j|Security measure, guard against
+s|j|killer sloth men. Strong but lazy,
+s|j|they'd wear themselves out thinking about
+s|j|the block and go to sleep.
+c
+s|j|Anyway, just push the block on the button to
+s|j|open the door.
+cc
+i|protagonist-nervous
+s|p|There aren't any of those sloth things in here,
+s|p|are there?
+cc
+i|janitor
+s|j|Naw.
+cc
+i|protagonist-happy
+s|p|Great!
+cc
+i|janitor
+s|j|Figure the rats drove 'em off.
+i|protagonist-sarcastic
+s|p|Great..
 cc
