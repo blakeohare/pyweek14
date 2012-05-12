@@ -95,7 +95,7 @@ class Level:
 				if len(parts) > 1:
 					key = parts[0][1:]
 					value = ':'.join(parts[1:])
-					values[key] = value
+					values[key] = trim(value)
 		self.values = values
 		self.width = int(self.values['width'])
 		self.height = int(self.values['height'])
