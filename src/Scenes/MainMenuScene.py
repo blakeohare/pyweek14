@@ -39,22 +39,24 @@ class MainMenuScene:
 		pass
 	
 	def render(self, screen, counter):
-		title = get_text("Sudo Scientific", 36, (255, 255, 255))
+		screen.blit(get_image('misc/progress2.png'), (0, 0))
+		
+		title = get_text("Sudo Science", 36, (255, 255, 255))
 		w = title.get_width()
 		h = title.get_height()
-		screen.blit(title, (screen.get_width() // 2 - w // 2, 30))
+		screen.blit(title, (20, 20))
 		
 		y = h + 30 + 20
 		i = 0
 		for option in self.options:
-			x = 100
+			x = 20
 			color = (190, 190, 190)
 			if self.index == i:
 				color = (255, 255, 255)
 				pygame.draw.rect(screen, color, pygame.Rect(x, y + 5, 5, 5))
 			elif not option[1]:
 				color = (80, 80, 80)
-			x = 110
+			x = 30
 			text = get_text(option[0], 18, color)
 			screen.blit(text, (x, y))
 			y += text.get_height() + 10
