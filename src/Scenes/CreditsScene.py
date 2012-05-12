@@ -2,6 +2,7 @@ class CreditsScene:
 	def __init__(self, canSkip):
 		self.next = self
 		self.canSkip = canSkip
+		self.speed = .7
 		self.counter = 0
 		self.things = [
 		[None, (' ', "Credits"), None],
@@ -14,6 +15,13 @@ class CreditsScene:
 		['duke', ("Level Implementation", "Will Duke & Ted Burton"), 'eofpi'],
 		[None, (" ", "Thank you for playing."), None]
 		]
+		
+		if not self.canSkip:
+			r = get_persisted_forever_int('research')
+			r += get_persisted_session_int('research')
+			self.things.append(
+			[None, (" ", "Research papers collected: " + str(r) + " out of 35"), None]
+			)
 		
 		i = 0
 		while i < len(self.things):
@@ -43,7 +51,7 @@ class CreditsScene:
 	
 	def render(self, screen, counter):
 		
-		y = 350 - int(self.counter * .7)# * 1.4)
+		y = 350 - int(self.counter * self.speed)# * 1.4)
 		
 		for item in self.things:
 			left = item[0]
