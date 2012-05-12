@@ -27,11 +27,11 @@ class PauseScene:
 					if self.i < 0:
 						self.i = 0
 					else:
-						play_sound('menu_move')
+						play_sound('menumove')
 				elif event.key == 'down':
 					self.i += 1
 					if self.i < len(self.options):
-						play_sound('menu_move')
+						play_sound('menumove')
 				elif event.key == 'spray' or event.key == 'start':
 					self.do_it()
 		if self.i < 0:
