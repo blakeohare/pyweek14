@@ -55,7 +55,7 @@ class TextPrinter:
 			sound = None
 			if self.speaker == 's':
 				sound = 'talkbloop'
-			elif self.speaker == 'j':
+			elif self.speaker in 'jf':
 				sound = 'talkblooplow'
 			elif self.speaker == 'p':
 				sound = 'talkbloophigh'
@@ -98,6 +98,7 @@ class DialogScene:
 			'w':(255, 255, 255),
 			's':(220, 180, 140),
 			'j':(140, 180, 230),
+			'f':(0, 200, 100),
 			'p':(255, 120, 180)
 		}
 		self.buffer_clear_counter = -42
@@ -202,6 +203,9 @@ class DialogScene:
 								text = parts[2]
 								self.buffer.append(['', color])
 								self.text_printer = TextPrinter(text, parts[1])
+						elif command == 'credits':
+							self.next = TransitionScene(self, CreditsScene(False))
+							keep_going = False
 						elif command == 'snd':
 							if not parts[1].startswith('talk'):
 								play_sound(parts[1])

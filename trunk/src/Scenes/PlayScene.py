@@ -67,7 +67,7 @@ class PlayScene:
 					increment_persisted_level_int('decontaminant', -1)
 					self.player.spray_counter = 30
 					if self.level.spray_from([self.player] + self.holograms):
-						if self.level.name == '1-3':
+						if self.level.name == '1-3' and self.story_mode:
 							self.next = DialogScene(self, 'a1b')
 			if event.key == 'start' and event.down and self.level.name != 'intro' and self.level.name != '99-0':
 				self.next = PauseScene(self)
@@ -130,9 +130,12 @@ class PlayScene:
 		
 		if self.level.complete:
 			next_level = get_level_manager().get_next_level(self.level.name)
-			increment_persisted_session_int('research', get_persisted_level_int('research'))
-			set_persisted_level_int('research', 0)
-			self.next = TransitionScene(self, PlayScene(next_level, self.story_mode))
+			if next_level == None:
+				self.next = TransitionScene(self, EndSceneNonStory())
+			else:
+				increment_persisted_session_int('research', get_persisted_level_int('research'))
+				set_persisted_level_int('research', 0)
+				self.next = TransitionScene(self, PlayScene(next_level, self.story_mode))
 		
 		sprites_to_add = []
 		sprites_to_remove = []
