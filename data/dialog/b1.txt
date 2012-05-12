@@ -10,14 +10,14 @@ cc
 i|janitor
 s|j|Security measure, guard against
 s|j|killer sloth men. Strong but lazy,
-s|j|they'd wear themselves out thinking about
-s|j|the block and go to sleep.
+s|j|they'd wear themselves out thinking
+s|j|about the block and go to sleep.
 c
-s|j|Anyway, just push the block on the button to
-s|j|open the door.
+s|j|Anyway, just push the block on the
+s|j|button to open the door.
 cc
 i|protagonist-nervous
-s|p|There aren't any of those sloth things in here,
+s|p|There aren't any of those sloths here,
 s|p|are there?
 cc
 i|janitor
@@ -28,6 +28,7 @@ s|p|Great!
 cc
 i|janitor
 s|j|Figure the rats drove 'em off.
+cc
 i|protagonist-sarcastic
 s|p|Great..
 cc
