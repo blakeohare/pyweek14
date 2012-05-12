@@ -34,7 +34,9 @@ s|p|Stay back, please!
 cc
 i|flugenmeister-after
 s|f|ARRRGH!
+p|50
 cc
+y|180
 p|180
 i|flugenmeister-before
 s|f|Dear me. Are you alright,
@@ -82,7 +84,7 @@ s|j|Good job.
 cc
 i|protagonist-sarcastic
 s|p|He says he's going to abandon his
-s|p| research and study the rats instead.
+s|p|research and study the rats instead.
 cc
 i|janitor
 s|j|Better bring back the research, then.
@@ -100,3 +102,5 @@ cc
 i|protagonist-hmm
 s|p|...Maybe...
 cc
+p|120
+credits
