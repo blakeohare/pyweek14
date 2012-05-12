@@ -2,6 +2,7 @@ class MainMenuScene:
 	def __init__(self):
 		self.next = self
 		self.index = 0
+		self.first = True
 		has_save_data = get_persisted_forever_string('save_level') != ''
 		self.options = [
 			('Start New Story Mode', True, lambda x:PlayScene('intro', True)),
@@ -49,6 +50,9 @@ class MainMenuScene:
 	
 	def update(self, counter):
 		get_jukebox().ensure_current_song('title')
+		if self.first:
+			self.first = False
+			get_persistent_state().session = {}
 	
 	def render(self, screen, counter):
 		screen.blit(get_image('misc/title_screen.png'), (0, 0))
