@@ -12,7 +12,8 @@ s|p|There's some weird circuitry in here,
 s|p|what's that about?
 cc
 i|janitor
-s|j|Security measure. Got a spare nuclear generator on you?
+s|j|Security measure. Got a spare 
+s|j|nuclear generator on you?
 cc
 i|protagonist-wtf
 s|p|No!
