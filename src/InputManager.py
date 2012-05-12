@@ -316,8 +316,8 @@ class InputManager:
 			rx = x * c + y * s
 			ry = -x * s + y * c
 		
-		self.axes[0] = rx
-		self.axes[1] = ry
+		self.axes[0] = rx / 1.8
+		self.axes[1] = ry / 1.8
 		
 		return events
 			
