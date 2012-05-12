@@ -1,3 +1,3 @@
 @echo OFF
-python.exe util\concat.py
-python.exe run.py
+%py27%\python.exe util\concat.py
+%py27%\python.exe run.py
