@@ -67,6 +67,22 @@ _switch_mapping = {
 		'grey',
 		None,
 		'yellow'
+	],
+	
+	'26-0': [
+		'blue',
+		'red'
+	],
+	
+	'27-0': [
+		'cyan',
+		'magenta',
+		'yellow'
+	],
+	
+	'28-0': [
+		'door',
+		'bridge'
 	]
 }
 
