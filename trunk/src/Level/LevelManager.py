@@ -17,7 +17,7 @@ class LevelManager:
 		self.ordering = [
 				('1-3', "Lab Entrance", (4, 9, 1, 'ne')),
 				('2-3', None, (7, 13, 1, 'ne')),
-				('3-1', None, (9, 10, 1, 'ne')),
+				('3-1', "The Green Room", (9, 10, 1, 'ne')),
 				('4-0', None, (5, 8, 1, 'ne')),
 				('5-0', None, (2, 10, 1, 'ne')),
 				('6-0', None, (1, 9, 3, 'ne')),
