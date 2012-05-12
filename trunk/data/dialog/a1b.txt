@@ -1,3 +1,37 @@
+y|100
+i|protagonist
+s|p|I did it!
+cc
 i|janitor
-s|j|Placeholder
+s|j|You're a credit to the species, darlin'.
+c
+s|j|Anyway, every now and then remember to
+s|j|save your game.
+cc
+i|protagonist
+s|p|Huh?
+cc
+i|janitor
+s|j|I said remember to let me know where you
+s|j|are. I'd hate to have to go search for
+s|j|another body.
+cc
+i|protagonist
+s|p|You...
+p|40
+s|p|You were joking about that...
+p|40
+s|p|right?
+cc
+i|janitor
+s|j|Uh, sure, kid. Sure I was.
+c
+s|j|Anyway, I have some research subjects to
+s|j|round up, and those extra legs make them
+s|j|darn hard to catch, so I'll be gone for 
+c
+s|j|a while.
+cc
+i|protagonist
+s|p|Alright, I guess
 cc

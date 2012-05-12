@@ -36,6 +36,8 @@ class Level:
 		return self.hologram_pads
 	
 	def spray_from(self, sprites):
+		success = False
+		
 		for sprite in sprites:
 			col = int(sprite.x // 16)
 			row = int(sprite.y // 16)
@@ -78,6 +80,8 @@ class Level:
 			maybe_goo = self.get_tile_at(col, row, layer)
 			if maybe_goo != None and maybe_goo.is_goo:
 				self.modify_block(col, row, layer, None)
+				success = True
+		return success
 	
 	def get_new_sprites(self):
 		output = self.newsprites

@@ -64,7 +64,9 @@ class PlayScene:
 					play_sound('spray.wav')
 					increment_persisted_level_int('decontaminant', -1)
 					self.player.spray_counter = 30
-					self.level.spray_from([self.player] + self.holograms)
+					if self.level.spray_from([self.player] + self.holograms):
+						if self.level.name == '1-3':
+							self.next = DialogScene(self, 'a1b')
 			if event.key == 'start' and event.down:
 				self.next = PauseScene(self)
 		
