@@ -37,20 +37,31 @@ def get_startup_dialog(play_scene):
 	return None
 
 class TextPrinter:
-	def __init__(self, text, color):
+	def __init__(self, text, speaker):
 		self.text = text
-		self.color = color
-		self.alternator = False
+		self.counter = 0
+		self.speaker= speaker
 		
-	def get_next_char(self):
+	def get_next_char(self, pressed):
+		self.counter += 1
 		t = ''
-		if self.alternator:
+		if len(self.text) == 0:
+			return None
+		amt = 20 if pressed else 1
+		t = self.text[:amt]
+		self.text = self.text[amt:]
+		if self.counter % 6 == 1:
+
+			sound = None
+			if self.speaker == 's':
+				sound = 'talkbloop'
+			elif self.speaker == 'j':
+				sound = 'talkblooplow'
+			elif self.speaker == 'p':
+				sound = 'talkbloophigh'
 			
-			if len(self.text) == 0:
-				return None
-			t = self.text[0]
-			self.text = self.text[1:]
-		self.alternator = not self.alternator
+			if sound != None:
+				play_sound(sound)
 		return t
 
 
@@ -82,6 +93,7 @@ class DialogScene:
 		self.active_portrait = None
 		self.buffer = []
 		self.clear_on_continue = False
+		self.fast_speed = False
 		self.colors = {
 			'w':(255, 255, 255),
 			's':(220, 180, 140),
@@ -105,9 +117,15 @@ class DialogScene:
 		
 	def process_input(self, events, pressed, axes, mouse):
 		pushed = False
+		self.fast_speed = False
 		for event in events:
 			if event.key in ('start', 'spray', 'walkie') and event.down:
 				pushed = True
+				#self.fast_speed = True
+		
+		for j in ('start', 'spray', 'walkie'):
+			if pressed[j]:
+				self.fast_speed = True
 		
 		if pushed and self.prompt_for_continue:
 			# TODO: this can be improved so it isn't quite as jumpy
@@ -147,7 +165,7 @@ class DialogScene:
 			elif self.prompt_for_continue:
 				keep_going = False
 			elif self.text_printer != None:
-				n = self.text_printer.get_next_char()
+				n = self.text_printer.get_next_char(self.fast_speed)
 				if n == None:
 					self.text_printer = None
 				else:
@@ -183,9 +201,10 @@ class DialogScene:
 								color = self.colors[parts[1]]
 								text = parts[2]
 								self.buffer.append(['', color])
-								self.text_printer = TextPrinter(text, None)
+								self.text_printer = TextPrinter(text, parts[1])
 						elif command == 'snd':
-							play_sound(parts[1])
+							if not parts[1].startswith('talk'):
+								play_sound(parts[1])
 						elif command == 'c':
 							self.prompt_for_continue = True
 							self.clear_on_continue = False
