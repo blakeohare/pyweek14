@@ -133,6 +133,8 @@ class PlayScene:
 		for sprite in sprites_to_add:
 			self.sprites.append(sprite)
 		
+		get_jukebox().update(self.level.name)
+		
 		
 	def do_hologram_stuff(self):
 		self.level.hologram_manager.update(self, self.level, self.player)
