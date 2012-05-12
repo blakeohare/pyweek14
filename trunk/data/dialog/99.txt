@@ -1,0 +1,37 @@
+i|flugenmeister-after
+s|f|You...
+p|60
+s|f|Who are you?
+cc
+i|protagonist-exclaim
+s|p|Dr. Flügenmeister?
+c
+s|p|What happened?
+cc
+i|flugenmeister-after
+s|f|I may be...who are you?
+c
+s|f|What are you doing here?
+cc
+i|protagonist-nervous
+s|p|I'm just an intern,
+c
+s|p|I came to get your research.
+cc
+i|flugenmeister-after
+s|f|My research? Thief!
+cc
+i|protagonist-nervous
+s|p| No! I just want to help!
+cc
+i|flugenmeister-after
+s|f|You worthless intern!
+C
+s|f|I'll destroy you!
+cc
+i|protagonist-exclaim
+s|p|Stay back, please!
+cc
+i|flugenmeister-after
+s|f|ARRRGH!
+cc
