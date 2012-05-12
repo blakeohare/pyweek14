@@ -4,10 +4,11 @@ class MainMenuScene:
 		self.index = 0
 		has_save_data = get_persisted_forever_int('has_save_data') == 1
 		self.options = [
-			('Start New Game', True, lambda x:PlayScene('intro')),
+			('Start New Story Mode', True, lambda x:PlayScene('intro')),
 			('Resume Saved Game', has_save_data, lambda x:PlayScene(None)),
+			('Level Picker', True, lambda x:LevelPickerScene()),
 			('Configure Input', True, lambda x:ConfigureInputScene()),
-			('Settings', True, lambda x:SettingsScene()),
+			('Sound Settings', True, lambda x:SettingsScene()),
 			('Credits', True, lambda x:CreditsScene(True)),
 			('Exit', True, lambda x:GoodbyeScene())
 			]
