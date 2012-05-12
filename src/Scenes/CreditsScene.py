@@ -10,7 +10,7 @@ class CreditsScene:
 		[None, ("Music and Sound", "Adrian Cline"), 'ikanreed'],
 		['satyrane', ("Story and Dialog", "Laura Freer"), None],
 		[None, ("Portrait and Large Art", "\"Fixception\""), 'fixception'],
-		['brendan', ("Puzzle Design", "Brendan & Stiva"), 'stiva'],
+		['brendan', ("Puzzle Design", "Brendan & Steve"), 'stiva'],
 		['duke', ("Level Implementation", "Will Duke & Ted Burton"), 'eofpi'],
 		[None, (" ", "Thank you for playing."), None]
 		]
