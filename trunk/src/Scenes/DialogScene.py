@@ -2,7 +2,6 @@ def get_startup_dialog(play_scene):
 	id = {
 		'1-3': 'a1',
 		'2-3': 'a2',
-		#'3-1': 'a3',
 		'4-0': 'b1',
 		'5-0': 'b2',
 		'6-0': 'b3',
@@ -68,6 +67,7 @@ class DialogScene:
 	def __init__(self, playscene, id):
 		self.id = id
 		self.next = self
+		self.wait_counter = 240 if (id == 'hologram') else 0
 		self.phase_duration = 60
 		self.playscene = playscene
 		self.initialize_script(id)
@@ -118,6 +118,10 @@ class DialogScene:
 		
 	
 	def update(self, counter):
+		if self.wait_counter > 0:
+			self.playscene.update(counter)
+			self.wait_counter -= 1
+			return
 		self.phase_counter += 1
 		self.frame_yielding -= 1
 		
@@ -282,6 +286,8 @@ class DialogScene:
 	def render(self, screen, counter):
 		
 		self.playscene.render(screen, counter)
+		
+		if self.wait_counter > 0: return
 		
 		self.render_box(screen, self.phase, self.phase_counter)
 		
