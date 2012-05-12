@@ -16,35 +16,47 @@ class SettingsScene:
 					self.i -= 1
 					if self.i == -1:
 						self.i = 0
+					else:
+						play_sound('menumove')
 				if event.key == 'down':
 					self.i += 1
 					if self.i > 3:
 						self.i = 3
+					else:
+						play_sound('menumove')
 				
 				if event.key == 'right':
 					if self.i == 0: # SFX
 						self.jk.set_sfx_volume(self.jk.get_sfx_volume() + 10)
+						play_sound('menumove')
 					elif self.i == 1: # Music
 						self.jk.set_music_volume(self.jk.get_music_volume() + 10)
+						play_sound('menumove')
 					elif self.i == 2:
 						self.toggle_magic()
+						play_sound('menumove')
 				
 				elif event.key == 'left':
 					if self.i == 0: # SFX
 						self.jk.set_sfx_volume(self.jk.get_sfx_volume() - 10)
+						play_sound('menumove')
 					elif self.i == 1: # Music
 						self.jk.set_music_volume(self.jk.get_music_volume() - 10)
+						play_sound('menumove')
 					elif self.i == 2:
 						self.toggle_magic()
+						play_sound('menumove')
 				
 				elif event.key == 'start':
 					if self.i == 2:
 						self.toggle_magic()
+						play_sound('menumove')
 					elif self.i == 3:
 						get_persistent_state().set_int_forever('sfx', self.jk.get_sfx_volume())
 						get_persistent_state().set_int_forever('music', self.jk.get_music_volume())
 						self.next = TransitionScene(self, MainMenuScene())
 						get_persistent_state().save_game()
+						play_sound('menumove')
 						
 				
 					
