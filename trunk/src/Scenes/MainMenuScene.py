@@ -20,12 +20,12 @@ class MainMenuScene:
 			if event.down:
 				if event.key == 'down':
 					self.index += 1
-					if not self.options[self.index][1]:
+					if self.index < len(self.options) and not self.options[self.index][1]:
 						self.index += 1
-					if self.index <= len(self.options):
+					if self.index < len(self.options):
 						play_sound('menumove')
 					else:
-						self.index = 0
+						self.index = len(self.options) - 1
 				elif event.key == 'up':
 					self.index -= 1
 					if not self.options[self.index][1]:
@@ -33,6 +33,8 @@ class MainMenuScene:
 					
 					if self.index >= 0:
 						play_sound('menumove')
+					else:
+						self.index == 0
 				elif event.key == 'start':
 					go = True
 		
