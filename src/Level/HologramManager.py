@@ -53,6 +53,6 @@ class HologramManager:
 				pr = p[1]
 				pl = p[2] + 1
 				self.new_sprites.append(Sprite(pc * 16 + 8, pr * 16 + 8, pl * 8, 'hologram|main'))
-				if level.name == '26-0':
+				if level.name == '26-0' and playscene.story_mode:
 					playscene.next = DialogScene(playscene, 'hologram')
 			self.sprites_created = self.new_sprites[:]

@@ -160,9 +160,10 @@ def override_switch_behavior(manager, level, index, is_blue):
 
 
 class SwitchManager:
-	def __init__(self, level):
-		#self.playscene = playscene
+	def __init__(self, level, playscene):
+		self.playscene = playscene
 		self.level = level
+		self.flipmaze_hack = playscene.story_mode
 		self.switches = self.level.get_switches()
 		self.enabled = [False] * len(self.switches)
 		self.statuses = [None] * len(self.switches)
@@ -252,6 +253,9 @@ class SwitchManager:
 			if status != None:
 				if status[0] == 'sprite':
 					if switch[3] == self.colors['gray'][0] or self.level.name == 'flipmaze':
+						if self.flipmaze_hack:
+							self.flipmaze_hack = False
+							self.playscene.next = DialogScene(self.playscene, 'h1')
 						self.enabled[i] = True
 				elif status[0] == 'block':
 					type = switch[3]

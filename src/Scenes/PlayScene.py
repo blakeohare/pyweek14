@@ -8,7 +8,7 @@ class PlayScene:
 		self.research_collected = 0
 		self.next = self
 		self.level_name = level_name
-		self.level = Level(level_name)
+		self.level = Level(level_name, self)
 		self.player = Sprite(17, 177, 32, 'main')
 		self.sprites = [self.player]
 		self.player.level = self.level
