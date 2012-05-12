@@ -25,6 +25,11 @@ _switch_mapping = {
 	
 	'12-0': [
 		'exit'
+	],
+	
+	'20-0': [
+		'blue',
+		'power'
 	]
 }
 

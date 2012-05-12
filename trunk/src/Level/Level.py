@@ -6,7 +6,6 @@ class PushTracker:
 		self.owner = sprite
 	
 class Level:
-	
 	def __init__(self, name):
 		self.name = name
 		self.initialize()
@@ -21,6 +20,7 @@ class Level:
 		self.switch_manager = SwitchManager(self)
 		self.sprite_introducer = get_hacks_for_level(name, 'introduce_sprites')
 		self.hologram_manager = HologramManager(self)
+		self.coil_manager = CoilManager(self)
 		self.counter = 0
 		self.hologram_pads = []
 	
@@ -138,6 +138,34 @@ class Level:
 	def get_switches(self):
 		return self.switches
 	
+	def get_coils(self):
+		if self.coils == None:
+			self.coils = []
+			stacks = self.grid
+			lookups = self.cellLookup
+			y = 0
+			while y < self.height:
+				x = 0
+				while x < self.width:
+					z = 0
+					stack = stacks[x][y]
+					stacklen = len(stack)
+					while z < stacklen:
+						cell = stack[z]
+						if cell != None and cell.teslaon:
+							lookup = lookups[x][y]
+							z = 0
+							while z < len(lookup):
+								t = lookup[z]
+								if t != None and stack[t].teslaon:
+									self.coils.append((x, y, z))
+								z += 1
+							break
+						z += 1
+					x += 1
+				y += 1
+		return self.coils
+	
 	def initialize_tiles(self, tiles):
 		width = self.width
 		height = self.height
@@ -145,6 +173,7 @@ class Level:
 		references = make_grid(self.width, self.height, None)
 		moving_platforms = []
 		self.switches = []
+		self.coils = []
 		self.hologram_pads = []
 		self.teleporter_tiles = []
 		tilestore = get_tile_store()
@@ -175,6 +204,9 @@ class Level:
 						
 						if t.isswitch:
 							self.switches.append((x, y, len(referenceStack), t))
+						
+						if t.teslaon:
+							self.coils.append((x, y, len(referenceStack)))
 						
 						if t.isholopad:
 							self.hologram_pads.append((x, y, len(referenceStack), t.id == 'clone'))
@@ -566,6 +598,7 @@ class Level:
 		
 	
 	def modify_block(self, col, row, layer, type):
+		self.coils = None
 		output = None
 		z = 0
 		stack = self.grid[col][row]

@@ -16,6 +16,13 @@ class Tile:
 			self.framerate = int(images[0])
 			images = images[1:]
 		self.hascharge = False
+		
+		if id == '4off':
+			images = ['teslacoil1.png']
+		
+		self.tesla = id in ('4off', '4')
+		self.teslaon = id == '4'
+		
 		self.images = safe_map(lambda x:get_image('tiles/' + x), images)
 		self.still = len(self.images) == 1
 		self.still_image = self.images[0]
