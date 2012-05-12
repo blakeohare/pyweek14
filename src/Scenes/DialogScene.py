@@ -47,7 +47,7 @@ class TextPrinter:
 		t = ''
 		if len(self.text) == 0:
 			return None
-		amt = 20 if pressed else 1
+		amt = 20 if (pressed and self.counter > 6) else 1
 		t = self.text[:amt]
 		self.text = self.text[amt:]
 		if self.counter % 6 == 1:
