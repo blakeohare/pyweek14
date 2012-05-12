@@ -1,5 +1,5 @@
 class PlayScene:
-	def __init__(self, level_name, story_mode):
+	def __init__(self, level_name, story_mode, temp_suppress=False):
 		self.story_mode = story_mode
 		persistence_change_level()
 		if level_name == '1-3':
@@ -53,7 +53,7 @@ class PlayScene:
 		if self.do_stuff != None:
 			self.do_stuff(self, self.level, -1)
 		
-		if self.story_mode:
+		if self.story_mode and not temp_suppress:
 			ds = get_startup_dialog(self)
 			if ds != None:
 				self.next = ds
@@ -160,7 +160,7 @@ class PlayScene:
 	
 	
 	def restart_level(self):
-		self.next = TransitionScene(self, PlayScene(self.level.name, self.story_mode))
+		self.next = TransitionScene(self, PlayScene(self.level.name, self.story_mode, True))
 	
 	def render(self, screen, counter):
 		
