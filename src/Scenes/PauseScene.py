@@ -56,6 +56,9 @@ class PauseScene:
 			self.next = None
 	
 	def save_game(self):
+		ps = get_persistent_state()
+		increment_persisted_forever_int('research', get_persisted_session_int('research'))
+		set_persisted_session_int('research', 0)
 		get_persistent_state().set_string_forever('save_level', self.playscene.level.name)
 		get_persistent_state().save_game()
 	def update(self, counter):

@@ -19,8 +19,9 @@ class PlaySceneOverlay:
 		screen.blit(rp, (24, screen.get_height() - rp.get_height() - 0))
 		
 		research_saved = get_persisted_forever_int('research')
-		level_research = self.playscene.research_collected
-		r = research_saved + level_research
+		session_research = get_persisted_session_int('research')
+		level_research = get_persisted_level_int('research')
+		r = research_saved + level_research + session_research
 		
 		goo_count = get_text(self.pad_with_zeroes(get_persisted_level_int('decontaminant'), 3), 16, (100, 255, 100))
 		rp_count = get_text(self.pad_with_zeroes(r, 3), 16, (255, 255, 255))

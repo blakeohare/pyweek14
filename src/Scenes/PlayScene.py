@@ -130,6 +130,8 @@ class PlayScene:
 		
 		if self.level.complete:
 			next_level = get_level_manager().get_next_level(self.level.name)
+			increment_persisted_session_int('research', get_persisted_level_int('research'))
+			set_persisted_level_int('research', 0)
 			self.next = TransitionScene(self, PlayScene(next_level, self.story_mode))
 		
 		sprites_to_add = []
