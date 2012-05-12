@@ -101,7 +101,6 @@ def override_switch_behavior(manager, level, index, is_blue):
 	
 	
 	elif name == 'flipmaze':
-		print 'hi/'
 		level.activate_switch('blue', is_blue)
 		return True
 	return False
