@@ -24,4 +24,6 @@
 40	opendoorleft.png	4	x
 br1	bridge2.png	1	x
 br2	bridge1.png	1	x
+br1i	bridge1i.png	1	
+br2i	bridge2i.png	1	
 ipt	invisiblepinktile.png	1	x
