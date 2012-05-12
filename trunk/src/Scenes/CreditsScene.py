@@ -6,12 +6,13 @@ class CreditsScene:
 		self.things = [
 		[None, (' ', "Credits"), None],
 		[None, ("Programming", "Blake O'Hare"), 'blake'],
-		['spears', ("Level Art", "Spears Dracona"), None],
-		[None, ("Music and Sound", "ikanreed"), 'ikanreed'],
-		['satyrane', ("Story and Dialog", "Satyrane"), None],
-		[None, ("Portrait and Large Art", "Fixception"), 'fixception'],
+		['spears', ("Level Art", "Angel McLaughlin"), None],
+		[None, ("Music and Sound", "Adrian Cline"), 'ikanreed'],
+		['satyrane', ("Story and Dialog", "Laura Freer"), None],
+		[None, ("Portrait and Large Art", "\"Fixception\""), 'fixception'],
 		['brendan', ("Puzzle Design", "Brendan & Stiva"), 'stiva'],
-		['duke', ("Level Implementation", "Duke & eofpi"), 'eofpi']
+		['duke', ("Level Implementation", "Will Duke & Ted Burton"), 'eofpi'],
+		[None, (" ", "Thank you for playing."), None]
 		]
 		
 		i = 0
@@ -63,5 +64,5 @@ class CreditsScene:
 				screen.blit(right, (r + 14, y - 5))
 			y = y2 + bottom.get_height() + 140
 		
-		if y < -200:
+		if y < -50:
 			self.next = TransitionScene(self, MainMenuScene())
