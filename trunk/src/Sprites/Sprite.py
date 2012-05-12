@@ -612,7 +612,8 @@ class Sprite:
 				omg_hax = self.dx != 0 and self.dy != 0
 			
 				
-			
+			if self.dx == 0 and self.dy == 0:
+				self.direction_queue = []
 			
 			
 			if omg_hax:
@@ -654,6 +655,12 @@ class Sprite:
 						a,b,c,d,e = self.direction_queue
 						if len(a) == 1 and d == e and len(d) == len(e) and a in d and ((b == c and (b == a or b == d)) or (b == a and c == d)): # BWAHAHAHAHAHA
 							self.last_direction_of_movement = d
+					else:
+						
+						for foo in self.direction_queue:
+							if len(foo) == 2:
+								self.last_direction_of_movement = foo
+								break
 				
 			
 		if new_platform != None and new_platform.stairs and on_new_coordinates_now:
