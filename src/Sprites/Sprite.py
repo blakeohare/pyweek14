@@ -30,9 +30,13 @@ def get_teleporter_image(going_out, counter, type):
 		if going_out and counter < 6:
 			return None
 		ts = get_tile_store()
+		battery = block_id in('45' or '46')
+		img = get_image('static/block' + str((int(counter // 2) % 4) + 1) + '.png')
+		if battery:
+			img = get_image('static/battery' + str((int(counter // 2) % 4) + 1) + '.png')
 		imgs = (
 			ts.get_tile(block_id).get_image(counter),
-			get_image('static/block' + str((int(counter // 2) % 4) + 1) + '.png'))
+			img)
 
 	return (ao, bo, imgs[0], imgs[1])
 	
