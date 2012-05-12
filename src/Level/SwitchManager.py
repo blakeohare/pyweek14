@@ -42,6 +42,8 @@ _switch_mapping = {
 		'blue'
 	],
 	
+	'18-0': [None] * 9,
+	
 	'19-0': [
 		'power'
 	],
@@ -73,6 +75,22 @@ def override_switch_behavior(manager, level, index):
 			# They're the same here because that's a coincidence
 			level.moving_platforms.set_pause_token('0', not enabled[index])
 			return True
+	
+	elif name == '18-0':
+		mapping = [
+			[10],
+			[0],
+			[2],
+			[4],
+			[1, 9],
+			[5],
+			[7],
+			[8],
+			[3, 6]
+		]
+		for platform in mapping[index]:
+			level.moving_platforms.set_pause_token(str(platform), not enabled[index])
+		return True
 	return False
 
 

@@ -24,6 +24,9 @@ class MovingPlatformManager:
 		pt = self.pause_tokens
 		if name == '16-0':
 			pt['0'] = True
+		elif name == '18-0':
+			for i in range(0, 11):
+				pt[str(i)] = True
 	
 	def is_paused_platform(self, i):
 		if self.pause_tokens.get(str(i)) == True:
