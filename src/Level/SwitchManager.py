@@ -51,7 +51,14 @@ _switch_mapping = {
 	'20-0': [
 		'blue',
 		'power'
-	]
+	],
+	
+	'21-0': [
+		'green',
+		'blue',
+		'powere',
+		'powerw'
+	],
 }
 
 def override_switch_behavior(manager, level, index):
