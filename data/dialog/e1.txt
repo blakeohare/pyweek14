@@ -1,5 +1,5 @@
 i|protagonist
-s|p|I see platforms on hover jets, I think
+s|p|I see platforms on hover jets, I think.
 s|p|Any chance they'll hurt me?
 cc
 i|janitor
