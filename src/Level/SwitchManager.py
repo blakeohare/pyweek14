@@ -90,9 +90,11 @@ _switch_mapping = {
 	],
 	
 	'90-0': [
-		'power',
+		None,
 		'green',
 		'blue',
+		'power',
+		'power',
 		'yellow'
 	]
 }
@@ -150,7 +152,10 @@ def override_switch_behavior(manager, level, index, is_blue):
 		if index != 0:
 		
 			return True
-	
+	elif name == '90-0':
+		if index == 0:
+			level.moving_platforms.set_pause_token('0', not enabled[index])
+			return True
 	return False
 
 
@@ -250,7 +255,7 @@ class SwitchManager:
 						self.enabled[i] = True
 				elif status[0] == 'block':
 					type = switch[3]
-					if type == self.colors['gray'] or status[1] == self.rubiks:
+					if type == self.colors['gray'] or (status[1] == self.rubiks and type.id != 'pi'):
 						self.enabled[i] = True
 					elif self.activator_lookup[type.id] == status[1]:
 						self.enabled[i] = True
