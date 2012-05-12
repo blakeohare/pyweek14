@@ -278,7 +278,7 @@ class Level:
 					return ((i + 1) * 8, tile)
 			i -= 1
 	
-	def render(self, screen, xOffset, yOffset, sprites, render_counter, sprites_to_add, sprites_to_delete):
+	def render(self, screen, xOffset, yOffset, sprites, render_counter):
 		self.allsprites = sprites
 		
 		self.re_blits = {}
@@ -333,8 +333,6 @@ class Level:
 				col -= 1
 			i += 1
 		
-		self.update(sprites, sprites_to_add, sprites_to_delete)
-	
 	def render_sprite(self, screen, sprite, xOffset, yOffset, render_counter, re_render=False):
 		
 		q = sprite.render_me(screen, xOffset, yOffset, render_counter)
