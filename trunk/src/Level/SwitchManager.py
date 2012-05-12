@@ -166,7 +166,7 @@ class SwitchManager:
 	def __init__(self, level, playscene):
 		self.playscene = playscene
 		self.level = level
-		self.flipmaze_hack = playscene.story_mode
+		self.flipmaze_hack = playscene.story_mode and level.name == 'flipmaze'
 		self.switches = self.level.get_switches()
 		self.enabled = [False] * len(self.switches)
 		self.statuses = [None] * len(self.switches)
