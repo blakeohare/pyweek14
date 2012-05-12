@@ -1,3 +1,40 @@
+i|protagonist-pout
+s|p|Hey, if one of my clones turned evil,
+s|p|would you know which one was really me?
+cc
 i|janitor
-s|j|Placeholder
+s|j|I'd assume the most annoying one.
+c
+s|j|I might be gone for a bit, kid;
+c
+s|j|a scientist accidentally injected
+s|j|himself with a super strength serum.
+cc
+i|protagonist-sarcastic
+s|p|You sound pretty calm about it.
+cc
+i|janitor
+s|j|I'm letting the other scientists 
+s|j|wear him down before I do anything.
+cc
+i|protagonist-exclaim
+s|p|How are they doing that?
+cc
+i|janitor
+s|j|Running and screaming, mostly.
+s|j|Oh, and pelt him with pens, now.
+c
+s|j|This section was notorious
+s|j|for leaving the microwave a mess.
+s|j|They'll think twice from now on.
+cc
+i|protagonist-smirk
+s|p|Can I be you when I grow up?
+cc
+i|janitor
+s|j|No. He's moving slower now, so
+s|j|I'm going in with a tranquilizer.
+cc
+i|protagonist
+s|p|Have fun!
 cc
