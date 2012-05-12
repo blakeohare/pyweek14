@@ -16,8 +16,8 @@ class JukeBox:
 		
 		ps = get_persistent_state()
 		if (ps.forever.get('sfx') != None):
-			self.set_music_volume(ps.get_int_forever('sfx'))
-			self.set_sfx_volume(ps.get_int_forever('music'))
+			self.set_music_volume(ps.get_int_forever('music'))
+			self.set_sfx_volume(ps.get_int_forever('sfx'))
 		else:
 			self.set_music_volume(70)
 			self.set_sfx_volume(70)
