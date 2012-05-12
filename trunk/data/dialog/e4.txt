@@ -1,3 +1,11 @@
+i|protagonist
+s|p|Hey, room E-4 has this big chasm in it,
+s|p|and I was thinking: you know what would
+s|p|be really useful?
+cc
 i|janitor
-s|j|Placeholder
+s|j|No hover jets, kid.
+cc
+i|protagonist-pout
+s|p|Aww.
 cc
