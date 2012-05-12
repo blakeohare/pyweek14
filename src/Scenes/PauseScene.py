@@ -59,7 +59,7 @@ class PauseScene:
 		i = 0
 		for option in self.options:
 			text = self.options[i]
-			color = (180, 180, 180)
+			color = (100, 100, 100)
 			if self.i == i:
 				color = (255, 255, 255)
 			img = get_text(text, 18, color)
