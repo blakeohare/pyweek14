@@ -19,7 +19,10 @@ class JukeBox:
 		
 		
 	def get_song_normalization(self, name):
-		return .1
+		if name == 'title':
+			return 1
+		
+		return .3
 	
 	def set_music_volume(self, percent):
 		percent = max(0, min(100, int(percent)))
@@ -57,7 +60,9 @@ class JukeBox:
 				if path.startswith('talk'):
 					if 'high' in path:
 						volume = volume / 2
-					volume = volume / 10
+					volume = volume / 3
+				if 'menumove' in path:
+					volume = volume / 4
 				snd.set_volume(volume)
 				self.sounds[path] = snd
 			else:

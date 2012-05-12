@@ -21,10 +21,17 @@ class MainMenuScene:
 					self.index += 1
 					if not self.options[self.index][1]:
 						self.index += 1
+					if self.index < len(self.options):
+						play_sound('menumove')
+					else:
+						self.index = 0
 				elif event.key == 'up':
 					self.index -= 1
 					if not self.options[self.index][1]:
 						self.index -= 1
+					
+					if self.index >= 0:
+						play_sound('menumove')
 				elif event.key == 'start':
 					go = True
 		
@@ -36,7 +43,7 @@ class MainMenuScene:
 			self.next = TransitionScene(self, next_scene)
 	
 	def update(self, counter):
-		pass
+		get_jukebox().ensure_current_song('title')
 	
 	def render(self, screen, counter):
 		screen.blit(get_image('misc/progress2.png'), (0, 0))

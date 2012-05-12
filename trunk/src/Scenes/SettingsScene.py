@@ -1,21 +1,78 @@
-# TODO: option to turn story mode off
-# TODO: option to clear saved data
-# TODO: Magic | More Magic
+# Sound* settings
 class SettingsScene:
 	def __init__(self):
 		self.next = self
-		
+		self.i = 0
+		self.jk = get_jukebox()
 		
 	def process_input(self, events, pressed, axes, mouse):
 		for event in events:
-			self.next = None
+			if event.down:
+				if event.key == 'up':
+					self.i -= 1
+					if self.i == -1:
+						self.i = 0
+				if event.key == 'down':
+					self.i += 1
+					if self.i > 3:
+						self.i = 3
+				
+				if event.key == 'right':
+					if self.i == 0: # SFX
+						self.jk.set_sfx_volume(self.jk.get_sfx_volume() + 10)
+					elif self.i == 1: # Music
+						self.jk.set_music_volume(self.jk.get_music_volume() + 10)
+				
+				elif event.key == 'left':
+					if self.i == 0: # SFX
+						self.jk.set_sfx_volume(self.jk.get_sfx_volume() - 10)
+					elif self.i == 1: # Music
+						self.jk.set_music_volume(self.jk.get_music_volume() - 10)
+				
+				elif event.key == 'start':
+					if self.i == 2:
+						z = 1 - get_persisted_forever_int('magic')
+						set_persisted_forever_int('magic', z)
+					elif self.i == 3:
+						self.next = TransitionScene(self, MainMenuScene())
+						
+				
+					
 	
 	def update(self, counter):
 		pass
 	
 	def render(self, screen, counter):
-		bye = get_text("Settings", 16, (255, 255, 255))
-		x = (screen.get_width() - bye.get_width()) // 2
-		y = (screen.get_height() - bye.get_height()) // 2
-		screen.blit(bye, (x, y))
+		header = get_text("Sound Settings", 30, (255, 255, 255))
+		x = (screen.get_width() - header.get_width()) // 2
+		y = 30
+		screen.blit(header, (x, y))
+		
+		y += header.get_height() + 30
+		
+		g = (120, 120, 120)
+		w = (255, 255, 255)
+		
+		c = w if self.i == 0 else g
+		img = get_text("SFX Volume: " + str(self.jk.get_sfx_volume()) + "%", 18, c)
+		screen.blit(img, ((screen.get_width() - img.get_width()) // 2, y))
+		y += img.get_height() + 40
+		
+		c = w if self.i == 1 else g
+		img = get_text("Music Volume: " + str(self.jk.get_music_volume()) + "%", 18, c)
+		screen.blit(img, ((screen.get_width() - img.get_width()) // 2, y))
+		y += img.get_height() + 40
+		
+		c = w if self.i == 2 else g
+		t = "More Magic " if (get_persisted_forever_int('magic') == 1) else "Magic"
+		img = get_text(t, 18, c)
+		screen.blit(img, ((screen.get_width() - img.get_width()) // 2, y))
+		y += img.get_height() + 40
+		
+		c = w if self.i == 3 else g
+		img = get_text("Return to Main Menu", 18, c)
+		screen.blit(img, ((screen.get_width() - img.get_width()) // 2, y))
+		y += img.get_height() + 40
+		
+		
 		
