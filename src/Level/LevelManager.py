@@ -16,20 +16,20 @@ class LevelManager:
 	def __init__(self, story_mode):
 		self.ordering = [
 				('1-3', "Lab Entrance", (4, 9, 1, 'ne')),
-				('2-3', None, (7, 13, 1, 'ne')),
+				('2-3', "Fill 'er up!", (7, 13, 1, 'ne')),
 				('3-1', "The Green Room", (9, 10, 1, 'ne')),
-				('4-0', None, (5, 8, 1, 'ne')),
-				('5-0', None, (2, 10, 1, 'ne')),
-				('6-0', None, (1, 9, 3, 'ne')),
+				('4-0', "Got the Blues", (5, 8, 1, 'ne')),
+				('5-0', "One Block, Two Block", (2, 10, 1, 'ne')),
+				('6-0', "Roadblock", (1, 9, 3, 'ne')),
 				('7-0', None, (1, 11, 3, 'ne')),
-				('8-0', None, (6, 9, 1, 'ne')),
-				('9-0', None, (1, 7, 1, 'ne')),
-				('10-2', None, (5, 11, 1, 'ne')),
+				('8-0', "Plug it in", (6, 9, 1, 'ne')),
+				('9-0', "Energize", (1, 7, 1, 'ne')),
+				('10-2', "You do this IRL", (5, 11, 1, 'ne')),
 				('11-0', None, (1, 4, 3, 'se')),
-				('12-0', None, (1, 10, 3, 'ne')),
+				('12-0', "Beam me up, Steve!", (1, 10, 3, 'ne')),
 				('13-0', None, (7, 18, 1, 'ne')),
 				('14-0', None, (5, 10, 3, 'ne')),
-				('15-0', None, (1, 10, 2, 'ne')),
+				('15-0', "Don't Look Down", (1, 10, 2, 'ne')),
 				('16-0', None, (10, 16, 2, 'ne')),
 				('17-3', "Block Party", (9, 18, 3, 'ne')),
 				('18-0', None, (1, 19, 2, 'se')),
@@ -41,9 +41,11 @@ class LevelManager:
 				('flipmaze', None, (1, 19, 1, 'se')),
 				('25-0', None, (1, 12, 1, 'se')),
 				('24-0', None, (1, 20, 3, 'ne')),
-				('26-0', None, (1, 9, 1, 'se')),
-				('27-0', None, (1, 9, 1, 'se')),
-				('90-0', None, (1, 9, 3, 'se'))]
+				('26-0', "Mirror Mirror", (1, 9, 1, 'se')),
+				('27-0', "Many Me", (1, 9, 1, 'se')),
+				('28-0', "Simon Says", (1, 12, 1, 'se')),
+				('90-0', "Here There Be Ratmen", (1, 9, 3, 'se')),
+				('99-0', "Doctor What?", (8, 4, 1, 'nw'))]
 		if story_mode:
 			self.ordering = [('intro', "Your Cubicle", (12, 14, 1, 'nw'))] + self.ordering
 	
