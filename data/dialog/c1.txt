@@ -1,3 +1,38 @@
+i|protagonist
+s|p|You there?
+cc
 i|janitor
-s|j|Placeholder
+s|j|Still around? Figured a rat got you.
+cc
+i|protagonist-sarcastic
+s|p|Thanks for the concern.
+cc
+i|protagonist
+s|p|There's some weird circuitry in here,
+s|p|what's that about?
+cc
+i|janitor
+s|j|Security measure. Got a spare nuclear generator on you?
+cc
+i|protagonist-wtf
+s|p|No!
+cc
+i|janitor
+s|j|Then you'll have to find another way to
+s|j|get power to open the door.
+s|j|Be resourceful.
+c
+s|j|I have to do some post-mortem papers,
+s|j|and then I have some other work, so
+s|j|don't bother me unless you have to
+s|j|or you're dead.
+cc
+i|protagonist-pout
+s|p|How would I-
+cc
+i|janitor
+s|j|Bothering!
+cc
+i|protagonist-hmm
+s|p|Okay, okay!
 cc

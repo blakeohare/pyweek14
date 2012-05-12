@@ -1,3 +1,8 @@
+i|protagonist-exclaim
+s|p|The battery in this room is dead!
+cc
 i|janitor
-s|j|Placeholder
+s|j|So charge it! If there's a power source
+s|j|in the room already, you shouldn't have
+s|j|any problem. Now go away!
 cc
