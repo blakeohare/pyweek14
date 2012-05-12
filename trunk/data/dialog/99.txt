@@ -79,6 +79,10 @@ i|flugenmeister-before
 s|f|I wonder what the basis of
 s|f|their language is...
 cc
+r
+p|180
+#Dr. Flügenmeister exits 
+cc
 i|janitor
 s|j|****static***
 s|j|Hey, sunshine, haven't heard
@@ -107,7 +111,54 @@ s|j|you're not the same person who walked in
 s|j|to this place this morning, am I right?
 cc
 i|protagonist-hmm
-s|p|...Maybe...
+s|p|Maybe...
+cc
+i|janitor
+s|j|Listen, kid, I was thinking: 
+s|j|you didn't do too bad today.
+c
+s|j|Want to come work for me?
+s|j|Pay is great, better than what the
+s|j|paperpushers here make.
+cc
+i|protagonist-sarcastic
+s|p|You mean facing death constantly in
+s|p|crazy situations with impossible goals?
+cc
+i|janitor
+s|j|Sure, but
+c
+s|j|I was thinking you'd start vacuuming.
+cc
+i|protagonist-pout
+s|p|Oh.
+cc
+i|janitor
+s|j|'Course some of the carpets are portals to
+s|j|other dimensions, especially shag. I keep
+s|j|telling them not to order shag...
+cc
+i|protagonist-happy
+s|p|I'll do it!
+cc
+i|janitor
+s|j|That's what I thought, sunshine.
+s|j|Now we're going to talk about salary
+s|j|and benefits.
+cc
+i|protagonist-happy
+s|p|Do I get a hover jet now?
+cc
+i|janitor
+s|j|No.
+cc
+i|protagonist-pout
+s|p|Aww.
+cc
+i|janitor
+s|j|Maybe after your first evaluation.
+cc
+i|protagonist-happy
 cc
 p|120
 credits
