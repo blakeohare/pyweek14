@@ -1,6 +1,6 @@
 class PlayScene:
-	def __init__(self, level_name):
-		
+	def __init__(self, level_name, story_mode):
+		self.story_mode = story_mode
 		persistence_change_level()
 		if level_name == '1-3':
 			set_persisted_level_int('decontaminant', 3)
@@ -121,7 +121,7 @@ class PlayScene:
 		
 		if self.level.complete:
 			next_level = get_level_manager().get_next_level(self.level.name)
-			self.next = TransitionScene(self, PlayScene(next_level))
+			self.next = TransitionScene(self, PlayScene(next_level, self.story_mode))
 		
 		sprites_to_add = []
 		sprites_to_remove = []
@@ -152,7 +152,7 @@ class PlayScene:
 	
 	
 	def restart_level(self):
-		self.next = TransitionScene(self, PlayScene(self.level.name))
+		self.next = TransitionScene(self, PlayScene(self.level.name, self.story_mode))
 	
 	def render(self, screen, counter):
 		

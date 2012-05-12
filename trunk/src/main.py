@@ -33,7 +33,7 @@ def main():
 			active_scene = MainMenuScene()
 		else:
 			level_name = lines[0]
-			active_scene = PlayScene(level_name)
+			active_scene = PlayScene(level_name, True)
 			if not active_scene.do_not_override_start:
 				coords = safe_map(int, lines[1].split(','))
 				x = coords[0]
