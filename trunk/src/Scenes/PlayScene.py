@@ -36,11 +36,15 @@ class PlayScene:
 			self.player.standingon = self.level.get_tile_at(x, y, z - 1)
 		
 		self.holograms = []
-		
+		self.x_offset_override = 0
 		level_pixel_width = self.level.height * 16 + self.level.width * 16
 		level_pixel_height = level_pixel_width // 2 + 12 * 8
 		self.fixed_x = level_pixel_width < 400
 		self.fixed_y = level_pixel_height < 300
+		if self.level.name == '28-0':
+			self.fixed_x = True
+			self.fixed_y = True
+			self.x_offset_override = 40
 		self.target_camera_x = None
 		self.target_camera_y = None
 		self.camera_x = None
@@ -187,7 +191,7 @@ class PlayScene:
 				else:
 					self.camera_y = new_camera_y
 		
-		self.level.render(screen, self.camera_x, self.camera_y, self.sprites, counter, sprites_to_add, sprites_to_remove)
+		self.level.render(screen, self.camera_x + self.x_offset_override, self.camera_y, self.sprites, counter, sprites_to_add, sprites_to_remove)
 		for sprite in sprites_to_remove:
 			sprite.garbage_collect = True
 		for sprite in sprites_to_add:
