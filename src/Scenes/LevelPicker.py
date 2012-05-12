@@ -7,10 +7,10 @@ class LevelPickerScene:
 		self.x = 0
 		self.y = 0
 		self.regions = [
-			("Sector A", '1-3 2-3 3-1'.split()),
+			("Sector A", '1-3 2-3 2a-0 3-1'.split()),
 			("Sector B", '4-0 5-0 6-0 7-0'.split()),
 			("Sector C", '8-0 9-0 10-2 11-0'.split()),
-			("Sector D", '12-0 13-0 14-0'.split()),
+			("Sector D", '12-0 13-0 14-0 14a-0'.split()),
 			("Sector E", '15-0 16-0 17-3 18-0'.split()),
 			("Sector F", '19a-0 19b-1'.split()),
 			("Sector G", '19-0 20-0 21-0'.split()),
@@ -30,9 +30,9 @@ class LevelPickerScene:
 			if w > 100:
 				h = h * 100 // w
 				w = 100
-			if h > 50:
-				w = w * 50 // h
-				h = 50
+			if h > 60:
+				w = w * 60 // h
+				h = 60
 			img = pygame.transform.scale(img, (w, h))
 			_level_image[name] = img
 		return img
@@ -119,5 +119,5 @@ class LevelPickerScene:
 					color = (255, 255, 255)
 				name_label = get_text(lm.get_current_room_name(m), 20, color)
 				screen.blit(name_label, (150, y))
-				y += 70
+				y += 60
 				i += 1
