@@ -13,6 +13,10 @@ _switch_mapping = {
 		'exit'
 	],
 	
+	'9-0': [
+		'exit'
+	],
+	
 	'10-2': [
 		'bridgene',
 		'bridgenw',
