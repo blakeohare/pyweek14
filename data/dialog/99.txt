@@ -35,3 +35,68 @@ cc
 i|flugenmeister-after
 s|f|ARRRGH!
 cc
+p|180
+i|flugenmeister-before
+s|f|Dear me. Are you alright,
+c
+s|f|my dear?
+cc
+i|protagonist-happy
+s|p|Dr. Flügenmeister!
+c
+s|p|You're normal again!
+cc
+i|flugenmeister-before
+s|f|Never better, thanks to you!
+s|f|Too much radiation,
+s|f|I suspect. Unfortunate.
+cc
+i|protagonist-happy
+s|p|Great, so you can finish
+s|p|your research? I've been
+s|p|collecting it while you were-
+cc
+i|protagonist-pout
+s|p|er...
+p|60
+s|p|away.
+cc
+i|flugenmeister-before
+s|f|No, I believe I shall instead
+s|f|seek out a more peaceful life
+s|f|with my rodent brethren.
+c
+i|protagonist-exclaim
+s|p|What?
+cc
+i|flugenmeister-before
+s|f|I wonder what the basis of
+s|f|their language is...
+cc
+p|180
+i|protagonist-sad
+s|p|I found Dr. Flügenmeister.
+cc
+i|janitor
+s|j|Good job.
+cc
+i|protagonist-sarcastic
+s|p|He says he's going to abandon his
+s|p| research and study the rats instead.
+cc
+i|janitor
+s|j|Better bring back the research, then.
+s|j|Use the backdoor to get here faster.
+cc
+p|180
+i|protagonist-exclaim
+s|p|Backdoor? You mean this whole time-
+cc
+i|janitor
+s|j|Think of it this way, kid:
+s|j|you're not the same person who walked in
+s|j|to this place this morning, am I right?
+cc
+i|protagonist-hmm
+s|p|...Maybe...
+cc
