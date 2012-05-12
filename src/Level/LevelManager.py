@@ -16,7 +16,7 @@ class LevelManager:
 	def __init__(self, story_mode):
 		self.ordering = [
 				('1-3', "Lab Entrance", (4, 9, 1, 'ne')),
-				('2-3', "Fill 'er up!", (7, 13, 1, 'ne')),
+				('2-3', "Fill 'er up!", (7, 13, 2, 'ne')),
 				('3-1', "The Green Room", (9, 10, 1, 'ne')),
 				('4-0', "Got the Blues", (5, 8, 1, 'ne')),
 				('5-0', "One Block, Two Block", (2, 10, 1, 'ne')),
