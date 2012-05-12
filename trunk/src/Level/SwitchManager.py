@@ -32,6 +32,11 @@ _switch_mapping = {
 		'exit'
 	],
 	
+	'16-0': [
+		None,
+		'green'
+	],
+	
 	'19-0': [
 		'power'
 	],
@@ -53,6 +58,15 @@ def override_switch_behavior(manager, level, index):
 			else:
 				level.activate_switch('door', False)
 				
+			return True
+	
+	elif name == '16-0':
+		if index == 0:
+			# Don't confuse the meaning of these 0's.
+			# The index == 0 which is the switch ID
+			# The pause token is 0 which is the moving platform ID
+			# They're the same here because that's a coincidence
+			level.moving_platforms.set_pause_token('0', not enabled[index])
 			return True
 	return False
 
