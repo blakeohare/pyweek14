@@ -31,10 +31,10 @@ class LevelManager:
 				('14-0', None, (5, 10, 3, 'ne')),
 				('15-0', None, (1, 10, 2, 'ne')),
 				('16-0', None, (10, 16, 2, 'ne')),
-				('17-3', None, (9, 18, 3, 'ne')),
+				('17-3', "Block Party", (9, 18, 3, 'ne')),
 				('18-0', None, (1, 19, 2, 'se')),
-				('19a-0', None, (2, 7, 1, 'se')),
-				('19b-1', None, (1, 17, 1, 'se')),
+				('19a-0', "Like Men", (2, 7, 1, 'se')),
+				('19b-1', "Rats in a Maze", (1, 17, 1, 'se')),
 				('19-0', None, (1, 8, 1, 'se')),
 				('20-0', None, (1, 15, 2, 'se')),
 				('21-0', None, (9, 13, 2, 'ne')),
@@ -45,7 +45,7 @@ class LevelManager:
 				('27-0', None, (1, 9, 1, 'se')),
 				('90-0', None, (1, 9, 3, 'se'))]
 		if story_mode:
-			self.ordering = [('intro', "Your Office", (12, 14, 1, 'nw'))] + self.ordering
+			self.ordering = [('intro', "Your Cubicle", (12, 14, 1, 'nw'))] + self.ordering
 	
 	def get_current_level_index(self, current_level_name):
 		for i in range(len(self.ordering)):
