@@ -69,6 +69,10 @@ _switch_mapping = {
 		'yellow'
 	],
 	
+	'25-0': [
+		'grey'
+	],
+	
 	'26-0': [
 		'blue',
 		'red'
@@ -83,6 +87,13 @@ _switch_mapping = {
 	'28-0': [
 		'door',
 		'bridge'
+	],
+	
+	'90-0': [
+		'power',
+		'green',
+		'blue',
+		'yellow'
 	]
 }
 
@@ -133,6 +144,13 @@ def override_switch_behavior(manager, level, index, is_blue):
 		if index == 4:
 			level.moving_platforms.set_pause_token('2', not enabled[index])
 			return True
+	
+	elif name == '25-0':
+		level.moving_platforms.set_pause_token(str(index - 1), not enabled[index])
+		if index != 0:
+		
+			return True
+	
 	return False
 
 
@@ -181,6 +199,7 @@ class SwitchManager:
 				
 				if sw[0] == col and sw[1] == row and sw[2] == layer:
 					self.statuses[i] = ('sprite', sprite)
+					print 'lkasjflkajfk', sprite.x
 					break
 				i += 1
 	
@@ -229,6 +248,7 @@ class SwitchManager:
 			if status != None:
 				if status[0] == 'sprite':
 					if switch[3] == self.colors['gray'][0] or self.level.name == 'flipmaze':
+						print 'working'
 						self.enabled[i] = True
 				elif status[0] == 'block':
 					type = switch[3]

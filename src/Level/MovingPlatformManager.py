@@ -29,6 +29,9 @@ class MovingPlatformManager:
 				pt[str(i)] = True
 		elif name == '24-0':
 			pt['2'] = True
+		elif name == '25-0':
+			for i in range(9):
+				pt[str(i)] = True
 	
 	def is_paused_platform(self, i):
 		if self.pause_tokens.get(str(i)) == True:
