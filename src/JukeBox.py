@@ -13,8 +13,15 @@ class JukeBox:
 	def __init__(self):
 		pygame.mixer.init()
 		self.current = None
-		self.set_music_volume(70)
-		self.set_sfx_volume(70)
+		
+		ps = get_persistent_state()
+		print ps.forever
+		if (ps.forever.get('sfx') != None):
+			self.set_music_volume(ps.get_int_forever('sfx'))
+			self.set_sfx_volume(ps.get_int_forever('music'))
+		else:
+			self.set_music_volume(70)
+			self.set_sfx_volume(70)
 		self.sounds = {}
 		self.music_map = {
 			'intro':'biologytake2',

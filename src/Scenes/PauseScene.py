@@ -48,12 +48,16 @@ class PauseScene:
 		elif i == 1:
 			self.next = TransitionScene(self, PlayScene(self.playscene.level.name, self.playscene.story_mode, True))
 		elif i == 2:
-			pass
+			self.save_game()
+			self.next = DialogScene(self.playscene, 'save')
 		elif i == 3:
 			self.next = TransitionScene(self, MainMenuScene())
 		elif i == 4:
 			self.next = None
 	
+	def save_game(self):
+		get_persistent_state().set_string_forever('save_level', self.playscene.level.name)
+		get_persistent_state().save_game()
 	def update(self, counter):
 		pass
 	
