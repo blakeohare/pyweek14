@@ -1,3 +1,17 @@
+i|protagonist
+s|p|I see platforms on hover jets, I think
+s|p|Any chance they'll hurt me?
+cc
 i|janitor
-s|j|Placeholder
+s|j|Not unless you fall off.
+cc
+i|protagonist-smirk
+s|p|Alright, I got this.
+s|p|Hey, do you think-
+cc
+i|janitor
+s|j|No, kid, you can't have a hover jet.
+cc
+i|protagonist-pout
+s|p|Aww.
 cc

@@ -1,3 +1,33 @@
+p|180
+i|protagonist-wtf
+s|p|Holy crap, what IS that?
+s|p|It just fried one of the rats!
+cc
 i|janitor
-s|j|Placeholder
+s|j|Fried it?
+cc
+i|protagonist-exclaim
+s|p|Yeah, and now it-
+cc
+i|protagonist-hmm
+s|p|It smells like fried chicken in here.
+s|p|That's kind of gross.
+cc
+i|janitor
+s|j|Damn. That's a Tesla coil, kid.
+s|j|They're really dangerous; I mean,
+s|j|you saw what it did to that rat.
+cc
+i|protagonist-crying
+s|p|What do I do? I don't want to be fried!
+cc
+i|janitor
+s|j|It's okay, sunshine, just don't step on the
+s|j|tiles surrounding it, and you'll be okay.
+cc
+i|protagonist-crying
+s|p|A-alright.
+cc
+i|janitor
+s|j|You can do it, kid.
 cc

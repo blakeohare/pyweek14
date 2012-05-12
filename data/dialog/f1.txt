@@ -1,3 +1,22 @@
+i|protagonist-wtf
+s|p|Help!
+c
+s|p|There really is a giant rat in here!
+cc
 i|janitor
-s|j|Placeholder
+s|j|Darlin', I don't lie about man-sized
+s|j|bipedal rodentia.
+cc
+i|protagonist-hmm
+s|p|Actually, it's kind of cute.
+cc
+i|janitor
+s|j|What it can do to you ain't cute.
+s|j|Just don't touch it and you should be fine.
+cc
+i|protagonist-nervous
+s|p|Are you sure?
+cc
+i|janitor
+s|j|Only one way to find out, sunshine.
 cc
