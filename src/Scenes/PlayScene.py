@@ -51,6 +51,11 @@ class PlayScene:
 		self.camera_y = None
 		if self.do_stuff != None:
 			self.do_stuff(self, self.level, -1)
+		
+		if self.story_mode:
+			ds = get_startup_dialog(self)
+			if ds != None:
+				self.next = ds
 	
 	def process_input(self, events, pressed, axes, mouse):
 		for event in events:

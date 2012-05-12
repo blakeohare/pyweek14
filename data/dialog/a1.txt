@@ -1,3 +1,51 @@
+i|protagonist
+s|p|I'm here, can you hear me?
+cc
 i|janitor
-s|j|Placeholder
+s|j|What? Oh, it's you, sunshine.
+s|j|Get cracking.
+cc
+i|protagonist
+s|p|I see some papers already, but...
+p|30
+s|p|um...
+p|30
+s|p|there's something in front of the door.
+cc
+i|janitor
+s|j|What?
+cc
+i|protagonist
+s|p|It's sort of a green glowing blob-thing.
+s|p|It doesn't look natural. Or healthy.
+cc
+i|janitor
+s|j|That would be radioactive waste, kid, so
+s|j|healthy isn't exactly what I'd call it.
+c
+s|j|And it isn't wallpaper paste, so try not
+s|j|to eat it. Got the spray I gave you?
+cc
+i|protagonist
+s|p|Yeah...
+cc
+i|janitor
+s|j|Walk right up to the green spot, holding
+s|j|the can in front of you. Give it a good
+s|j|shake and press the spacebar.
+cc
+i|protagonist
+s|p|The what?
+cc
+i|janitor
+s|j|I said press the lever on top of the can.
+s|j|And whatever you do, don't get the
+s|j|radiation on you.
+c
+s|j|Mutant hunting is a big pain in my
+s|j|backside.
+cc
+i|protagonist
+s|p|Um. Okay, definitely not going to touch
+s|p|the green stuff.
 cc

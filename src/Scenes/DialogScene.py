@@ -1,3 +1,41 @@
+def get_startup_dialog(play_scene):
+	id = {
+		'1-3': 'a1',
+		'2-3': 'a2',
+		'3-1': 'a3',
+		'4-0': 'b1',
+		'5-0': 'b2',
+		'6-0': 'b3',
+		'7-0': 'b4',
+		'8-0': 'c1',
+		'9-0': 'c2',
+		'10-2': 'c3',
+		'11-0': 'c4',
+		'12-0': 'd1',
+		'13-0': 'd2',
+		'14-0': 'd3',
+		'15-0': 'e1',
+		'16-0': 'e2',
+		'17-3': 'e3',
+		'18-0': 'e4',
+		'19a-0': 'f1',
+		'19b-1': 'f2',
+		'19-0': 'g1',
+		'20-0': 'g2',
+		'21-0': 'g3',
+		'flipmaze': 'h1',
+		'25-0': 'h2',
+		'24-0': 'i1',
+		'26-0': 'j1',
+		'27-0': 'j2',
+		'28-0': 'j3',
+		'90-0': '90'
+	}.get(play_scene.level.name, None)
+	
+	if id != None:
+		return DialogScene(play_scene, id)
+	return None
+
 class TextPrinter:
 	def __init__(self, text, color):
 		self.text = text
