@@ -16,6 +16,18 @@ class JukeBox:
 		self.set_music_volume(70)
 		self.set_sfx_volume(70)
 		self.sounds = {}
+		self.music_map = {
+			'intro':'biologytake2',
+			'12-0':'chemistry',
+			'13-0':'chemistry',
+			'14-0':'chemistry',
+			'17-3':'chemistry',
+			'18-0':'chemistry',
+			'19a-0':'chemistry',
+			'19b-1':'chemistry',
+			'19-0':'chemistry',
+			'99-0':'bossmusic',
+		}
 		
 		
 	def get_song_normalization(self, name):
@@ -83,9 +95,7 @@ class JukeBox:
 				pygame.mixer.music.play(-1)
 	
 	def get_song_for_level(self, level):
-		if level == 'intro':
-			return 'biologytake2'
-		return 'astrophysics'
+		return self.music_map.get(level, 'astrophysics')
 	
 	def update(self, levelname):
 		song = self.get_song_for_level(levelname)
