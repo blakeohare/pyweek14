@@ -45,22 +45,28 @@ class LevelPickerScene:
 					if self.x < 0:
 						self.x = 0
 					else:
+						play_sound('menumove')
 						self.y = 0
 				elif event.key == 'right':
 					self.x += 1
 					if self.x > len(self.regions):
 						self.x = len(self.regions) - 1
 					else:
+						play_sound('menumove')
 						self.y = 0
 				
 				elif event.key == 'down':
 					self.y += 1
 					if self.y >= len(self.regions[self.x][1]):
 						self.y -= 1
+					else:
+						play_sound('menumove')
 				elif event.key == 'up':
 					self.y -= 1
 					if self.y < 0:
 						self.y = 0
+					else:
+						play_sound('menumove')
 					
 				elif event.key == 'start':
 					if self.x == len(self.regions):
