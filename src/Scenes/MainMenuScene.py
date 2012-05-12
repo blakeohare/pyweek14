@@ -51,7 +51,7 @@ class MainMenuScene:
 		get_jukebox().ensure_current_song('title')
 	
 	def render(self, screen, counter):
-		screen.blit(get_image('misc/progress2.png'), (0, 0))
+		screen.blit(get_image('misc/title_screen.png'), (0, 0))
 		
 		title = get_text("Sudo Science", 36, (255, 255, 255))
 		w = title.get_width()
