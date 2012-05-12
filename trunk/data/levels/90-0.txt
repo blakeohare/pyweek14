@@ -7,5 +7,5 @@
 #action|negative|yellow:0^7^3^37l%6^27^2^br1i%7^27^2^br1i%8^27^2^br1i%9^27^2^br1i%10^27^2^br1i%11^27^2^br1i%12^27^2^br1i%13^27^2^br1i%14^27^2^br1i
 #action|positive|green:14^5^2^br1%15^5^2^br1%16^5^2^br1
 #action|negative|green:14^5^2^br2i%15^5^2^br2i%16^5^2^br2i
-#action|positive|blue:11^3^3^48i5%11^3^4^48i5%11^3^5^48i%12^3^3^48i5%12^3^4^48i%13^3^3^48i
+#action|positive|blue:11^3^3^0%11^3^4^0%11^3^5^0%12^3^3^0%12^3^4^0%13^3^3^0
 #action|positive|yellow:0^7^3^37%6^27^2^br2%7^27^2^br2%8^27^2^br2%9^27^2^br2%10^27^2^br2%11^27^2^br2%12^27^2^br2%13^27^2^br2%14^27^2^br2
