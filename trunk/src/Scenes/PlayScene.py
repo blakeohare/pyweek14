@@ -69,7 +69,7 @@ class PlayScene:
 					if self.level.spray_from([self.player] + self.holograms):
 						if self.level.name == '1-3':
 							self.next = DialogScene(self, 'a1b')
-			if event.key == 'start' and event.down and self.level.name != 'intro':
+			if event.key == 'start' and event.down and self.level.name != 'intro' and self.level.name != '99-0':
 				self.next = PauseScene(self)
 		
 		if not self.player.immobilized and self.player.automation == None:
