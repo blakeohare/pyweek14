@@ -123,6 +123,17 @@ class PlayScene:
 			next_level = get_level_manager().get_next_level(self.level.name)
 			self.next = TransitionScene(self, PlayScene(next_level))
 		
+		sprites_to_add = []
+		sprites_to_remove = []
+		
+		self.level.update(self.sprites, sprites_to_add, sprites_to_remove)
+
+		for sprite in sprites_to_remove:
+			sprite.garbage_collect = True
+		for sprite in sprites_to_add:
+			self.sprites.append(sprite)
+		
+		
 	def do_hologram_stuff(self):
 		self.level.hologram_manager.update(self, self.level, self.player)
 		
@@ -142,8 +153,6 @@ class PlayScene:
 		self.next = TransitionScene(self, PlayScene(self.level.name))
 	
 	def render(self, screen, counter):
-		sprites_to_add = []
-		sprites_to_remove = []
 		
 		player_position = self.player.pixel_position(0, 0, None)
 		player_x = player_position[0]
@@ -191,10 +200,6 @@ class PlayScene:
 				else:
 					self.camera_y = new_camera_y
 		
-		self.level.render(screen, self.camera_x + self.x_offset_override, self.camera_y, self.sprites, counter, sprites_to_add, sprites_to_remove)
-		for sprite in sprites_to_remove:
-			sprite.garbage_collect = True
-		for sprite in sprites_to_add:
-			self.sprites.append(sprite)
+		self.level.render(screen, self.camera_x + self.x_offset_override, self.camera_y, self.sprites, counter)
 		
 		self.overlay.render(screen, counter)
