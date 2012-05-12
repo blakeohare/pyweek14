@@ -1,3 +1,35 @@
+i|protagonist
+s|p|Hey, are you there? I need some help!
+cc
 i|janitor
-s|j|Placeholder
+s|j|****static****
+p|60
+s|j|Sunshine?
+p|20
+s|j|I'm busy!
+cc
+i|protagonist
+s|p|There's a lot more globby things and
+s|p|my can is empty!
+cc
+i|janitor
+s|j|It's volatile. It evaporates quickly.
+s|j|You'll just have to...
+cc
+s|j|HOLD HIM!
+p|60
+s|j|HE'S GOT A BANANA!
+p|60
+cc
+s|j|*ahem* ...to find a refill, there
+s|j|should be a few of those around-
+p|60
+s|j|HIGGINS, DON'T TOUCH HIS EAR!
+cc
+i|protagonist
+s|p|But I don't-
+cc
+i|janitor
+s|j|I've got a code mauve!
+s|j|****static****
 cc
