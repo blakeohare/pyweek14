@@ -46,7 +46,7 @@ class PauseScene:
 			self.next = self.playscene
 			self.next.next = self.next
 		elif i == 1:
-			self.next = TransitionScene(self, PlayScene(self.playscene.level.name, self.playscene.story_mode))
+			self.next = TransitionScene(self, PlayScene(self.playscene.level.name, self.playscene.story_mode, True))
 		elif i == 2:
 			pass
 		elif i == 3:
