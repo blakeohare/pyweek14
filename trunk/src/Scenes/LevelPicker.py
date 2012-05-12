@@ -12,10 +12,9 @@ class LevelPickerScene:
 			("Sector C", '8-0 9-0 10-2 11-0'.split()),
 			("Sector D", '12-0 13-0 14-0 14a-0'.split()),
 			("Sector E", '15-0 16-0 17-3 18-0'.split()),
-			("Sector F", '19a-0 19b-1'.split()),
-			("Sector G", '19-0 20-0 21-0'.split()),
-			("Sector H", 'flipmaze 25-0'.split()),
-			("Sector I", '24-0'.split()),
+			("Sector F", '19a-0 19b-1 19c-0'.split()),
+			("Sector G", '19-0 20-0 21-0 21a-0'.split()),
+			("Sector H", 'flipmaze 25-0 24-0'.split()),
 			("Sector J", '26-0 27-0 28-0'.split()),
 			("Sector X", '90-0'.split())
 		]
