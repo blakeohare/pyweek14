@@ -37,7 +37,7 @@ class Automation:
 		elif counter < 69:
 			return (-1.5, 0)
 		elif counter == 80:
-			print 'here'
+			
 			
 			drf2 = get_tile_store().get_tile('drf2')
 			sprite.level.modify_block(4, 4, 1, drf2)
