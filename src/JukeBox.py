@@ -48,6 +48,7 @@ class JukeBox:
 			fpath = 'sound/SFX/' + path + '.ogg'
 			fpath = fpath.replace('.wav', '.ogg').replace('/', os.sep).replace('\\', os.sep)
 			fpath = fpath.replace('.ogg.ogg', '.ogg')
+			print fpath
 			if not os.path.exists(fpath):
 				fpath = fpath.replace('.ogg', '.wav')
 			snd = self.sounds.get(fpath)
