@@ -61,7 +61,7 @@ _switch_mapping = {
 	],
 }
 
-def override_switch_behavior(manager, level, index):
+def override_switch_behavior(manager, level, index, is_blue):
 	enabled = manager.enabled
 	name = level.name
 	
@@ -97,6 +97,12 @@ def override_switch_behavior(manager, level, index):
 		]
 		for platform in mapping[index]:
 			level.moving_platforms.set_pause_token(str(platform), not enabled[index])
+		return True
+	
+	
+	elif name == 'flipmaze':
+		print 'hi/'
+		level.activate_switch('blue', is_blue)
 		return True
 	return False
 
@@ -193,7 +199,7 @@ class SwitchManager:
 			status = self.statuses[i]
 			if status != None:
 				if status[0] == 'sprite':
-					if switch[3] == self.colors['gray'][0]:
+					if switch[3] == self.colors['gray'][0] or self.level.name == 'flipmaze':
 						self.enabled[i] = True
 				elif status[0] == 'block':
 					type = switch[3]
@@ -216,7 +222,9 @@ class SwitchManager:
 	def do_action(self, level, name, switch_index, positive):
 		global _switch_mapping
 		
-		if override_switch_behavior(self, level, switch_index):
+		is_blue = level.get_tile_at(self.switches[switch_index]) == self.colors['blue'][0]
+		
+		if override_switch_behavior(self, level, switch_index, is_blue):
 			return
 		
 		mapping = _switch_mapping.get(name)
