@@ -10,7 +10,7 @@ def get_user_debug_message():
 def main():
 
 	pygame.init()
-	pygame.display.set_caption("Sudo Scientific")
+	pygame.display.set_caption("Sudo Science")
 	real_screen = pygame.display.set_mode((800, 600))
 	fake_screen = pygame.Surface((400, 300))
 	fps = 60
