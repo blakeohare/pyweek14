@@ -5,6 +5,8 @@
 48i	darktilei.png	1	
 48i2	darktileir.png	1	
 48i3	darktileil.png	1	
+48i5	darktileir2.png	1	
+48i6	darktileil2.png	1	
 48i4	darktileiboth.png	1	
 25	backleft.png	1	x
 26	backright.png	1	x
