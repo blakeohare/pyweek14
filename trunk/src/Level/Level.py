@@ -6,7 +6,7 @@ class PushTracker:
 		self.owner = sprite
 	
 class Level:
-	def __init__(self, name):
+	def __init__(self, name, playscene):
 		self.name = name
 		self.initialize()
 		self.sprite_z_sorter = lambda x,y:x.z < y.z
@@ -19,7 +19,7 @@ class Level:
 		self.spritify_counters = []
 		self.moving_platforms = MovingPlatformManager(self)
 		self.teleporters = TeleporterManager(self)
-		self.switch_manager = SwitchManager(self)
+		self.switch_manager = SwitchManager(self, playscene)
 		self.sprite_introducer = get_hacks_for_level(name, 'introduce_sprites')
 		self.hologram_manager = HologramManager(self)
 		self.coil_manager = CoilManager(self)
