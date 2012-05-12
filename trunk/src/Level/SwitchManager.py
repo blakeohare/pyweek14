@@ -37,6 +37,11 @@ _switch_mapping = {
 		'green'
 	],
 	
+	'17-3': [
+		'red',
+		'blue'
+	],
+	
 	'19-0': [
 		'power'
 	],
