@@ -27,6 +27,8 @@ class MovingPlatformManager:
 		elif name == '18-0':
 			for i in range(0, 11):
 				pt[str(i)] = True
+		elif name == '24-0':
+			pt['2'] = True
 	
 	def is_paused_platform(self, i):
 		if self.pause_tokens.get(str(i)) == True:
