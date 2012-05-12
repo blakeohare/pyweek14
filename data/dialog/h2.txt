@@ -1,3 +1,19 @@
+i|protagonist-happy
+s|p|Aww, do you want some cheese,
+s|p|little buddy? Er, well,
+s|p|maybe not so little...
+cc
 i|janitor
-s|j|Placeholder
+s|j|Getting attached to the
+s|j|giant mutant killer rats?
+cc
+i|protagonist-hmm
+s|p|Oops, hit the talk button.
+s|p|And maybe.
+i|protagonist-happy
+s|p|But he's such a cute
+s|p|giant mutant killer rat!
+cc
+i|janitor
+s|j|I don't believe this...
 cc
