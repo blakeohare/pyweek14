@@ -17,7 +17,7 @@ class LevelManager:
 		self.ordering = [
 				('1-3', "Lab Entrance", (4, 9, 1, 'ne')),
 				('2-3', "Fill 'er up!", (7, 13, 2, 'ne')),
-                                ('2a-0', "Around the Room", (6, 10, 1, 'ne')),
+				('2a-0', "Around the Room", (6, 10, 1, 'ne')),
 				('3-1', "The Green Room", (9, 10, 1, 'ne')),
 				('4-0', "Got the Blues", (5, 8, 1, 'ne')),
 				('5-0', "One Block, Two Block", (2, 10, 1, 'ne')),
@@ -30,6 +30,7 @@ class LevelManager:
 				('12-0', "A Block Too Far", (1, 10, 3, 'ne')),
 				('13-0', "Beam me up, Steve!", (7, 18, 1, 'ne')),
 				('14-0', "Blocks in High Places", (5, 10, 3, 'ne')),
+				('14a-0', "Jump the River", (4, 10, 2, 'ne')),
 				('15-0', "Don't Look Down", (1, 10, 2, 'ne')),
 				('16-0', "Islands", (10, 16, 2, 'ne')),
 				('17-3', "Block Party", (9, 18, 3, 'ne')),
