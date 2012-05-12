@@ -20,6 +20,10 @@ moving_platforms:
 def make_sprite(type, col, row, layer):
 	return Sprite(col * 16 + 8, row * 16 + 8, layer * 8, type)
 
+def _hack_do_stuff_99(level, counter):
+	pass #if counter == 1:
+		
+
 def _hack_introduce_sprites_intro(level, counter):
 	
 	if counter == 120:
@@ -48,6 +52,10 @@ _level_specific_hacks = {
 		'introduce_sprites': _hack_introduce_sprites_intro,
 		'do_stuff': _hack_do_stuff_intro,
 		'dialog': { } #'transition_level_one': _hack_dialog_intro_transition_level_one }
+	},
+	
+	'99-0': {
+		
 	},
 	
 	'9-0': {

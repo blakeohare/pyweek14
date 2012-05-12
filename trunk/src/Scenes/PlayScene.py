@@ -21,6 +21,8 @@ class PlayScene:
 		self.counter = 0
 		start = level_manager.get_starting_point_for_level(level_name)
 		self.do_stuff = get_hacks_for_level(level_name, 'do_stuff')
+		if level_name == '99-0':
+			self.player.set_automation(Automation('99-0', '99_p'))
 		
 		if start != None:
 			x = start[0]
