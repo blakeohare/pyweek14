@@ -41,7 +41,7 @@ class LevelManager:
 				('19-0', "A Shockin Experience", (1, 8, 1, 'se')),
 				('20-0', "1.21 \"Jiga\" Watts", (1, 15, 2, 'se')),
 				('21-0', "R.O.U.S.", (9, 13, 2, 'ne')),
-				('21a-0', "High Voltage", (5, 5, 1, 'se')), 
+				('21a-0', "High Voltage", (1, 11, 1, 'se')),
 				('flipmaze', "On The Flip Side", (1, 19, 1, 'se')),
 				('25-0', "Hunger Game", (1, 12, 1, 'se')),
 				('24-0', "Three Blind Mice", (1, 20, 3, 'ne')),

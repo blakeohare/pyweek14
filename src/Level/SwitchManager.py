@@ -63,6 +63,13 @@ _switch_mapping = {
 		'powerw'
 	],
 	
+	'21a-0': [
+		'green',
+		'magenta',
+		'yellow',
+		'cyan'
+	],
+	
 	'24-0': [
 		'green',
 		'power',
