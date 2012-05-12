@@ -199,7 +199,6 @@ class SwitchManager:
 				
 				if sw[0] == col and sw[1] == row and sw[2] == layer:
 					self.statuses[i] = ('sprite', sprite)
-					print 'lkasjflkajfk', sprite.x
 					break
 				i += 1
 	
@@ -248,7 +247,6 @@ class SwitchManager:
 			if status != None:
 				if status[0] == 'sprite':
 					if switch[3] == self.colors['gray'][0] or self.level.name == 'flipmaze':
-						print 'working'
 						self.enabled[i] = True
 				elif status[0] == 'block':
 					type = switch[3]
