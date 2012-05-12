@@ -1,3 +1,39 @@
 i|janitor
-s|j|Placeholder
+s|j|I'm back.
+cc
+i|protagonist-smirk
+s|p|Have to hunt any mutants?
+cc
+i|janitor
+s|j|Cleaned the fridge in the breakroom.
+s|j|I swear that tuna salad Ann brings
+s|j|is sentient; sometimes when you look at it,
+s|j|you start to feel something is looking back...
+cc
+i|protagonist-pout
+s|p|Freaky.
+cc
+i|protagonist
+s|p|Anyway, there's this glowing green vortex
+s|p|coming out of the floor in here.
+cc
+i|janitor
+s|j|Oh, that's a transporter.
+cc
+i|protagonist-happy
+s|p|We have those?
+cc
+i|janitor
+s|j|No. Anyway, check for a blue one, that's
+s|j|your exit. Be careful, they only go one-way.
+cc
+i|protagonist-smirk
+s|p|So..
+cc
+i|protagonist-happy
+s|p|We have transporters!
+s|p|That's so cool!
+cc
+i|janitor
+s|j|Shut up, kid.
 cc

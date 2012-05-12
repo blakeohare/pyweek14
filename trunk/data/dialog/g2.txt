@@ -1,3 +1,23 @@
 i|janitor
-s|j|Placeholder
+s|j|You there?
+cc
+i|protagonist
+s|p|I'm here.
+cc
+i|janitor
+s|j|Oh. Alright then.
+cc
+i|protagonist-smirk
+s|p|Were you worried about me?
+cc
+i|janitor
+s|j|No! Just...wondered if I needed to go
+s|j|collect your corpse yet. That's all.
+cc
+i|protagonist-smirk
+s|p|Thanks for the concern.
+cc
+i|janitor
+s|j|Don't thank me, just keep moving!
+s|j|Damn brat.
 cc
