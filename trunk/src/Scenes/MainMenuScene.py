@@ -21,7 +21,7 @@ class MainMenuScene:
 					self.index += 1
 					if not self.options[self.index][1]:
 						self.index += 1
-					if self.index < len(self.options):
+					if self.index <= len(self.options):
 						play_sound('menumove')
 					else:
 						self.index = 0
