@@ -1,0 +1,144 @@
+i|supervisor
+s|s|How'd it go?
+cc
+i|protagonist-pout
+s|p|You have no idea what I had to go through
+s|p|to get these.
+cc
+r
+snd|pickup.wav
+s|w|Handed over research.
+#if there are less than 15 papers
+i|supervisor
+s|s|This...is barely adequate.
+s|s|Did you even try?
+cc
+i|protagonist-wtf
+s|p|There were rats! And coils! And-
+cc
+i|supervisor
+s|s|Never mind, allowances must be made
+s|s|for your youth and inexperience.
+c
+s|s|I hope your work improves in the future.
+cc
+#if there are less than 30 papers but more than 15
+i|supervisor
+s|s|It appears you retrieved the bulk of the
+s|s|research, though not all of it.
+cc
+i|protagonist-wtf
+s|p|I had to go through radioactive waste,
+s|p|mutant rats, and a lab that was trying
+s|p|to kill me! I think I did okay!
+cc
+i|supervisor
+s|s|I'm sure you do. Don't worry;
+s|s|even if the result was mediocre,
+s|s|we will make allowances considering your
+s|s|rather temporary position here.
+c
+s|s|Perhaps in the future, you'll be able to do
+s|s|some real quality work!
+cc
+#if the number of papers is greater than 30
+i|supervisor
+s|s|Did...did you get Dr. Flügenmeister’s
+s|s|grocery list in here too?
+cc
+i|protagonist-smirk
+s|p|Is that what that was?
+cc
+i|supervisor
+s|s|It's written in Esperanto,
+s|s|or maybe Klingon.
+c
+s|s|Anyway, I suppose this is an...
+c
+s|s|acceptable job. I mean,
+s|s|did you bring back a specimen?
+cc
+i|protagonist-exclaim
+s|p|You mean one of the giant killer rats?
+c
+i|protagonist-sarcastic
+s|p|No, I didn't bring one of those back.
+cc
+i|supervisor
+s|s|Shame. I suppose it's too much to expect
+s|s|someone so young and green to go above and
+s|s|beyond mere necessity.
+cc
+#Dialogue continues normally from here.
+i|supervisor
+s|s|In any case, we can continue
+s|s|Dr. Flügenmeister’s work now!
+c
+s|s|A gas-powered can opener...
+c
+s|s|What a visionary.
+cc
+i|protagonist-wtf
+s|p|WHAT? You mean all this work-
+cc
+i|supervisor
+s|s|Speaking of work, I suggest you get back to yours!
+s|s|Just think: if you do well enough,
+s|s|one day you could be like me!
+cc
+p|180
+#supervisor exits, janitor enters
+i|protagonist-crying
+s|p|Just like her...
+cc
+i|janitor
+s|j|Hey sunshine.
+cc
+i|protagonist-happy
+s|p|Hey! I made it!
+cc
+i|janitor
+s|j|I can see that. Listen, kid,
+s|j|I was thinking: you didn't do
+s|j|too bad in there today.
+c
+s|j|Want to come work for me?
+s|j|Pay is great, better than what the
+s|j|paperpushers here make.
+cc
+i|protagonist-sarcastic
+s|p|You mean facing death constantly in
+s|p|crazy situations with impossible goals?
+cc
+i|janitor
+s|j|I was thinking you'd start on the floors.
+cc
+i|protagonist-pout
+s|p|Oh.
+i|janitor
+s|j|'Course some of the carpets are portals to
+s|j|other dimensions, especially shag. I keep
+s|j|telling them not to order shag...
+cc
+i|protagonist-happy
+s|p|I'll do it.
+cc
+i|janitor
+s|j|That's what I thought, sunshine.
+s|j|Now we're going to talk about salary
+s|j|and benefits.
+cc
+i|protagonist-happy
+s|p|Do I get a hover jet now?
+cc
+i|janitor
+s|j|No.
+cc
+i|protagonist-pout
+s|p|Aww.
+cc
+i|janitor
+s|j|Maybe after your first evaluation.
+cc
+i|protagonist-happy
+cc
