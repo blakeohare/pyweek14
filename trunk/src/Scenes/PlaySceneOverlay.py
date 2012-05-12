@@ -18,8 +18,12 @@ class PlaySceneOverlay:
 		screen.blit(goo, (0, screen.get_height() - goo.get_height() - 14))
 		screen.blit(rp, (24, screen.get_height() - rp.get_height() - 0))
 		
+		research_saved = get_persisted_forever_int('research')
+		level_research = self.playscene.research_collected
+		r = research_saved + level_research
+		
 		goo_count = get_text(self.pad_with_zeroes(get_persisted_level_int('decontaminant'), 3), 16, (100, 255, 100))
-		rp_count = get_text(self.pad_with_zeroes(get_persisted_forever_int('research'), 3), 16, (255, 255, 255))
+		rp_count = get_text(self.pad_with_zeroes(r, 3), 16, (255, 255, 255))
 		loc = get_level_manager().get_current_room_name(self.level.name)
 		if loc == None:
 			loc = "Room Needs Name"

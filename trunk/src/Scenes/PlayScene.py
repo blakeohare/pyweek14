@@ -5,6 +5,7 @@ class PlayScene:
 		if level_name == '1-3':
 			set_persisted_level_int('decontaminant', 3)
 		
+		self.research_collected = 0
 		self.next = self
 		self.level_name = level_name
 		self.level = Level(level_name)
