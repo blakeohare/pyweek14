@@ -6,8 +6,9 @@
 
 i|supervisor
 snd|talktalk.wav
-s|s|Hey, how's it going?
-s|s|You've been with us for...
+s|s|Hey, uh...you. You've been with us for a 
+snd|talktalk.wav
+s|s|while now, yes?
 cc
 snd|talkhigh.wav
 i|protagonist-happy
@@ -15,14 +16,6 @@ s|p|Two months.
 cc
 snd|talktalk.wav
 i|supervisor
-s|s|Two months, now. That's quite a while
-snd|talktalk.wav
-s|s|and I think you've done well, Miss, uh...
-c
-snd|talk.wav
-s|s|...yes, very well!
-cc
-|
 snd|talktalk.wav
 s|s|To show how much we appreciate your
 snd|talktalk.wav
@@ -40,12 +33,11 @@ s|s|-extremely talented!
 cc
 snd|talktalkhigh.wav
 i|protagonist
-s|p|Um, thanks, I guess. What is this
-s|p|assignment?
+s|p|Um, thanks?
 cc
 i|supervisor
 snd|talktalk.wav
-s|s|Well, Dr. Flügenmeister has, uh, gone
+s|s|Dr. Flügenmeister has, uh, gone
 snd|talktalk.wav
 s|s|on an unannounced leave of absence-
 cc
@@ -61,7 +53,7 @@ snd|talktalk.wav
 s|s|Unfortunately, his lab is, shall we say,
 p|60
 snd|talk.wav
-s|s|"cluttered".
+s|s|cluttered.
 cc
 i|janitor
 snd|talktalklow.wav
@@ -69,27 +61,17 @@ s|j|Seen rats in there that walk like men.
 cc
 i|supervisor
 snd|talktalk.wav
-s|s|Recently, he made a very important, 
-snd|talktalk.wav
-s|s|even critical, discovery.
-c
-snd|talktalk.wav
 s|s|I can not stress enough how vitally
 snd|talktalk.wav
-s|s|important his work is, not only to our
-snd|talktalk.wav
-s|s|company, but to mankind!
+s|s|important his work is!
 c
 snd|talktalk.wav
-s|s|We must retrieve this research at all
-snd|talktalk.wav
-s|s|costs; fortunately, we have you.
+s|s|We must retrieve it at all costs.
 c
 snd|talktalk.wav
-s|s|Your records indicate that you're
+s|s|Our records indicate that you're 
+c
 snd|talktalk.wav
-s|s|extremely talented, intelligent,
-snd|talk.wav
 s|s|dedicated-
 cc
 i|janitor
@@ -119,16 +101,13 @@ cc
 i|protagonist-nervous
 snd|talkhigh.wav
 s|p|Hazardous materials?
-p|40
-snd|talkhigh.wav
-s|p|Like what?
 cc
 i|supervisor
 snd|talktalk.wav
 s|s|Oh, they're really only mildly
 snd|talktalk.wav
-s|s|hazardous; probably won't cause any
-s|s|mutations at all.
+s|s|hazardous; probably won't cause many
+s|s|mutations.
 c
 snd|talktalk.wav
 s|s|Incidentally, you'll need to sign this
@@ -148,12 +127,7 @@ s|p|I'll do it!
 cc
 i|supervisor
 snd|talktalk.wav
-s|s|Excellent! You'll be escorted to the
-snd|talktalk.wav
-s|s|entrance to his lab shortly.
-c
-snd|talktalk.wav
-s|s|It's a large space, so be sure to look
+s|s|Excellent! Be sure to look
 snd|talktalk.wav
 s|s|everywhere. Remember, we need that
 snd|talk.wav
@@ -165,15 +139,10 @@ y|180
 p|180
 i|janitor
 snd|talktalklow.wav
-s|j|Rats that walk like men, kid.
+s|j|Not kidding about those rats, kid.
 cc
-snd|talktalkhigh.wav
-i|protagonist-hmm
-s|p|They don't really exist, do they?
-cc
-i|janitor
 snd|talktalklow.wav
-s|j|Wanna bet? Take this.
+s|j|Here, take this.
 cc
 r
 #h|intro_janitor_walkie_talkie
@@ -184,9 +153,7 @@ s|w|Received a Walkie Talkie.
 cc
 i|janitor
 snd|talktalklow.wav
-s|j|This way you can keep me posted about
-snd|talktalklow.wav
-s|j|where you are in the lab.
+s|j|Keep me posted on your location.
 cc
 i|protagonist-sarcastic
 p|60
