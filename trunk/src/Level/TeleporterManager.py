@@ -7,24 +7,30 @@ class TeleporterManager:
 		receivers = []
 		enabled = []
 		in_use = []
-		if len(transporters) == 2:
-			for t in transporters:
-				if t[3] == 't1' or t[3] == 't3':
-					senders.append(t)
-					enabled.append(t[3] == 't1')
-				else:
-					receivers.append(t)
-		else:
-			pass
-			# TODO: configure it for when there are multiple
-			# currently, it'll be in the order of the parser
+		for t in transporters:
+			if t[3] == 't1' or t[3] == 't3':
+				senders.append(t)
+				enabled.append(t[3] == 't1')
+			else:
+				receivers.append(t)
+		
 		self.senders = senders
 		self.receivers = receivers
+		
+		self.manual_level_config(level.name)
+
 		self.new_sprites = {}
 		self.remove_sprites = []
 		self.in_use = len(self.senders) * [999]
 		self.enabled = enabled
-		
+
+	
+	def manual_level_config(self, name):
+		if name == '13-0':
+			r = self.receivers
+			self.receivers = [
+				r[0], r[9], r[4], r[5], r[2], r[10], r[3], r[1], r[8], r[6], r[7]
+			]
 	
 	def set_teleporter_status(self, col, row, layer, isenabled):
 		i = 0
