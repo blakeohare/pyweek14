@@ -3,3 +3,4 @@ rat2	ratne.png	4	x
 rat3	ratsw.png	4	x
 rat4	ratnw.png	4	x
 drf	flugenmeister.png	4	x
+drf2	drf2.png	4	x
