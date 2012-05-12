@@ -13,8 +13,10 @@ class Level:
 		self.push_trackers = []
 		self.newsprites = []
 		self.circuitry = Circuits(self)
+		self.counter = 0
 		self.render_exceptions = []
 		self.complete = False
+		self.spritify_counters = []
 		self.moving_platforms = MovingPlatformManager(self)
 		self.teleporters = TeleporterManager(self)
 		self.switch_manager = SwitchManager(self)
@@ -283,8 +285,9 @@ class Level:
 			i -= 1
 	
 	def render(self, screen, xOffset, yOffset, sprites, render_counter):
+		self.counter += 1
 		self.allsprites = sprites
-		
+		self.any_res = False
 		self.re_blits = {}
 		
 		width = self.width
@@ -337,30 +340,31 @@ class Level:
 				col -= 1
 			i += 1
 		
+		
 	def render_sprite(self, screen, sprite, xOffset, yOffset, render_counter, re_render=False):
 		
 		q = sprite.render_me(screen, xOffset, yOffset, render_counter)
 		if not re_render:
 			if sprite.x % 16 < 6 and sprite.y % 16 > 10:
-				
-				col = int(sprite.x // 16)
-				row = int(sprite.y // 16)
-				layer = int(sprite.z // 8)
-				k = str(col) + '^' + str(row)
-				r = (layer + sprite.height, q)
-				if self.re_blits.get(k) == None:
-					self.re_blits[k] = [r]
-				else:
-					if self.re_blits[k][-1][0] < r[0]:
-						self.re_blits[k].append(r)
+				if sprite.main_or_hologram or sprite.israt:
+					col = int(sprite.x // 16)
+					row = int(sprite.y // 16)
+					layer = int(sprite.z // 8)
+					k = str(col) + '^' + str(row)
+					r = (layer + sprite.height, q)
+					if self.re_blits.get(k) == None:
+						self.re_blits[k] = [r]
 					else:
-						i = 0
-						while i < len(self.re_blits[k]):
-							if self.re_blits[k][i][0] > r[0]:
-								self.re_blits[k] = self.re_blits[k][:i] + [r] + self.re_blits[k][i:]
-								break
-							i += 1
-	
+						if self.re_blits[k][-1][0] < r[0]:
+							self.re_blits[k].append(r)
+						else:
+							i = 0
+							while i < len(self.re_blits[k]):
+								if self.re_blits[k][i][0] > r[0]:
+									self.re_blits[k] = self.re_blits[k][:i] + [r] + self.re_blits[k][i:]
+									break
+								i += 1
+		
 	def render_tile_stack(self, screen, col, row, xOffset, yOffset, render_counter, sprites, re_on, re_off):
 		re_sprite_on = None
 		re_sprite_off = None
@@ -374,6 +378,7 @@ class Level:
 			re_sprite_on = []
 			for re in re_on:
 				if re.is_block:
+					self.any_res = True
 					re_block_on.append(re)
 				else:
 					re_sprite_on.append(re)
@@ -383,6 +388,7 @@ class Level:
 			re_sprite_off = []
 			for re in re_off:
 				if re.is_block:
+					self.any_res = True
 					re_block_off.append(re)
 				else:
 					re_sprite_off.append(re)				
@@ -424,6 +430,7 @@ class Level:
 										re_offset = re.get_offset()
 									else:
 										rei += 1
+							
 							self.render_sprite(screen, sprite, xOffset + re_offset[0], yOffset + re_offset[1], render_counter)
 					else:
 						new_sprites.append(sprite)
@@ -581,7 +588,7 @@ class Level:
 						self.modify_block(end_col, end_row, layer, get_tile_store().get_tile('45'))
 					if standingon.id == 'pi':
 						if block.id == '45':
-							#play_sound('electricity_flows.wav')
+							play_sound('electricity_flows.wav')
 							self.circuitry.refresh_charges()
 					if was_standing_on != None and was_standing_on.id == 'pi' and block.id == '45':
 						play_sound('battery_deplete.wav')
@@ -592,7 +599,9 @@ class Level:
 			should_spritify = True
 		
 		if should_spritify:
-			self.spritify_block(end_col, end_row, layer)
+			
+			self.spritify_counters.append([end_col, end_row, layer, 5])
+			#self.spritify_block(end_col, end_row, layer)
 	
 	def spritify_block(self, col, row, layer):
 		block = self.modify_block(col, row, layer, None)
@@ -708,6 +717,18 @@ class Level:
 			if not re.expired:
 				new_re.append(re)
 		self.render_exceptions = new_re
+		
+		i = 0
+		while i < len(self.spritify_counters):
+			t = self.spritify_counters[i]
+			if t[-1] == 0:
+				self.spritify_counters = self.spritify_counters[:i] + self.spritify_counters[i + 1:]
+				self.spritify_block(t[0], t[1], t[2])
+			else:
+				t[-1] -= 1
+				i += 1
+		
+		
 		self.counter += 1
 		
 	
