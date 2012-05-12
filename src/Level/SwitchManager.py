@@ -21,6 +21,10 @@ _switch_mapping = {
 		'bridgene',
 		'bridgenw',
 		'bridgese'
+	],
+	
+	'12-0': [
+		'exit'
 	]
 }
 
