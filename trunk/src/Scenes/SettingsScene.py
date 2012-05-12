@@ -4,7 +4,11 @@ class SettingsScene:
 		self.next = self
 		self.i = 0
 		self.jk = get_jukebox()
-		
+	
+	def toggle_magic(self):
+		z = 1 - get_persisted_forever_int('magic')
+		set_persisted_forever_int('magic', z)
+	
 	def process_input(self, events, pressed, axes, mouse):
 		for event in events:
 			if event.down:
@@ -22,25 +26,32 @@ class SettingsScene:
 						self.jk.set_sfx_volume(self.jk.get_sfx_volume() + 10)
 					elif self.i == 1: # Music
 						self.jk.set_music_volume(self.jk.get_music_volume() + 10)
+					elif self.i == 2:
+						self.toggle_magic()
 				
 				elif event.key == 'left':
 					if self.i == 0: # SFX
 						self.jk.set_sfx_volume(self.jk.get_sfx_volume() - 10)
 					elif self.i == 1: # Music
 						self.jk.set_music_volume(self.jk.get_music_volume() - 10)
+					elif self.i == 2:
+						self.toggle_magic()
 				
 				elif event.key == 'start':
 					if self.i == 2:
-						z = 1 - get_persisted_forever_int('magic')
-						set_persisted_forever_int('magic', z)
+						self.toggle_magic()
 					elif self.i == 3:
+						get_persistent_state().set_int_forever('sfx', self.jk.get_sfx_volume())
+						get_persistent_state().set_int_forever('music', self.jk.get_music_volume())
 						self.next = TransitionScene(self, MainMenuScene())
+						get_persistent_state().save_game()
 						
 				
 					
 	
 	def update(self, counter):
 		pass
+		
 	
 	def render(self, screen, counter):
 		header = get_text("Sound Settings", 30, (255, 255, 255))

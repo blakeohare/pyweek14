@@ -2,10 +2,10 @@ class MainMenuScene:
 	def __init__(self):
 		self.next = self
 		self.index = 0
-		has_save_data = get_persisted_forever_int('has_save_data') == 1
+		has_save_data = get_persisted_forever_string('save_level') != ''
 		self.options = [
 			('Start New Story Mode', True, lambda x:PlayScene('intro', True)),
-			('Resume Saved Game', has_save_data, lambda x:PlayScene(None, True)),
+			('Resume Saved Game', has_save_data, 'resume_save'),
 			('Level Picker', True, lambda x:LevelPickerScene()),
 			('Configure Input', True, lambda x:ConfigureInputScene()),
 			('Sound Settings', True, lambda x:SettingsScene()),
@@ -39,7 +39,12 @@ class MainMenuScene:
 		self.index = min(self.index, len(self.options) - 1)
 		
 		if go:
-			next_scene = self.options[self.index][2](None)
+			lamb = self.options[self.index][2]
+			if lamb == 'resume_save':
+				level = get_persistent_state().get_string_forever('save_level')
+				next_scene = PlayScene(level, True)
+			else:
+				next_scene = lamb(None)
 			self.next = TransitionScene(self, next_scene)
 	
 	def update(self, counter):

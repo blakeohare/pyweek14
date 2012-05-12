@@ -92,9 +92,10 @@ class PersistentState:
 								value = int(value)
 							except:
 								value = 0
+							
 						else:
 							type = 's'
-							values[name] = (type, value)
+						values[name] = (type, value)
 		self.forever = values
 						
 					
