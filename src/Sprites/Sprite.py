@@ -192,9 +192,13 @@ class Sprite:
 				path += '.png'
 			img = get_image(path)
 		elif self.israt:
-			path = 'rat/' + self.rat_trot_mode
-			if self.is_moving:
-				path += str([1, 2, 3, 4, 3, 2][(render_counter // 6) % 6])
+			path = 'rat/'
+			if self.death_type == 'bazat':
+				path += 'zap' + str(((render_counter // 3) % 4) + 1)
+			else:
+				path += self.rat_trot_mode
+				if self.is_moving:
+					path += str([1, 2, 3, 4, 3, 2][(render_counter // 6) % 6])
 			path += '.png'
 			img = get_image(path)
 		elif self.isjanitor:
