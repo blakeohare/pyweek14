@@ -1,3 +1,12 @@
+i|protagonist-wtf
+s|p|Seriously, what the heck is this?
+s|p|A big multicolored block?
+cc
 i|janitor
-s|j|Placeholder
+s|j|Oh, that's the master block!
+s|j|Been looking for that. It pushes any button.
+s|j|Today's your lucky day, sunshine.
+cc
+i|protagonist-sarcastic
+s|p|Clearly.
 cc
