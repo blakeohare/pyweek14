@@ -2,11 +2,8 @@ i|protagonist-exclaim
 s|p|Hey, there's another me!
 s|p|I stepped on this pad
 s|p|and there's another me!
-cc
-r
-p|180
-#Intern waves and her clone copies
-i|protagonist-happy!
+c
+i|protagonist-happy
 s|p|Teehee!
 cc
 i|janitor
