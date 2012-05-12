@@ -59,6 +59,15 @@ _switch_mapping = {
 		'powere',
 		'powerw'
 	],
+	
+	'24-0': [
+		'green',
+		'power',
+		'purple',
+		'grey',
+		None,
+		'yellow'
+	]
 }
 
 def override_switch_behavior(manager, level, index, is_blue):
@@ -103,6 +112,11 @@ def override_switch_behavior(manager, level, index, is_blue):
 	elif name == 'flipmaze':
 		level.activate_switch('blue', is_blue)
 		return True
+		
+	elif name == '24-0':
+		if index == 4:
+			level.moving_platforms.set_pause_token('2', not enabled[index])
+			return True
 	return False
 
 
