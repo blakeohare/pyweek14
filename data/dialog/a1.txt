@@ -1,12 +1,11 @@
-i|protagonist
-s|p|I'm here, can you hear me?
+i|protagonist-exclaim
+s|p|Can you hear me?
 cc
 i|janitor
 s|j|What? Oh, it's you, sunshine.
-s|j|Get cracking.
 cc
-i|protagonist
-s|p|I see some papers already, but...
+i|protagonist-nervous
+s|p|I see some papers, but...
 p|30
 s|p|um...
 p|30
@@ -15,37 +14,34 @@ cc
 i|janitor
 s|j|What?
 cc
-i|protagonist
+i|protagonist-nervous
 s|p|It's sort of a green glowing blob-thing.
 s|p|It doesn't look natural. Or healthy.
 cc
 i|janitor
-s|j|That would be radioactive waste, kid, so
-s|j|healthy isn't exactly what I'd call it.
+s|j|That would be radioactive waste, kid.
 c
-s|j|And it isn't wallpaper paste, so try not
-s|j|to eat it. Got the spray I gave you?
+s|j|Got the spray I gave you?
 cc
-i|protagonist
+i|protagonist-pout
 s|p|Yeah...
 cc
 i|janitor
-s|j|Walk right up to the green spot, holding
-s|j|the can in front of you. Give it a good
-s|j|shake and press the spacebar.
+s|j|Walk right up to the green spot,
+s|j|give the can a good shake,
+s|j|and press the spacebar.
 cc
-i|protagonist
+i|protagonist-pout
 s|p|The what?
 cc
 i|janitor
-s|j|I said press the lever on top of the can.
+s|j|I said press the button on the can.
 s|j|And whatever you do, don't get the
 s|j|radiation on you.
 c
 s|j|Mutant hunting is a big pain in my
 s|j|backside.
 cc
-i|protagonist
-s|p|Um. Okay, definitely not going to touch
-s|p|the green stuff.
+i|protagonist-exclaim
+s|p|Okay, don't touch the green stuff.
 cc
