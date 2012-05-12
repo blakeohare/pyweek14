@@ -10,6 +10,7 @@ class PlayScene:
 		self.level = Level(level_name)
 		self.player = Sprite(17, 177, 32, 'main')
 		self.sprites = [self.player]
+		self.player.level = self.level
 		for rat in self.level.rats:
 			rat.standingon = None
 			self.sprites.append(rat)

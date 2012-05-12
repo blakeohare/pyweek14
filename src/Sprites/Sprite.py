@@ -51,7 +51,7 @@ class Sprite:
 	# sprite coordinates are assuming the grid is 16x16 tiles
 	# these get transposed into pixel coordinates and
 	# are converted into tile coords by simply dividing by 16
-	def __init__(self, x, y, z, type):
+	def __init__(self, x, y, z, type, level=None):
 		global _block_images_for_sprites
 		self.garbage_collect = False
 		self.x = x + 0.0
@@ -60,6 +60,7 @@ class Sprite:
 		self.dx = 0
 		self.dy = 0
 		self.dz = 0
+		self.level = None # for intro hack, only
 		self.automation = None
 		self.falling = False
 		self.standingon = None
@@ -72,6 +73,7 @@ class Sprite:
 		self.holding_spray = False
 		self.clone_creating = False
 		self.holding_walkie = False
+		self.intro_hack = False
 		self.issupervisor = type == 'supervisor'
 		self.isblock = type.startswith('block|')
 		self.israt = type.startswith('rat|')
@@ -168,7 +170,12 @@ class Sprite:
 					return get_image('scan/character'+str(((render_counter // 2) % 4) + 1)+'.png')
 				if render_counter % 2 == 1:
 					return None #flickering holograms
-			
+			else:
+				if self.level != None and self.level.name == 'intro':
+					if self.intro_hack:
+						pass
+					else:
+						return get_image('protagonist/nwsit.png')
 			if self.death_counter > 0:
 				path = 'protagonist/s.png'
 				if self.death_type == 'goo':
