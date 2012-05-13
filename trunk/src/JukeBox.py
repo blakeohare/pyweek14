@@ -88,6 +88,9 @@ class JukeBox:
 		snd.play()
 	
 	def ensure_current_song(self, song):
+		if song == 'bossmusic' and self.current == 'stringtheory':
+			self.ensure_current_song('stringtheory')
+			return
 		if song == None:
 			pygame.mixer.music.stop()
 		else:
@@ -105,4 +108,8 @@ class JukeBox:
 	
 	def update(self, levelname):
 		song = self.get_song_for_level(levelname)
+		#if levelname == '99-0' and self.current == 'stringtheory' and song != 'stringtheory':
+			
+		#	#return
+			
 		self.ensure_current_song(song)
