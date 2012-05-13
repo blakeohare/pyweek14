@@ -81,9 +81,8 @@ s|f|I wonder what the basis of
 s|f|their language is...
 cc
 r
-p|180
+p|120
 #Dr. Flügenmeister exits 
-cc
 i|janitor
 s|j|****static***
 s|j|Hey, sunshine, haven't heard
@@ -135,7 +134,7 @@ i|protagonist-pout
 s|p|Oh.
 cc
 i|janitor
-s|j|'Course some of the carpets are portals to
+s|j|'cause some of the carpets are portals to
 s|j|other dimensions, especially shag. I keep
 s|j|telling them not to order shag...
 cc
