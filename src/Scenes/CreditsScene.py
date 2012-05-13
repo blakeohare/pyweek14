@@ -20,7 +20,7 @@ class CreditsScene:
 			r = get_persisted_forever_int('research')
 			r += get_persisted_session_int('research')
 			self.things.append(
-			[None, (" ", "Research papers collected: " + str(r) + " out of 35"), None]
+			[None, (" ", "Research papers collected: " + str(r) + " out of 36"), None]
 			)
 		
 		i = 0
