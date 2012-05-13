@@ -3,8 +3,8 @@ s|p|It's a rat maze!
 s|p|What kind of people come up with this?
 cc
 i|janitor
-s|j|Same kind who created the giant rats in the
-s|j|first place.
+s|j|Same kind who created the giant rats in
+s|j|the first place.
 c
 s|j|Just think, kid; if you get to the end,
 s|j|you might find some cheese.
