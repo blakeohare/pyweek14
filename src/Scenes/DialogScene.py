@@ -206,6 +206,8 @@ class DialogScene:
 						elif command == 'credits':
 							self.next = TransitionScene(self, CreditsScene(False))
 							keep_going = False
+						elif command == 'music':
+							get_jukebox().ensure_current_song(parts[1])
 						elif command == 'snd':
 							if not parts[1].startswith('talk'):
 								play_sound(parts[1])
