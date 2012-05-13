@@ -42,56 +42,84 @@ class Automation:
 			drf2 = get_tile_store().get_tile('drf2')
 			sprite.level.modify_block(4, 4, 1, drf2)
 		return (0, 0)
+
+	def hold_spray(self, sprite):
+		sprite.holding_spray = True
+	def unhold_spray(self, sprite):
+		sprite.holding_spray= False
+	def hold_walkie(self, sprite):
+		sprite.holding_walkie = True
+	def unhold_walkie(self, sprite):
+		sprite.holding_walkie = False
+	def kill_me(self, sprite):
+		sprite.garbage_collect = True
 	
 	def do_intro_janitor(self, level, counter, sprite):
-		
-		if counter < 124:
-			if counter < 8:
-				x = 1
-			else:
-				x = 0
-			return (x, 2)
-		elif counter < 128:
-			return (-2, 0)
+		#print counter
 		
 		
-		elif counter > 222 and counter < 312:
-			t = counter - 222
-			if t < 4:
-				return (-1, 0)
-			if t == 40:
-				sprite.holding_spray = True
-			if t == 80:
-				sprite.holding_spray = False
-			if t > 80 and t < 85:
-				return (1, 0)
-			elif t == 85:
-				return (-1, 0)
-		elif counter > 492:
-			t = counter - 492
-			if t < 4:
-				return (-1, 0)
-			if t == 20:
-				sprite.holding_walkie = True
-			if t == 80:
-				sprite.holding_walkie = False
-			if t > 80 and t < 84:
-				return (1, 0)
-			if t == 84:
-				return (-1, 0)
-			
-			if t > 100:
-				t = t - 100
-				if t < 4:
-					return (2, 0)
-				elif t < 33:
-					return (0, 2)
-				else:
-					sprite.garbage_collect = True
+		
+		ranges = [
+		# less than, then return, and do...
+		(8, (1, 2)),
+		(116, (0, 2)),
+		(4, (-2, 0)),
+		(182, (0, 0)),
+		(4, (-1, 0)),
+		(40, (0, 0), self.hold_spray),
+		(1, (0, 0), self.unhold_spray),
+		(6, (0, 0)),
+		(4, (1, 0)),
+		(1, (-1, 0)),
+		(210, (0, 0)),
+		(4, (-1, 0)),
+		(6, (0, 0)),
+		(40, (0, 0), self.hold_walkie),
+		(26, (0, 0), self.unhold_walkie),
+		(6, (1, 0)),
+		(1, (-1, 0)),
+		(30, (0, 0)),
+		(4, (1, 0)),
+		(40, (0, 1.4)),
+		(1, (0, 0), self.kill_me),
+		(999, (0, -4))
+		]
+		cumulative = 0
+		for r in ranges:
+			cumulative += r[0]
+			if counter < cumulative:
+				if len(r) == 3:
+					r[2](sprite)
+				#print 'jan', counter, r
+				return r[1]
 		
 			
 	
 	def do_intro_supervisor(self, level, counter, sprite):
+		
+		
+		ranges = [
+		# less than, then return, and do...
+		(8, (1, 2)),
+		(108, (0, 2)),
+		(4, (-2, 0)),
+		(320, (0, 0)),
+		(4, (1, 0)),
+		(60, (0, 1)),
+		(1, (0, 0), self.kill_me),
+		(999, (0, -4))
+		]
+		cumulative = 0
+		for r in ranges:
+			cumulative += r[0]
+			if counter < cumulative:
+				if len(r) == 3:
+					r[2](sprite)
+				
+				return r[1]
+		
+		
+		
 		leave_begin = 373
 		if counter < 116:
 			if counter < 8:
@@ -122,4 +150,3 @@ class Automation:
 			return (0, 1)
 		if counter < s + 149:
 			return (1, 0)
-		
