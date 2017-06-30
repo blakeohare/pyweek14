@@ -41,13 +41,13 @@ class InputManager:
 	
 	def init_default_key_config(self):
 		self._key_mapping = {
-			pygame.K_RETURN: 'start',
-			pygame.K_LEFT: 'left',
-			pygame.K_RIGHT: 'right',
-			pygame.K_UP: 'up',
-			pygame.K_DOWN: 'down',
-			pygame.K_SPACE: 'spray',
-			pygame.K_w: 'walkie'
+			Game.KeyboardKey.ENTER: 'start',
+			Game.KeyboardKey.LEFT: 'left',
+			Game.KeyboardKey.RIGHT: 'right',
+			Game.KeyboardKey.UP: 'up',
+			Game.KeyboardKey.DOWN: 'down',
+			Game.KeyboardKey.SPACE: 'spray',
+			Game.KeyboardKey.W: 'walkie'
 		}
 		t = read_file('data/key_config.txt')
 		
@@ -147,38 +147,25 @@ class InputManager:
 		self.raw_keyups = []
 		keyboard_only = True
 		self.axes = [0.0, 0.0]
-		pg_pressed = pygame.key.get_pressed()
 		for event in window.pumpEvents():
-			if event.type in (pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP, pygame.MOUSEMOTION):
-				move = event.type == pygame.MOUSEMOTION
-				if move or event.button == 1:
-					down = event.type == pygame.MOUSEBUTTONDOWN
-					self.mouse_pressed = down
-					x, y = event.pos
-					x = x // 2
-					y = y // 2
-					self.mouse_events.append((x // 2, y // 2, move, down))
-					self.cursor = (x, y)
-			elif event.type == pygame.QUIT:
+			if event.type == Game.EventType.QUIT:
 				self.quitAttempt = True
 				return []
-			elif event.type in (pygame.KEYDOWN, pygame.KEYUP):
-				down = event.type == pygame.KEYDOWN
-				if not down:
+			elif event.type == Game.EventType.MOUSE_LEFT_DOWN or event.type == Game.EventType.MOUSE_LEFT_UP:
+				self.mouse_events.append((event.x, event.y, False, event.down))
+				self.cursor = (event.x, event.y)
+				self.mouse_pressed = event.down
+			elif event.type == Game.EventType.MOUSE_MOVE:
+				self.mouse_events.append((event.x, event.y, True, False))
+				self.cursor = (event.x, event.y)
+			elif event.type == Game.EventType.KEY_DOWN or event.type == Game.EventType.KEY_UP:
+				if not event.down:
 					self.raw_keyups.append(event.key)
-				if down and event.key == pygame.K_F4:
-					if pg_pressed[pygame.K_LALT] or pg_pressed[pygame.K_RALT]:
-						self.quitAttempt = True
-						return []
-				elif down and event.key == pygame.K_ESCAPE:
-					self.quitAttempt = True
-					return []
-				
-				action = self._key_mapping.get(event.key, None)
+				action = self._key_mapping.get(event.key)
 				
 				if action != None:
-					self.my_pressed[action] = down
-					events.append(MyEvent(action, down))
+					self.my_pressed[action] = event.down
+					events.append(MyEvent(action, event.down))
 		self.axes[0] = 2.0 if self.my_pressed['right'] else 0.0
 		self.axes[0] = -2.0 if self.my_pressed['left'] else self.axes[0]
 		self.axes[1] = 2.0 if self.my_pressed['down'] else 0.0
