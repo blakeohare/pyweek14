@@ -69,7 +69,7 @@ class SetInputScene:
 					return
 			for i in range(js.get_numaxes()):
 				value = js.get_axis(i)
-				if abs(value) > .3:
+				if Math.abs(value) > .3:
 					sign = '+' if (value > 0) else '-'
 					js_config[self.action] = ('axis', i, 'x' + sign)
 					self.leave()

@@ -193,11 +193,11 @@ class PlayScene:
 		
 		max_pan_speed = 4
 		if self.camera_x != self.target_camera_x:
-			if abs(self.camera_x - self.target_camera_x) == 1:
+			if Math.abs(self.camera_x - self.target_camera_x) == 1:
 				self.camera_x = self.target_camera_x
 			else:
 				new_camera_x = (self.camera_x + self.target_camera_x) // 2
-				if abs(new_camera_x - self.camera_x) > max_pan_speed:
+				if Math.abs(new_camera_x - self.camera_x) > max_pan_speed:
 					if self.camera_x < new_camera_x:
 						self.camera_x += max_pan_speed
 					else:
@@ -206,11 +206,11 @@ class PlayScene:
 					self.camera_x = new_camera_x
 		
 		if self.camera_y != self.target_camera_y:
-			if abs(self.camera_y - self.target_camera_y) == 1:
+			if Math.abs(self.camera_y - self.target_camera_y) == 1:
 				self.camera_y = self.target_camera_y
 			else:
 				new_camera_y = (self.camera_y + self.target_camera_y) // 2
-				if abs(new_camera_y - self.camera_y) > max_pan_speed:
+				if Math.abs(new_camera_y - self.camera_y) > max_pan_speed:
 					if self.camera_y < new_camera_y:
 						self.camera_y += max_pan_speed
 					else:

@@ -122,7 +122,3 @@ def parseInt(string):
 		return string.strip()
 	except:
 		return 0
-	
-def abs(num):
-	if num < 0: return -num
-	return num

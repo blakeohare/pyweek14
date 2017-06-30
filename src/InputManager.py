@@ -196,7 +196,7 @@ class InputManager:
 						x = cached_poll.get('a' + str(n))
 						if x == None:
 							x = joystick.get_axis(n)
-							if abs(x) < 0.01:
+							if Math.abs(x) < 0.01:
 								x = 0
 							cached_poll['a' + str(n)] = x
 						
@@ -208,7 +208,7 @@ class InputManager:
 								x = 0
 							else:
 								x *= -1
-						x = abs(x)
+						x = Math.abs(x)
 						
 						if x > 0.01:
 							keyboard_only = False
@@ -235,7 +235,7 @@ class InputManager:
 								x = 0
 							else:
 								x *= -1
-						x = abs(x)
+						x = Math.abs(x)
 					elif c[0] == 'button':
 						x = cached_poll.get('b' + str(n))
 						if x == None:
@@ -266,19 +266,19 @@ class InputManager:
 							events.append(MyEvent(action, toggled))
 						
 						if action == 'left':
-							if abs(self.axes[0]) < 0.01 and pushed > 0.01:
+							if Math.abs(self.axes[0]) < 0.01 and pushed > 0.01:
 								self.axes[0] = -2 * pushed
 						
 						elif action == 'right':
-							if abs(self.axes[0]) < 0.01 and pushed > 0.01:
+							if Math.abs(self.axes[0]) < 0.01 and pushed > 0.01:
 								self.axes[0] = 2 * pushed
 								
 						elif action == 'up':
-							if abs(self.axes[1]) < 0.01 and pushed > 0.01:
+							if Math.abs(self.axes[1]) < 0.01 and pushed > 0.01:
 								self.axes[1] = -2 * pushed
 								
 						elif action == 'down':
-							if abs(self.axes[1]) < 0.01 and pushed > 0.01:
+							if Math.abs(self.axes[1]) < 0.01 and pushed > 0.01:
 								self.axes[1] = 2 * pushed
 		
 		self.axes[0] = self.axes[0] / 1.8
@@ -292,14 +292,14 @@ class InputManager:
 			x = 1.2 * xsign
 			y = 1.2 * ysign
 			
-		if abs(x) < 0.05 and abs(y) < 0.05:
+		if Math.abs(x) < 0.05 and Math.abs(y) < 0.05:
 			rx = 0.0
 			ry = 0.0
 			
 		else:
 			ang = 3.14159265 / 4.0
-			c = math.cos(ang)
-			s = math.sin(ang)
+			c = Math.cos(ang)
+			s = Math.sin(ang)
 			rx = x * c + y * s
 			ry = -x * s + y * c
 		

@@ -24,7 +24,7 @@ class CoilManager:
 				while i <= col + 1:
 					coil_column = coil_map[i]
 					for coil in coil_column:
-						if abs(coil[2] - int(sprite.z // 8)) < 2:
+						if Math.abs(coil[2] - int(sprite.z // 8)) < 2:
 							dx = coil[0] * 16 + 8 - sprite.x
 							dy = coil[1] * 16 + 8 - sprite.y
 							if dx * dx + dy * dy < 24 * 24:
