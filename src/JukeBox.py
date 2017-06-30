@@ -64,13 +64,12 @@ class JukeBox:
 		return self.sfx_volume
 	
 	def play_sound(self, path):
+		if '.' in path:
+			raise Exception("Do not include file extension in play_sound")
+
 		snd = self.sounds.get(path)
 		if snd == None:
-			fpath = 'sound/SFX/' + path + '.ogg'
-			fpath = fpath.replace('.wav', '.ogg').replace('/', os.sep).replace('\\', os.sep)
-			fpath = fpath.replace('.ogg.ogg', '.ogg')
-			if not os.path.exists(fpath):
-				fpath = fpath.replace('.ogg', '.wav')
+			fpath = ('sound/sfx/' + path + '.ogg').replace('/', os.sep)
 			snd = self.sounds.get(fpath)
 			if snd == None:
 				snd = pygame.mixer.Sound(fpath)
@@ -91,18 +90,19 @@ class JukeBox:
 		if song == 'bossmusic' and self.current == 'stringtheory':
 			self.ensure_current_song('stringtheory')
 			return
+
 		if song == None:
 			pygame.mixer.music.stop()
-		else:
-			song = 'sound/music/' + song + '.mp3'
-			song = song.replace('/', os.sep).replace('\\', os.sep)
-			if self.current != song:
-				self.current = song
-				self.update_volume(song)
-				pygame.mixer.music.load(song)
-				pygame.mixer.music.play(-1)
-				pygame.mixer.music.play(-1)
-	
+			return
+		
+		song = 'sound/music/' + song + '.ogg'
+		song = song.replace('/', os.sep)
+		if self.current != song:
+			self.current = song
+			self.update_volume(song)
+			pygame.mixer.music.load(song)
+			pygame.mixer.music.play(-1)
+
 	def get_song_for_level(self, level):
 		return self.music_map.get(level, 'astrophysics')
 	
