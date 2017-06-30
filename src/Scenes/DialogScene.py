@@ -73,8 +73,6 @@ class DialogPause:
 		self.remaining -= 1
 		return self.remaining >= 0
 		
-	
-
 class DialogScene:
 	def __init__(self, playscene, id):
 		self.id = id
@@ -135,8 +133,6 @@ class DialogScene:
 			if self.clear_on_continue:
 				self.buffer = []
 				
-		
-	
 	def update(self, counter):
 		if self.wait_counter > 0:
 			self.playscene.update(counter)
@@ -148,7 +144,6 @@ class DialogScene:
 		if self.frame_yielding >= 0:
 			for s in self.playscene.sprites:
 				if s.issupervisor:
-					#print 'supervisor:', s.automation.counter
 					pass
 			self.playscene.update(counter)
 		

@@ -297,6 +297,4 @@ class SwitchManager:
 		if mapping != None:
 			action_name = mapping[switch_index]
 			level.activate_switch(action_name, positive)
-		#print "Level", name, switch_index, positive
-		#pass
 		
