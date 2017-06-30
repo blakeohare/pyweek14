@@ -72,6 +72,7 @@ class GameWindow:
 		if delay <= 0:
 			delay = 0.001
 		time.sleep(delay)
+		self.lastFrame = now
 	
 		
 EventType = _GameObj()
