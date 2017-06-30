@@ -183,7 +183,7 @@ class DialogScene:
 				keep_going = False
 			else:
 				if self.i < len(self.lines):
-					line = trim(self.lines[self.i])
+					line = self.lines[self.i].strip()
 					if len(line) > 0:
 						parts = line.split('|')
 						command = parts[0]

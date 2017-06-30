@@ -88,7 +88,7 @@ class InputManager:
 			self.active_joystick = -1
 		elif len(self.actual_joysticks) > id:
 			self.active_actual_joystick = id
-			name = trim(self.actual_joysticks[self.active_actual_joystick].get_name())
+			name = self.actual_joysticks[self.active_actual_joystick].get_name().strip()
 			found = False
 			i = 0
 			for js in self.joysticks:
@@ -325,12 +325,12 @@ class InputManager:
 		self.actual_joysticks = []
 		active_joystick_name = None
 		if self.active_joystick != -1:
-			active_joystick_name = trim(self.joysticks[self.active_joystick].get('name', '')).lower()
+			active_joystick_name = self.joysticks[self.active_joystick].get('name', '').strip().lower()
 		for i in range(pygame.joystick.get_count()):
 			js = pygame.joystick.Joystick(i)
 			js.init()
 			self.actual_joysticks.append(js)
-			name = trim(js.get_name()).lower()
+			name = js.get_name().strip().lower()
 			if name == active_joystick_name:
 				self.active_actual_joystick = i
 		
@@ -369,23 +369,23 @@ class InputManager:
 	def read_config_save(self):
 		prev = read_file('data/input_config.txt')
 		if prev != None:
-			data = trim(prev).split('$')
+			data = prev.strip().split('$')
 			if len(data) > 0:
-				active = trim(data[0])
+				active = data[0].strip()
 				parts = active.split(':')
 				active_joystick_name = None
-				if len(parts) >= 2 and trim(parts[0]) == '#active':
-					active_joystick_name = trim(':'.join(parts[1:]))
+				if len(parts) >= 2 and parts[0].strip() == '#active':
+					active_joystick_name = ':'.join(parts[1:]).strip()
 				for config in data[1:]:
 					lines = config.split('\n')
 					data = {}
 					for line in lines:
-						line = trim(line)
+						line = line.strip()
 						if len(line) > 0 and line[0] == '#':
 							parts = line[1:].split(':')
 							if len(parts) == 2:
-								key = trim(parts[0])
-								value = trim(parts[1]).split(' ')
+								key = parts[0].strip()
+								value = parts[1].strip().split(' ')
 								if value[0] == 'axis':
 									if len(value) == 3:
 										n = parseInt(value[1])
@@ -401,7 +401,7 @@ class InputManager:
 										if self.verify_axis_value(value[2]):
 											data[key] = ('hat', n, value[2])
 								elif key == 'name':
-									data[key] = trim(' '.join(value))
+									data[key] = ' '.join(value).strip()
 					name = data.get('name', None)
 					if name != None and len(name) > 0:
 						if active_joystick_name != None and active_joystick_name.lower() == name.lower():

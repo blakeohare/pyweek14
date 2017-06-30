@@ -95,13 +95,13 @@ class Level:
 		lines = read_file('data/levels/' + self.name + '.txt').split('\n')
 		values = {}
 		for line in lines:
-			line = trim(line)
+			line = line.strip()
 			if len(line) > 0 and line[0] == '#':
 				parts = line.split(':')
 				if len(parts) > 1:
 					key = parts[0][1:]
 					value = ':'.join(parts[1:])
-					values[key] = trim(value)
+					values[key] = value.strip()
 		self.values = values
 		self.width = int(self.values['width'])
 		self.height = int(self.values['height'])

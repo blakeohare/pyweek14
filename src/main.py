@@ -28,7 +28,7 @@ def main():
 	load_persistent_state()
 	
 	if os.path.exists('start.txt'):
-		lines = trim(read_file('start.txt').split('\n'))
+		lines = read_file('start.txt').strip().split('\n')
 		
 		if lines[0] == 'normal':
 			active_scene = MainMenuScene()

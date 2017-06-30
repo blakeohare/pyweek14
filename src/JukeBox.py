@@ -1,4 +1,4 @@
-_MUSIC_ENABLED = False
+_MUSIC_ENABLED = True
 
 _jukebox = None
 
