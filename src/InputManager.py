@@ -142,13 +142,13 @@ class InputManager:
 	def get_mouse_status(self):
 		return self.mouse_pressed
 	
-	def get_events(self):
+	def get_events(self, window):
 		events = []
 		self.raw_keyups = []
 		keyboard_only = True
 		self.axes = [0.0, 0.0]
 		pg_pressed = pygame.key.get_pressed()
-		for event in pygame.event.get():
+		for event in window.pumpEvents():
 			if event.type in (pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP, pygame.MOUSEMOTION):
 				move = event.type == pygame.MOUSEMOTION
 				if move or event.button == 1:
