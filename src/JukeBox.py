@@ -1,3 +1,5 @@
+_MUSIC_ENABLED = False
+
 _jukebox = None
 
 def get_jukebox():
@@ -7,7 +9,11 @@ def get_jukebox():
 	return _jukebox
 
 def play_sound(path):
+	if is_music_off(): return
 	get_jukebox().play_sound(path)
+
+def is_music_off():
+	return not _MUSIC_ENABLED
 
 class JukeBox:
 	def __init__(self):
@@ -67,6 +73,8 @@ class JukeBox:
 		if '.' in path:
 			raise Exception("Do not include file extension in play_sound")
 
+		if is_music_off(): return
+
 		snd = self.sounds.get(path)
 		if snd == None:
 			fpath = ('sound/sfx/' + path + '.ogg').replace('/', os.sep)
@@ -87,6 +95,7 @@ class JukeBox:
 		snd.play()
 	
 	def ensure_current_song(self, song):
+		if is_music_off(): return
 		if song == 'bossmusic' and self.current == 'stringtheory':
 			self.ensure_current_song('stringtheory')
 			return
