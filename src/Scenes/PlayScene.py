@@ -65,7 +65,7 @@ class PlayScene:
 		for event in events:
 			if event.key == 'spray' and event.down and self.player.spray_counter < 0:
 				if get_persisted_level_int('decontaminant') > 0:
-					play_sound('spray.wav')
+					play_sound('spray')
 					increment_persisted_level_int('decontaminant', -1)
 					self.player.spray_counter = 30
 					if self.level.spray_from([self.player] + self.holograms):

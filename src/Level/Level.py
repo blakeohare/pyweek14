@@ -547,7 +547,7 @@ class Level:
 	# there are no blockages. It's already been verified by the time this function
 	# has been called.
 	def push_block(self, sprite, start_col, start_row, end_col, end_row, layer):
-		play_sound('blockpush.wav')
+		play_sound('blockpush')
 		pt = self.get_push_tracker(sprite)
 		pt.push_counter = -1
 		pt.push_target = None
@@ -584,14 +584,14 @@ class Level:
 					should_spritify = True
 				else:
 					if standingon.id == 'po' and block.id == '46' and self.circuitry.is_charged(end_col, end_row, below_layer):
-						play_sound('battery_charge.wav')
+						play_sound('battery_charge')
 						self.modify_block(end_col, end_row, layer, get_tile_store().get_tile('45'))
 					if standingon.id == 'pi':
 						if block.id == '45':
-							play_sound('electricity_flows.wav')
+							play_sound('electricity_flows')
 							self.circuitry.refresh_charges()
 					if was_standing_on != None and was_standing_on.id == 'pi' and block.id == '45':
-						play_sound('battery_deplete.wav')
+						play_sound('battery_deplete')
 						self.modify_block(end_col, end_row, layer, get_tile_store().get_tile('46'))
 						self.circuitry.refresh_charges()
 						

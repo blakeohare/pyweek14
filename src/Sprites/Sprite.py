@@ -614,7 +614,7 @@ class Sprite:
 					self.death_counter = 60
 					self.death_type = 'goo'
 					self.immobilized = True
-					play_sound("irradiated.wav")
+					play_sound("irradiated")
 			self.impeded_last_go_round = blocked
 					
 			omg_hax = self.dx != 0 or self.dy != 0
@@ -715,7 +715,7 @@ class Sprite:
 		if layer < 0: return
 		tile = level.get_tile_at(col, row, layer)
 		if tile != None and tile.powerup:
-			play_sound('pickup.wav')
+			play_sound('pickup')
 			level.modify_block(col, row, layer, None)
 			if tile.goo:
 				increment_persisted_level_int('decontaminant', tile.goo_size)
