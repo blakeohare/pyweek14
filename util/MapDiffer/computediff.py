@@ -1,13 +1,5 @@
 import os
 
-
-def trim(string):
-	while len(string) > 0 and string[0] in ' \r\n\t':
-		string = string[1:]
-	while len(string) > 0 and string[-1] in ' \r\n\t':
-		string = string[:-1]
-	return string
-
 python3 = 5 / 2 == 2.5
 
 get_input = input if python3 else raw_input
@@ -36,7 +28,7 @@ def generate_tile_store():
 	tiles = {}
 	for file in files:
 		if '.svn' in file: continue
-		lines = Resources.readText('data/tile_manifests/' + file).split('\n')
+		lines = read_file('data/tile_manifests/' + file).split('\n')
 		for line in lines:
 			parts = line.split('\t')
 			if len(parts) > 3:
@@ -55,17 +47,17 @@ def get_tile_height(id):
 	return output
 
 def read_map_file(name):
-	t = Resources.readText('data/levels/' + name + '.txt')
+	t = read_file('data/levels/' + name + '.txt')
 	
 	lines = t.split('\n')
 	values = {}
 	
 	for line in lines:
-		parts = trim(line).split(':')
+		parts = line.strip().split(':')
 		if len(parts) >= 2 and len(parts[0]) > 0 and parts[0][0] == '#':
 			key = parts[0][1:]
 			value = ':'.join(parts[1:])
-			values[key] = trim(value)
+			values[key] = value.strip()
 	
 	tiles = values.get('tiles', None)
 	
