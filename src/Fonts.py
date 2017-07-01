@@ -1,12 +1,3 @@
-_fonts = {}
-def get_font(size):
-	global _fonts
-	key = 'f' + str(size)
-	font = _fonts.get(key)
-	if font == None:
-		font = pygame.font.SysFont(pygame.font.get_default_font(), size)
-		_fonts[key] = font
-	return font
 
 _COLORS_TO_COMPONENTS = {
 	'red': (255, 0, 0),
@@ -14,17 +5,22 @@ _COLORS_TO_COMPONENTS = {
 	'black': (0, 0, 0),
 }
 
+_defaultFont = None
 _text = {}
 def get_text(text, size, color):
-	global _text
 	key = str(size) + "," + str(color) + "|" + text
 	texture = _text.get(key)
 	if texture == None:
-		font = get_font(size)
-		pgImage = font.render(text, True, _COLORS_TO_COMPONENTS.get(color, color))
-		width, height = pgImage.get_size()
-		imgRes = ImageResources.ImageResource(width, height, False)
-		imgRes.image = pgImage
-		texture = Graphics2D.GraphicsTexture(imgRes)
+		size = size * 2 / 3 + 1
+		color = _COLORS_TO_COMPONENTS.get(color, color)
+		font = _defaultFont if _defaultFont != None else get_default_font()
+		fontRenderer = font.getRenderer(size, color[0], color[1], color[2])
+		texture = fontRenderer.render(text)
 		_text[key] = texture
 	return texture
+
+def get_default_font():
+	global _defaultFont
+	if _defaultFont == None:
+		_defaultFont = Graphics2DText.FontResource.fromSystem('Arial')
+	return _defaultFont
