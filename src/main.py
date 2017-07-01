@@ -56,8 +56,6 @@ def main():
 	input_manager = get_input_manager()
 	
 	while active_scene != None:
-		start = time.time()
-		
 		counter += 1
 		event_list = []
 		event_list = input_manager.get_events(window)
