@@ -59,7 +59,7 @@ class Draw:
 		if height == 1 or width == 1:
 			return Draw.line(x, y, x + width - 1, y + height - 1, 1, r, g, b, a)
 		
-		if a == 255:
+		if a >= 255:
 			pygameDrawRect(_screen, (r, g, b), pygame.Rect(x, y, width, height))
 		else:
 			key = width * 100000 + height
@@ -73,10 +73,17 @@ class Draw:
 	
 	@staticmethod
 	def line(x1, y1, x2, y2, width, r, g, b, a = 255):
-		if a == 255:
+		if a >= 255:
 			pygameDrawLine(_screen, (r, g, b), (x1, y1), (x2, y2), width)
 		else:
 			raise Exception("Not implemented: draw line with alpha")
+
+	@staticmethod
+	def triangle(x1, y1, x2, y2, x3, y3, r, g, b, a = 255):
+		if a >= 255:
+			pygame.draw.polygon(_screen, (r, g, b), [(x1, y1), (x2, y2), (x3, y3)])
+		else:
+			raise Exception("Not implemented: draw triangle with alpha")
 
 	@staticmethod
 	def fill(r, g, b):

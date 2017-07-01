@@ -26,6 +26,11 @@ class GameWindow:
 		for onScreenCreatedHandler in onScreenCreated:
 			onScreenCreatedHandler(self.virtualScreen)
 
+	# This actually isn't in Crayon (it's done via build file) but I don't want to pull the ability
+	# out of the PyGame side of the implementation
+	def setIcon(self, imageRawPath):
+		pygame.display.set_icon(pygame.image.load(imageRawPath))
+	
 	def pumpEvents(self):
 		output = []
 		sw, sh = self.realScreen.get_size()

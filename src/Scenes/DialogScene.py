@@ -328,4 +328,4 @@ class DialogScene:
 			
 			if self.prompt_for_continue and (counter // 10) % 2 == 0:
 				y = cursor_height
-				pygame.draw.polygon(screen, last_color, [(300, y), (308, y), (304, y + 5)])
+				Graphics2D.Draw.triangle(300, y, 308, y, 304, y + 5, last_color[0], last_color[1], last_color[2])

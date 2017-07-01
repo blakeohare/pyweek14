@@ -1,15 +1,5 @@
 _block_images_for_sprites = None
-_surface_cache = {}
 
-def get_surface(width, height):
-	global _surface_cache
-	k = str(width) + '|' + str(height)
-	surface = _surface_cache.get(k, None)
-	if surface == None:
-		surface = pygame.Surface((width, height)).convert()
-		_surface_cache[k] = surface
-	return surface
-	
 def get_teleporter_image(going_out, counter, type):
 	counter = min(60, max(0, counter))
 	if going_out:
@@ -34,9 +24,7 @@ def get_teleporter_image(going_out, counter, type):
 		img = get_image('static/block' + str((Math.floor(counter // 2) % 4) + 1) + '.png')
 		if battery:
 			img = get_image('static/battery' + str((Math.floor(counter // 2) % 4) + 1) + '.png')
-		imgs = (
-			ts.get_tile(block_id).get_image(counter),
-			img)
+		imgs = (ts.get_tile(block_id).get_image(counter), img)
 
 	return (ao, bo, imgs[0], imgs[1])
 	

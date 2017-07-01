@@ -20,7 +20,7 @@ def main():
 	real_screen = window.realScreen
 	fake_screen = window.virtualScreen
 	fps = window.fps
-	pygame.display.set_icon(pygame.image.load('icon.png'))
+	window.setIcon('icon.png')
 	
 	pressed = {
 		'start': False,
