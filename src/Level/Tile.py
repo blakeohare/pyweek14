@@ -26,7 +26,7 @@ class Tile:
 		self.images = safe_map(lambda x:get_image('tiles/' + x), images)
 		self.still = len(self.images) == 1
 		self.still_image = self.images[0]
-		self.y_offsets = safe_map(lambda x:24 - x.get_height(), self.images)
+		self.y_offsets = safe_map(lambda x:24 - x.height, self.images)
 		self.still_y_offset = self.y_offsets[0]
 		self.image_count = len(self.images)
 		self.height = height
@@ -86,5 +86,5 @@ class Tile:
 			img = self.images[i]
 			y += self.y_offsets[i]
 		
-		screen.blit(img, (x, y))
+		img.draw(x, y)
 		

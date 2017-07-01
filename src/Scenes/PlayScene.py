@@ -177,9 +177,9 @@ class PlayScene:
 		player_y = player_position[1]
 		
 		if self.fixed_x:
-			self.target_camera_x = screen.get_width() // 2
+			self.target_camera_x = GAME_WIDTH // 2
 		else:
-			self.target_camera_x = screen.get_width() // 2 - player_x
+			self.target_camera_x = GAME_WIDTH // 2 - player_x
 		
 		if self.fixed_y:
 			self.target_camera_y = 50

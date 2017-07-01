@@ -51,7 +51,7 @@ class CreditsScene:
 	
 	def render(self, screen, counter):
 		
-		y = 350 - int(self.counter * self.speed)# * 1.4)
+		y = 350 - Math.floor(self.counter * self.speed)
 		
 		for item in self.things:
 			left = item[0]
@@ -59,18 +59,18 @@ class CreditsScene:
 			top = get_text(item[1][0], 14, (123, 123, 123))
 			bottom = get_text(item[1][1], 24, (255, 255, 255))
 			
-			x1 = screen.get_width() // 2 - top.get_width() // 2
-			x2 = screen.get_width() // 2 - bottom.get_width() // 2
-			x = min(x1, x2)
-			screen.blit(top, (x1, y))
-			y2 = y + top.get_height() + 5
-			screen.blit(bottom, (x2, y2))
+			x1 = GAME_WIDTH // 2 - top.width // 2
+			x2 = GAME_WIDTH // 2 - bottom.width // 2
+			x = Math.min(x1, x2)
+			top.draw(x1, y)
+			y2 = y + top.height + 5
+			bottom.draw(x2, y2)
 			r = 400 - x
 			if left != None:
-				screen.blit(left, (x - left.get_width() - 14, y - 5))
+				left.draw(x - left.width - 14, y - 5)
 			if right != None:
-				screen.blit(right, (r + 14, y - 5))
-			y = y2 + bottom.get_height() + 140
+				right.draw(r + 14, y - 5)
+			y = y2 + bottom.height + 140
 		
 		if y < -50:
 			self.next = TransitionScene(self, MainMenuScene())

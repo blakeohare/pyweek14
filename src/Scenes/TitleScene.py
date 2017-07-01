@@ -18,14 +18,14 @@ class TitleScene:
 		self.y += 2
 	
 	def render(self, screen, counter):
-		w = screen.get_width()
-		h = screen.get_height()
+		w = GAME_WIDTH
+		h = GAME_HEIGHT
 		self.x = (self.x + w) % w
 		self.y = (self.y + h) % h
 		
 		for t in ((0, 0), (-1, 0), (0, -1), (-1, -1)):
 			x = self.x + w * t[0]
 			y = self.y + h * t[1]
-			screen.blit(self.text, (x, y))
-			screen.blit(self.textb, (x, y + self.textb.get_height() + 4))
+			self.text.draw(x, y)
+			self.textb.draw(x, y + self.textb.height + 4)
 			

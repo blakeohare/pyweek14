@@ -7,8 +7,11 @@ class Event:
 	def __init__(self, type):
 		self.type = type
 
+onScreenCreated = []
+
 class GameWindow:
 	def __init__(self, title, fps, gameWidth, gameHeight, screenWidth, screenHeight):
+		global screen
 		self.title = title
 		self.fps = fps + 0.0
 		self.width = gameWidth
@@ -20,7 +23,9 @@ class GameWindow:
 		self.virtualScreen = pygame.Surface((gameWidth, gameHeight))
 		self.lastFrame = time.time()
 		self.pressed_keys = {}
-	
+		for onScreenCreatedHandler in onScreenCreated:
+			onScreenCreatedHandler(self.virtualScreen)
+
 	def pumpEvents(self):
 		output = []
 		sw, sh = self.realScreen.get_size()

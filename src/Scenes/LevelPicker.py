@@ -24,8 +24,8 @@ class LevelPickerScene:
 		img = _level_image.get(name)
 		if img == None:
 			img = get_image('levelshots/' + name + '.png')
-			w = img.get_width()
-			h = img.get_height()
+			w = img.width
+			h = img.height
 			if w > 100:
 				h = h * 100 // w
 				w = 100
@@ -78,18 +78,18 @@ class LevelPickerScene:
 		pass
 	
 	def render(self, screen, counter):
-		screen.fill((48, 48, 48))
-		bye = get_text("Level Picker", 18, (255, 255, 255))
-		x = (screen.get_width() - bye.get_width()) // 2
-		screen.blit(bye, (x, 10))
+		Graphics2D.Draw.fill(48, 48, 48)
+		bye = get_text("Level Picker", 18, 'white')
+		x = (GAME_WIDTH - bye.width) // 2
+		bye.draw(x, 10)
 		
 		x = 10
 		y = 30
 		i = 0
 		sector = get_text("Sector: ", 16, (255, 255, 0))
-		screen.blit(sector, (x, y))
+		sector.draw(x, y)
 		
-		x += sector.get_width() + 10
+		x += sector.width + 10
 		for region in self.regions + [None]:
 			
 			color = (130, 130, 130)
@@ -99,11 +99,11 @@ class LevelPickerScene:
 				label = get_text("Main Menu", 16, color)
 			else:
 				label = get_text(self.regions[i][0].split(' ')[1], 16, color)
-			screen.blit(label, (x, y))
-			x += label.get_width() + 10
+			label.draw(x, y)
+			x += label.width + 10
 			i += 1
 		
-		y += sector.get_height() + 10
+		y += sector.height + 10
 		
 		if self.x < len(self.regions):
 			lm = get_level_manager()
@@ -111,12 +111,12 @@ class LevelPickerScene:
 			maps = self.regions[self.x][1]
 			for m in maps:
 				img = self.get_level_image(m)
-				screen.blit(img, (30, y))
+				img.draw(30, y)
 				
 				color = (120, 120, 120)
 				if self.y == i:
 					color = (255, 255, 255)
 				name_label = get_text(lm.get_current_room_name(m), 20, color)
-				screen.blit(name_label, (150, y))
+				name_label.draw(150, y)
 				y += 60
 				i += 1

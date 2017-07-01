@@ -41,16 +41,6 @@ def get_teleporter_image(going_out, counter, type):
 	return (ao, bo, imgs[0], imgs[1])
 	
 
-def copy_surface(surface):
-	return pygame.Surface(surface)
-
-def blit_at_opacity(target, source, x, y, opacity):
-	t = get_surface(source.get_width(), source.get_height())
-	t.blit(screen, (-x, -y))
-	t.blit(source)
-	t.set_alpha(opacity)
-	screen.blit(t, (x, y))
-
 class Sprite:
 	# sprite coordinates are assuming the grid is 16x16 tiles
 	# these get transposed into pixel coordinates and
@@ -154,13 +144,13 @@ class Sprite:
 					img = x[1]
 					
 					if o > 0:
-						t = get_surface(img.get_width(), img.get_height())
+						t = get_surface(img.width, img.height)
 						t.blit(screen, (-coords[0], -coords[1]))
 						t.blit(img, (0, 0))
 						t.set_alpha(o)
 						screen.blit(t, (coords[0], coords[1]))	
 			else:
-				screen.blit(img, coords)
+				img.draw(coords[0], coords[1])
 			
 		return (self, xOffset, yOffset, render_counter)
 		
@@ -254,8 +244,8 @@ class Sprite:
 			w = 16
 			h = 32
 		else:
-			w = img.get_width()
-			h = img.get_height()
+			w = img.width
+			h = img.height
 		x = x - w / 2
 		y = y - self.z - h + 8
 		if self.isblock:

@@ -1,3 +1,9 @@
+FPS = 60.0
+GAME_WIDTH = 400
+GAME_HEIGHT = 300
+SCREEN_WIDTH = 800
+SCREEN_HEIGHT = 600
+
 _debug_message = None
 def set_user_debug_message(text):
 	global _debug_message
@@ -9,7 +15,7 @@ def get_user_debug_message():
 
 def main():
 
-	window = Game.GameWindow("Sudo Science", 60, 400, 300, 800, 600)
+	window = Game.GameWindow("Sudo Science", FPS, GAME_WIDTH, GAME_HEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT)
 	
 	real_screen = window.realScreen
 	fake_screen = window.virtualScreen
@@ -50,6 +56,10 @@ def main():
 	
 	input_manager = get_input_manager()
 	
+	# TODO: make an async loader scene
+	global _imageSheet
+	_imageSheet = ImageResources.ImageSheet.loadFromResources('everything')
+	
 	while active_scene != None:
 		counter += 1
 		event_list = []
@@ -62,12 +72,14 @@ def main():
 		active_scene.process_input(event_list, pressed, axes, mouse_events)
 		active_scene.update(counter)
 		
-		fake_screen.fill((0, 0, 0))
+		Graphics2D.Draw.fill(0, 0, 0)
+		
 		active_scene.render(fake_screen, counter)
 		
 		debug_message = get_user_debug_message()
 		if debug_message != None:
-			fake_screen.blit(get_text(debug_message, 20, (255, 0, 0)), (10, 10))
+			txt = get_text(debug_message, 20, (255, 0, 0))
+			txt.draw(10, 10)
 		
 		active_scene = active_scene.next
 		

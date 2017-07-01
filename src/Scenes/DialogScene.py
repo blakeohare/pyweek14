@@ -84,7 +84,6 @@ class DialogScene:
 		self.text_printer = None
 		self.prompt_for_continue = False
 		self.pauser = None
-		self.surfaces = {}
 		self.i = 0
 		self.phase = 'init'
 		self.phase_counter = 0
@@ -289,20 +288,14 @@ class DialogScene:
 				width = counter * 300 // half
 			else:
 				width = 300
-			
-		key = str(width) + '^' + str(height)
-		surface = self.surfaces.get(key, None)
-		if surface == None:
-			surface = pygame.Surface((width, height)).convert()
-			surface.fill((0, 0, 0))
-			surface.set_alpha(180)
-			self.surfaces[key] = surface
 		
-		x = screen.get_width() // 2 - width // 2
+		x = GAME_WIDTH // 2 - width // 2
 		y = 100 - height // 2
-		
-		screen.blit(surface, (x, y))
-		pygame.draw.rect(screen, (255, 255, 255), pygame.Rect(x, y, width, height), 1)
+		Graphics2D.Draw.rectangle(x, y, width, height, 0, 0, 0, 180)
+		Graphics2D.Draw.rectangle(x, y, width, 1, 255, 255, 255)
+		Graphics2D.Draw.rectangle(x, y, 1, height, 255, 255, 255)
+		Graphics2D.Draw.rectangle(x + width - 1, y, 1, height, 255, 255, 255)
+		Graphics2D.Draw.rectangle(x, y + height - 1, width, 1, 255, 255, 255)
 		
 	def render(self, screen, counter):
 		
@@ -314,7 +307,7 @@ class DialogScene:
 		
 		if self.phase == 'dialog':
 			if self.active_portrait != None:
-				screen.blit(self.active_portrait, (10, 10))
+				self.active_portrait.draw(10, 10)
 			
 			font_size = 18
 			line_height = 23
@@ -330,7 +323,7 @@ class DialogScene:
 				color = line[1]
 				last_color = color
 				img = get_text(text, font_size, color)
-				screen.blit(img, (89, y))
+				img.draw(89, y)
 				y += line_height
 			
 			if self.prompt_for_continue and (counter // 10) % 2 == 0:

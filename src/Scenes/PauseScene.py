@@ -66,7 +66,7 @@ class PauseScene:
 	
 	def render(self, screen, counter):
 		self.playscene.render(screen, counter)
-		screen.blit(self.overlay, (0, 0))
+		self.overlay.draw(0, 0)
 		y = 100
 		
 		i = 0
@@ -77,7 +77,7 @@ class PauseScene:
 				color = (255, 255, 255)
 			img = get_text(text, 18, color)
 			
-			x = screen.get_width() // 2 - img.get_width() // 2
-			screen.blit(img, (x, y))
+			x = (GAME_WIDTH - img.width) // 2
+			img.draw(x, y)
 			i += 1
-			y += img.get_height() + 20
+			y += img.height + 20

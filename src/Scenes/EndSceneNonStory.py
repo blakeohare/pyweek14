@@ -15,5 +15,5 @@ class EndSceneNonStory:
 		img = get_text("This is the end of the game.", 30, (255, 255, 255))
 		img2 = get_text("To see the ending, play in story-mode.", 14, (255, 255, 255))
 		
-		screen.blit(img, (200 - img.get_width() // 2, 100))
-		screen.blit(img2, (200 - img2.get_width() // 2, 150))
+		img.draw(200 - img.width // 2, 100)
+		img2.draw(200 - img2.width // 2, 150)

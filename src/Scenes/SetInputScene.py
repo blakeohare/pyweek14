@@ -90,22 +90,20 @@ class SetInputScene:
 	
 	def render(self, screen, counter):
 		self.prev.render(screen, counter)
-		screen.blit(get_set_input_shade(), (0, 0))
+		get_set_input_shade().draw(0, 0)
 		if self.is_keyboard:
 			label = "Press the key on the keyboard"
 		else:
 			label = "Press the button on the gamepad"
-		#label += actions[self.action]
-		h = self.top_img.get_height()
+		h = self.top_img.height
 		y = 150 - h - 3
 		left = 25
 		top = y - 20
 		width = 350
 		height = h * 2 + 6 + 40
-		pygame.draw.rect(screen, (0, 0, 0), pygame.Rect(left, top, width, height))
-		pygame.draw.rect(screen, (128, 128, 128), pygame.Rect(left, top, width, height), 1)
-		screen.blit(self.top_img, (200 - self.top_img.get_width() // 2, y))
-		screen.blit(self.bottom_img, (200 - self.bottom_img.get_width() // 2, 150 + 3))
+		Graphics2D.Draw.rectangle(left, top, width, height, 128, 128, 128)
+		Graphics2D.Draw.rectangle(left + 1, top + 1, width - 2, height - 2, 0, 0, 0)
+		self.top_img.draw(200 - self.top_img.width // 2, y)
+		self.bottom_img.draw(200 - self.bottom_img.width // 2, 150 + 3)
 		if self.show_tryanother:
-			screen.blit(self.tryanother, (200 - self.tryanother.get_width() // 2, top + height - 15))
-		
+			self.tryanother.draw(200 - self.tryanother.width // 2, top + height - 15)

@@ -1,9 +1,10 @@
 _image_library = {}
+_imageSheet = None
 
 def get_image(path):
-	global _image_library
 	image = _image_library.get(path)
 	if image == None:
-		image = pygame.image.load(canonicalize_path('images/' + path))
+		imageRes = _imageSheet.getImage(canonicalize_path('images/' + path))
+		image = Graphics2D.GraphicsTexture.load(imageRes)
 		_image_library[path] = image
 	return image
