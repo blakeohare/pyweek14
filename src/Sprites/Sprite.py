@@ -136,14 +136,12 @@ class Sprite:
 			
 		return (self, xOffset, yOffset, render_counter)
 		
-	
-	
 	def get_image(self, render_counter):
 		img = None
 		if self.main_or_hologram:
 			if not self.ismain:
 				if self.clone_creating:
-					return get_image('scan/character'+str(((render_counter // 2) % 4) + 1)+'.png')
+					return get_image('scan/character' + str(((render_counter // 2) % 4) + 1) +'.png')
 				if render_counter % 2 == 1:
 					return None #flickering holograms
 			else:
@@ -264,7 +262,6 @@ class Sprite:
 			'dy:', self.dy,
 			'dz:', self.dz]))
 		
-	
 	def get_replacement_sprite(self):
 		if self.trecv and self.garbage_collect:
 			self.prototype.garbage_collect = False
@@ -593,11 +590,9 @@ class Sprite:
 			self.is_moving = omg_hax
 			if self.automation == None:
 				omg_hax = self.dx != 0 and self.dy != 0
-			
 				
 			if self.dx == 0 and self.dy == 0:
 				self.direction_queue = []
-			
 			
 			if omg_hax:
 				distance = (self.dx * self.dx + self.dy * self.dy) ** .5
@@ -644,8 +639,7 @@ class Sprite:
 							if len(foo) == 2:
 								self.last_direction_of_movement = foo
 								break
-				
-			
+		
 		if new_platform != None and new_platform.stairs and on_new_coordinates_now:
 			if direction == new_platform.entrance:
 				self.z -= new_platform.height * 8

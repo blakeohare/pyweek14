@@ -1,13 +1,3 @@
-_set_input_shade = None
-
-def get_set_input_shade():
-	global _set_input_shade
-	if _set_input_shade == None:
-		_set_input_shade = pygame.Surface((400, 300)).convert()
-		_set_input_shade.fill((0, 0, 0))
-		_set_input_shade.set_alpha(170)
-	return _set_input_shade
-	
 class SetInputScene:
 	def __init__(self, action, is_keyboard, prev_scene):
 		self.next = self
@@ -90,7 +80,7 @@ class SetInputScene:
 	
 	def render(self, screen, counter):
 		self.prev.render(screen, counter)
-		get_set_input_shade().draw(0, 0)
+		Graphics2D.Draw.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, 0, 0, 0, 170)
 		if self.is_keyboard:
 			label = "Press the key on the keyboard"
 		else:
