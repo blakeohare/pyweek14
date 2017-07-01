@@ -23,6 +23,7 @@ class GraphicsTexture:
 		_screen.blit(self.pgImage, (x, y))
 
 	def drawWithAlpha(self, x, y, alpha):
+		if alpha < 1: return
 		key = self.width * 100000 + self.height
 		temp = _tempSurfStore.get(key)
 		if temp == None:

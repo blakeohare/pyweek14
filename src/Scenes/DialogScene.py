@@ -186,7 +186,7 @@ class DialogScene:
 						elif command == 'r':
 							self.change_portrait(None)
 						elif command == 'p':
-							self.pauser = DialogPause(int(parts[1]))
+							self.pauser = DialogPause(Core.parseInt(parts[1]))
 						elif command == 's':
 							if len(self.buffer) == 3:
 								self.buffer_clear_counter = 10
@@ -216,13 +216,13 @@ class DialogScene:
 							hack_function = get_hacks_for_level(self.playscene.level.name, 'dialog_hack')[parts[1]]
 							hack_function(self.playscene, self.playscene.level)
 						elif command == 'y':
-							self.frame_yielding = int(parts[1])
+							self.frame_yielding = Core.parseInt(parts[1])
 						elif command == 'goto':
 							self.do_goto(parts[1])
 						elif command == 'if':
 							var = parts[1]
 							operator = parts[2]
-							value = int(parts[3])
+							value = Core.parseInt(parts[3])
 							label = parts[4]
 							self.do_if(operator, var, value, label)
 						elif command == 'end':

@@ -12,7 +12,7 @@ class TileStore:
 					if len(cols) >= 4:
 						id = cols[0]
 						images = cols[1]
-						height = int(cols[2])
+						height = Core.parseInt(cols[2])
 						flags = cols[3]
 						tiles[id] = Tile(id, images, height, flags)
 		self.tiles = tiles

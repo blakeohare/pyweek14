@@ -97,7 +97,7 @@ class PersistentState:
 						name = key[1:]
 						if type == 'i':
 							try:
-								value = int(value)
+								value = Core.parseInt(value)
 							except:
 								value = 0
 							

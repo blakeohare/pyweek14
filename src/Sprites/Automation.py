@@ -132,7 +132,7 @@ class Automation:
 		s = 180
 		if counter == s + 132:
 			sprite.intro_hack = True
-			level.modify_block(int(sprite.x // 16), int(sprite.y // 16), int(sprite.z // 8), get_tile_store().get_tile('54'))
+			level.modify_block(Math.floor(sprite.x // 16), Math.floor(sprite.y // 16), Math.floor(sprite.z // 8), get_tile_store().get_tile('54'))
 		if counter < s + 132:
 			return None
 		if counter < s + 148:

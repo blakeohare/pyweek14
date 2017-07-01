@@ -163,7 +163,7 @@ class ConfigureInputScene:
 		else:
 			parts = id.split(' ')
 			if parts[0] == 'joystick':
-				im.set_active_actual_joystick(int(parts[1]) - 1)
+				im.set_active_actual_joystick(Core.parseInt(parts[1]) - 1)
 			elif parts[0] == 'keyconfig':
 				action = parts[1]
 				self.next = SetInputScene(action, True, self)

@@ -203,9 +203,9 @@ class SwitchManager:
 		
 	
 	def update_statuses_for_sprite(self, sprite, level):
-		col = int(sprite.x // 16)
-		row = int(sprite.y // 16)
-		layer = int(sprite.z // 8) - 1
+		col = Math.floor(sprite.x // 16)
+		row = Math.floor(sprite.y // 16)
+		layer = Math.floor(sprite.z // 8) - 1
 		
 		floor = level.get_tile_at(col, row, layer)
 		if floor != None and floor.isswitch:

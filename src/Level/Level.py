@@ -41,9 +41,9 @@ class Level:
 		success = False
 		
 		for sprite in sprites:
-			col = int(sprite.x // 16)
-			row = int(sprite.y // 16)
-			layer = int(sprite.z // 8)
+			col = Math.floor(sprite.x // 16)
+			row = Math.floor(sprite.y // 16)
+			layer = Math.floor(sprite.z // 8)
 			dir = sprite.last_direction_of_movement
 			x = sprite.x % 16
 			y = sprite.y % 16
@@ -103,8 +103,8 @@ class Level:
 					value = ':'.join(parts[1:])
 					values[key] = value.strip()
 		self.values = values
-		self.width = int(self.values['width'])
-		self.height = int(self.values['height'])
+		self.width = Core.parseInt(self.values['width'])
+		self.height = Core.parseInt(self.values['height'])
 		self.initialize_tiles(self.values['tiles'].split(','))
 		
 		self.initialize_switch_actions(values)
@@ -134,9 +134,9 @@ class Level:
 		ts = get_tile_store()
 		for change in lookup.get(name).split('%'):
 			parts = change.split('^')
-			col = int(parts[0])
-			row = int(parts[1])
-			layer = int(parts[2])
+			col = Math.floor(parts[0])
+			row = Math.floor(parts[1])
+			layer = Math.floor(parts[2])
 			id = parts[3]
 			tile = None if (id == '0') else ts.get_tile(id)
 			self.modify_block(col, row, layer, tile)
@@ -294,8 +294,8 @@ class Level:
 		height = self.height
 		sprite_lookup = {}
 		for sprite in sprites:
-			x = int(sprite.x // 16)
-			y = int(sprite.y // 16)
+			x = Math.floor(sprite.x // 16)
+			y = Math.floor(sprite.y // 16)
 			key = str(x) + '_' + str(y)
 			list = sprite_lookup.get(key)
 			if list == None:
@@ -347,9 +347,9 @@ class Level:
 		if not re_render:
 			if sprite.x % 16 < 6 and sprite.y % 16 > 10:
 				if sprite.main_or_hologram or sprite.israt:
-					col = int(sprite.x // 16)
-					row = int(sprite.y // 16)
-					layer = int(sprite.z // 8)
+					col = Math.floor(sprite.x // 16)
+					row = Math.floor(sprite.y // 16)
+					layer = Math.floor(sprite.z // 8)
 					k = str(col) + '^' + str(row)
 					r = (layer + sprite.height, q)
 					if self.re_blits.get(k) == None:
@@ -509,7 +509,7 @@ class Level:
 				else:
 					re = re_sprite_on[re_i]
 					sprite = sprites[sprite_i]
-					if re.z < int(sprite.z // 8):
+					if re.z < Math.floor(sprite.z // 8):
 						sprite = None
 						re_i += 1
 					else:
@@ -599,9 +599,7 @@ class Level:
 			should_spritify = True
 		
 		if should_spritify:
-			
 			self.spritify_counters.append([end_col, end_row, layer, 5])
-			#self.spritify_block(end_col, end_row, layer)
 	
 	def spritify_block(self, col, row, layer):
 		block = self.modify_block(col, row, layer, None)
@@ -696,9 +694,9 @@ class Level:
 		
 		if created != None:
 			for c in created:
-				col = int(c.x // 16)
-				row = int(c.y // 16)
-				layer = int(c.z // 8)
+				col = Math.floor(c.x // 16)
+				row = Math.floor(c.y // 16)
+				layer = Math.floor(c.z // 8)
 				c.standingon = self.get_tile_at(col, row, layer - 1)
 				sprite_additions.append(c)
 		
@@ -737,4 +735,3 @@ class Level:
 	
 	def get_teleporters(self):
 		return self.teleporter_tiles
-	

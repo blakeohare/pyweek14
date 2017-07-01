@@ -49,7 +49,7 @@ class JukeBox:
 		return .3
 	
 	def set_music_volume(self, percent):
-		percent = max(0, min(100, int(percent)))
+		percent = max(0, min(100, Math.floor(percent)))
 		self.music_volume = percent
 		self.update_volume(self.current)
 	
@@ -59,7 +59,7 @@ class JukeBox:
 			pygame.mixer.music.set_volume(volume / 100.0)
 	
 	def set_sfx_volume(self, percent):
-		percent = max(0, min(100, int(percent)))
+		percent = max(0, min(100, Math.floor(percent)))
 		self.sfx_volume = percent
 		self.sounds = {}
 	

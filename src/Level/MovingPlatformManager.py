@@ -139,13 +139,13 @@ class MovingPlatformManager:
 							
 							
 							for sprite in sprites:
-								if sprite.standingon != None and int(sprite.x // 16) == move_us[-1][0] and int(sprite.y // 16) == move_us[-1][1] and int(sprite.z // 8) == move_us[-1][2] + 2:
-									sx = int(sprite.x // 16)
+								if sprite.standingon != None and Math.floor(sprite.x // 16) == move_us[-1][0] and Math.floor(sprite.y // 16) == move_us[-1][1] and Math.floor(sprite.z // 8) == move_us[-1][2] + 2:
+									sx = Math.floor(sprite.x // 16)
 									if sx == move_us[-1][0]:
-										sy = int(sprite.y // 16)
-										sz = int(sprite.z // 8)
+										sy = Math.floor(sprite.y // 16)
+										sz = Math.floor(sprite.z // 8)
 										if sy == move_us[-1][1] and sz == move_us[-1][2] + 2:
-											coords = (int(sprite.x // 16), int(sprite.y // 16), int(sprite.z // 8))
+											coords = (Math.floor(sprite.x // 16), Math.floor(sprite.y // 16), Math.floor(sprite.z // 8))
 											target = [coords[0] + offset[0], coords[1] + offset[1], coords[2]]
 											lookup = level.cellLookup[target[0]][target[1]]
 											stack = level.grid[target[0]][target[1]]
