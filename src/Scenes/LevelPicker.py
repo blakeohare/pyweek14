@@ -32,7 +32,7 @@ class LevelPickerScene:
 			if h > 60:
 				w = w * 60 // h
 				h = 60
-			img = pygame.transform.scale(img, (w, h))
+			img = img.scale(w, h)
 			_level_image[name] = img
 		return img
 		

@@ -142,13 +142,7 @@ class Sprite:
 				for x in ((bo, bi), (ao, ai)):
 					o = x[0]
 					img = x[1]
-					
-					if o > 0:
-						t = get_surface(img.width, img.height)
-						t.blit(screen, (-coords[0], -coords[1]))
-						t.blit(img, (0, 0))
-						t.set_alpha(o)
-						screen.blit(t, (coords[0], coords[1]))	
+					img.drawWithAlpha(coords[0], coords[1], o)
 			else:
 				img.draw(coords[0], coords[1])
 			

@@ -32,7 +32,7 @@ class CreditsScene:
 				left = get_image('us/' + left + '.png')
 			if right != None:
 				right = get_image('us/' + right + '.png')
-				right = pygame.transform.flip(right, True, False)
+				right = right.flip(True, False)
 			self.things[i][0] = left
 			self.things[i][2] = right
 			

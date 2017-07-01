@@ -22,6 +22,33 @@ class GraphicsTexture:
 	def draw(self, x, y):
 		_screen.blit(self.pgImage, (x, y))
 
+	def drawWithAlpha(self, x, y, alpha):
+		key = self.width * 100000 + self.height
+		temp = _tempSurfStore.get(key)
+		if temp == None:
+			temp = pygame.Surface((self.width, self.height)).convert()
+			_tempSurfStore[key] = temp
+		temp.blit(_screen, (-x, -y))
+		temp.blit(self.pgImage, (0, 0))
+		temp.set_alpha(alpha)
+		_screen.blit(temp, (x, y))
+		
+		
+	def scale(self, newWidth, newHeight):
+		img = pygame.transform.scale(self.pgImage, (newWidth, newHeight))
+		output = GraphicsTexture(self.image)
+		output.pgImage = img
+		output.width = newWidth
+		output.height = newHeight
+		return output
+	
+	def flip(self, flipHorizontal, flipVertical):
+		output = GraphicTexture(self.image)
+		output.pgImage = pygame.transform.flip(self.pgImage, flipHorizontal, flipVertical)
+		output.width = self.width
+		output.height = self.height
+		return output
+		
 _tempSurfStore = {}
 		
 class Draw:
