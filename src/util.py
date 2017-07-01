@@ -2,20 +2,6 @@
 def canonicalize_path(path):
 	return path.replace('\\', os.sep).replace('/', os.sep)
 
-def read_file(path):
-	path = canonicalize_path(path)
-	if os.path.exists(path):
-		c = open(canonicalize_path(path), 'rt')
-		t = c.read()
-		c.close()
-		return t
-	return None
-	
-def write_file(path, contents):
-	c = open(path, 'wt')
-	c.write(contents)
-	c.close()
-
 def make_grid(width, height, defaultValue):
 	cols = []
 	x = 0

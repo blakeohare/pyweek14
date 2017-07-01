@@ -49,7 +49,9 @@ class InputManager:
 			Game.KeyboardKey.SPACE: 'spray',
 			Game.KeyboardKey.W: 'walkie'
 		}
-		t = read_file('data/key_config.txt')
+		t = None
+		if (UserData.fileExists('key_config.txt')):
+			t = UserData.fileReadText('key_config.txt')
 		
 		things = 'start left right up down spray walkie'.split()
 		if t != None:
@@ -73,7 +75,7 @@ class InputManager:
 			action = self._key_mapping[key]
 			output.append(action + ':' + str(key))
 		output = '\r\n'.join(output)
-		write_file('data/key_config.txt', output)
+		UserData.fileWriteText('key_config.txt', output)
 	
 	def set_key_config(self, action, key):
 		for k in self._key_mapping.keys():
@@ -336,7 +338,7 @@ class InputManager:
 		for joystick in self.joysticks:
 			output.append(self._save_joystick(joystick))
 		output = '$'.join(output)
-		write_file('data/input_config.txt', output)
+		UserData.fileWriteText('input_config.txt', output)
 	
 	
 	def _save_joystick(self, config):
@@ -354,7 +356,9 @@ class InputManager:
 		return '\r\n'.join(output)
 	
 	def read_config_save(self):
-		prev = read_file('data/input_config.txt')
+		prev = None
+		if UserData.fileExists('input_config.txt'):
+			prev = UserData.fileReadText('input_config.txt')
 		if prev != None:
 			data = prev.strip().split('$')
 			if len(data) > 0:

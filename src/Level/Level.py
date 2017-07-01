@@ -92,7 +92,7 @@ class Level:
 	
 	def initialize(self):
 		self.rats = []
-		lines = read_file('data/levels/' + self.name + '.txt').split('\n')
+		lines = Resources.readText('data/levels/' + self.name + '.txt').split('\n')
 		values = {}
 		for line in lines:
 			line = line.strip()

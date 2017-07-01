@@ -9,11 +9,6 @@ def get_user_debug_message():
 
 def main():
 
-	#pygame.init()
-	#pygame.display.set_caption("Sudo Science")
-	#real_screen = pygame.display.set_mode((800, 600))
-	#fake_screen = pygame.Surface((400, 300))
-	#fps = 60
 	window = Game.GameWindow("Sudo Science", 60, 400, 300, 800, 600)
 	
 	real_screen = window.realScreen
@@ -32,8 +27,8 @@ def main():
 	
 	load_persistent_state()
 	
-	if os.path.exists('start.txt'):
-		lines = read_file('start.txt').strip().split('\n')
+	if UserData.fileExists('start.txt'):
+		lines = UserData.fileReadText('start.txt').strip().split('\n')
 		
 		if lines[0] == 'normal':
 			active_scene = MainMenuScene()

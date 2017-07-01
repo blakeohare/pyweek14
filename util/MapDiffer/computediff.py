@@ -36,7 +36,7 @@ def generate_tile_store():
 	tiles = {}
 	for file in files:
 		if '.svn' in file: continue
-		lines = read_file('data/tile_manifests/' + file).split('\n')
+		lines = Resources.readText('data/tile_manifests/' + file).split('\n')
 		for line in lines:
 			parts = line.split('\t')
 			if len(parts) > 3:
@@ -55,7 +55,7 @@ def get_tile_height(id):
 	return output
 
 def read_map_file(name):
-	t = read_file('data/levels/' + name + '.txt')
+	t = Resources.readText('data/levels/' + name + '.txt')
 	
 	lines = t.split('\n')
 	values = {}

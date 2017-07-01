@@ -5,7 +5,7 @@ class TileStore:
 		manifests = os.listdir(manifest_dir)
 		for manifest in manifests:
 			if '.svn' in manifest: continue
-			manifest_data = read_file(manifest_dir + os.sep + manifest).split('\n')
+			manifest_data = Resources.readText(manifest_dir + '/' + manifest).split('\n')
 			for line in manifest_data:
 				if line != '' and line[0] != '#':
 					cols = line.split('\t')

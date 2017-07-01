@@ -104,7 +104,7 @@ class DialogScene:
 		self.buffer_shift_offset = 0
 	
 	def initialize_script(self, id):
-		file = read_file('data/dialog/' + id + '.txt')
+		file = Resources.readText('data/dialog/' + id + '.txt')
 		self.lines = file.split('\n')
 		self.labels = {}
 		i = 0
