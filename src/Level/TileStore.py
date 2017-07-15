@@ -1,8 +1,8 @@
 class TileStore:
 	def __init__(self):
 		tiles = {}
-		manifest_dir = canonicalize_path('data/tile_manifests')
-		manifests = os.listdir(manifest_dir)
+		manifest_dir = 'data/tile_manifests'
+		manifests = Resources.directoryList(manifest_dir)
 		for manifest in manifests:
 			if '.svn' in manifest: continue
 			manifest_data = Resources.readText(manifest_dir + '/' + manifest).split('\n')

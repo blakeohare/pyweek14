@@ -1,7 +1,4 @@
 
-def canonicalize_path(path):
-	return path.replace('\\', os.sep).replace('/', os.sep)
-
 def make_grid(width, height, defaultValue):
 	cols = []
 	x = 0
@@ -23,16 +20,6 @@ def safe_map(function, list):
 		output.append(function(list[i]))
 		i += 1
 	return output
-
-def max(a, b):
-	if a < b:
-		return b
-	return a
-	
-def min(a, b):
-	if a < b:
-		return a
-	return b
 
 _range_4 = [0, 1, 2, 3]
 _range_2 = [0, 1]

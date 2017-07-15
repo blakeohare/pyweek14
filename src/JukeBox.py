@@ -17,7 +17,6 @@ def is_music_off():
 
 class JukeBox:
 	def __init__(self):
-		pygame.mixer.init()
 		self.current = None
 		
 		ps = get_persistent_state()
@@ -28,6 +27,7 @@ class JukeBox:
 			self.set_music_volume(70)
 			self.set_sfx_volume(70)
 		self.sounds = {}
+		self.musics = {}
 		self.music_map = {
 			'intro':'biologytake2',
 			'12-0':'chemistry',
@@ -56,7 +56,7 @@ class JukeBox:
 	def update_volume(self, song):
 		if song != None:
 			volume = self.music_volume * self.get_song_normalization(song)
-			pygame.mixer.music.set_volume(volume / 100.0)
+			#pygame.mixer.music.set_volume(volume / 100.0)
 	
 	def set_sfx_volume(self, percent):
 		percent = max(0, min(100, Math.floor(percent)))
@@ -77,10 +77,10 @@ class JukeBox:
 
 		snd = self.sounds.get(path)
 		if snd == None:
-			fpath = ('sound/sfx/' + path + '.ogg').replace('/', os.sep)
+			fpath = 'sound/sfx/' + path + '.ogg'
 			snd = self.sounds.get(fpath)
 			if snd == None:
-				snd = pygame.mixer.Sound(fpath)
+				snd = Audio.SoundResource.loadFromResource(fpath)
 				volume = self.sfx_volume / 100.0
 				if path.startswith('talk'):
 					if 'high' in path:
@@ -88,29 +88,31 @@ class JukeBox:
 					volume = volume / 3
 				if 'menumove' in path:
 					volume = volume / 4
-				snd.set_volume(volume)
+				snd.setDefaultVolume(volume)
 				self.sounds[path] = snd
 			else:
 				self.sounds[path] = snd
 		snd.play()
 	
-	def ensure_current_song(self, song):
+	def ensure_current_song(self, songId):
 		if is_music_off(): return
-		if song == 'bossmusic' and self.current == 'stringtheory':
+		if songId == 'bossmusic' and self.current == 'stringtheory':
 			self.ensure_current_song('stringtheory')
 			return
 
-		if song == None:
-			pygame.mixer.music.stop()
+		if songId == None:
+			Audio.Music.stop()
 			return
 		
-		song = 'sound/music/' + song + '.ogg'
-		song = song.replace('/', os.sep)
-		if self.current != song:
-			self.current = song
-			self.update_volume(song)
-			pygame.mixer.music.load(song)
-			pygame.mixer.music.play(-1)
+		if self.current != songId:
+			songPath = 'sound/music/' + songId + '.ogg'
+			self.current = songId
+			self.update_volume(songId)
+			music = self.musics.get(songPath)
+			if music == None:
+				music = Audio.Music.loadFromResource(songPath)
+				self.musics[songPath] = music
+			music.play(True)
 
 	def get_song_for_level(self, level):
 		return self.music_map.get(level, 'astrophysics')
