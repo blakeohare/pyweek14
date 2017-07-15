@@ -1,5 +1,6 @@
 import Core
 import Game
+import Gamepad
 import Math
 import Random
 import Resources

@@ -564,7 +564,6 @@ class Sprite:
 				if blocked:
 					break
 			
-			
 			if not blocked:
 				old_col = Math.floor(self.x // 16)
 				old_row = Math.floor(self.y // 16)

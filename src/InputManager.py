@@ -90,7 +90,7 @@ class InputManager:
 			self.active_joystick = -1
 		elif len(self.actual_joysticks) > id:
 			self.active_actual_joystick = id
-			name = self.actual_joysticks[self.active_actual_joystick].get_name().strip()
+			name = self.actual_joysticks[self.active_actual_joystick].getName().strip()
 			found = False
 			i = 0
 			for js in self.joysticks:
@@ -180,7 +180,7 @@ class InputManager:
 			config = self.joysticks[self.active_joystick]
 			name = config.get('name', '')
 			for js in self.actual_joysticks:
-				name2 = js.get_name()
+				name2 = js.getName()
 				if name.lower() == name2.lower():
 					joystick = js
 					break
@@ -197,7 +197,7 @@ class InputManager:
 						direction = True
 						x = cached_poll.get('a' + str(n))
 						if x == None:
-							x = joystick.get_axis(n)
+							x = joystick.getAxisState(n)
 							if Math.abs(x) < 0.01:
 								x = 0
 							cached_poll['a' + str(n)] = x
@@ -241,7 +241,7 @@ class InputManager:
 					elif c[0] == 'button':
 						x = cached_poll.get('b' + str(n))
 						if x == None:
-							x = joystick.get_button(n)
+							x = joystick.getButtonState(n)
 							cached_poll['b' + str(n)] = x
 						
 					
@@ -315,11 +315,10 @@ class InputManager:
 		active_joystick_name = None
 		if self.active_joystick != -1:
 			active_joystick_name = self.joysticks[self.active_joystick].get('name', '').strip().lower()
-		for i in range(pygame.joystick.get_count()):
-			js = pygame.joystick.Joystick(i)
-			js.init()
+		for i in range(Gamepad.GamepadManager.getDeviceCount()):
+			js = Gamepad.GamepadManager.getDeviceByIndex(i)
 			self.actual_joysticks.append(js)
-			name = js.get_name().strip().lower()
+			name = js.getName().strip().lower()
 			if name == active_joystick_name:
 				self.active_actual_joystick = i
 		
