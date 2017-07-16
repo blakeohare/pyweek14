@@ -13,7 +13,7 @@ class Tile:
 		images = images.split('|')
 		self.framerate = 4
 		if self.is_num(images[0][0]):
-			self.framerate = int(images[0])
+			self.framerate = Core.parseInt(images[0])
 			images = images[1:]
 		self.hascharge = False
 		
@@ -23,10 +23,16 @@ class Tile:
 		self.tesla = id in ('4off', '4')
 		self.teslaon = id == '4'
 		
-		self.images = safe_map(lambda x:get_image('tiles/' + x), images)
+		self.images = []
+		for image in images:
+			self.images.append(get_image('tiles/' + image))
+
 		self.still = len(self.images) == 1
 		self.still_image = self.images[0]
-		self.y_offsets = safe_map(lambda x:24 - x.get_height(), self.images)
+		self.y_offsets = []
+		for image in self.images:
+			self.y_offsets.append(24 - image.height)
+
 		self.still_y_offset = self.y_offsets[0]
 		self.image_count = len(self.images)
 		self.height = height
@@ -49,7 +55,7 @@ class Tile:
 		self.is_goo = id == '15'
 		self.goo_size = 0
 		if self.goo:
-			self.goo_size = ((int(id) - 41) - 1) * 2 + 1 # 1, 3, 5 OMGHAX
+			self.goo_size = ((Core.parseInt(id) - 41) - 1) * 2 + 1 # 1, 3, 5 OMGHAX
 		self.blocking = self.blocking or self.stairs or self.pushable
 		if self.stairs:
 			self.no_blocks = True
@@ -77,7 +83,6 @@ class Tile:
 
 	# Code duplicated above
 	def render(self, screen, x, y, render_counter):
-		
 		if self.still:
 			img = self.still_image
 			y += self.still_y_offset
@@ -86,5 +91,4 @@ class Tile:
 			img = self.images[i]
 			y += self.y_offsets[i]
 		
-		screen.blit(img, (x, y))
-		
+		img.draw(x, y)

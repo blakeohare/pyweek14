@@ -57,12 +57,12 @@ class MainMenuScene:
 			get_persistent_state().session = {}
 	
 	def render(self, screen, counter):
-		screen.blit(get_image('misc/title_screen.png'), (0, 0))
+		get_image('misc/title_screen.png').draw(0, 0)
 		
 		title = get_text("Sudo Science", 36, (255, 255, 255))
-		w = title.get_width()
-		h = title.get_height()
-		screen.blit(title, (20, 20))
+		w = title.width
+		h = title.height
+		title.draw(20, 20)
 		
 		y = h + 30 + 20
 		i = 0
@@ -70,12 +70,11 @@ class MainMenuScene:
 			x = 20
 			color = (190, 190, 190)
 			if self.index == i:
-				color = (255, 255, 255)
-				pygame.draw.rect(screen, color, pygame.Rect(x, y + 5, 5, 5))
+				Graphics2D.Draw.rectangle(x, y + 5, 5, 5, 255, 255, 255)
 			elif not option[1]:
 				color = (80, 80, 80)
 			x = 30
 			text = get_text(option[0], 18, color)
-			screen.blit(text, (x, y))
-			y += text.get_height() + 10
+			text.draw(x, y)
+			y += text.height + 10
 			i += 1

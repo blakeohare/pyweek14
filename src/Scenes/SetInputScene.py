@@ -1,13 +1,3 @@
-_set_input_shade = None
-
-def get_set_input_shade():
-	global _set_input_shade
-	if _set_input_shade == None:
-		_set_input_shade = pygame.Surface((400, 300)).convert()
-		_set_input_shade.fill((0, 0, 0))
-		_set_input_shade.set_alpha(170)
-	return _set_input_shade
-	
 class SetInputScene:
 	def __init__(self, action, is_keyboard, prev_scene):
 		self.next = self
@@ -69,7 +59,7 @@ class SetInputScene:
 					return
 			for i in range(js.get_numaxes()):
 				value = js.get_axis(i)
-				if abs(value) > .3:
+				if Math.abs(value) > .3:
 					sign = '+' if (value > 0) else '-'
 					js_config[self.action] = ('axis', i, 'x' + sign)
 					self.leave()
@@ -90,22 +80,20 @@ class SetInputScene:
 	
 	def render(self, screen, counter):
 		self.prev.render(screen, counter)
-		screen.blit(get_set_input_shade(), (0, 0))
+		Graphics2D.Draw.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, 0, 0, 0, 170)
 		if self.is_keyboard:
 			label = "Press the key on the keyboard"
 		else:
 			label = "Press the button on the gamepad"
-		#label += actions[self.action]
-		h = self.top_img.get_height()
+		h = self.top_img.height
 		y = 150 - h - 3
 		left = 25
 		top = y - 20
 		width = 350
 		height = h * 2 + 6 + 40
-		pygame.draw.rect(screen, (0, 0, 0), pygame.Rect(left, top, width, height))
-		pygame.draw.rect(screen, (128, 128, 128), pygame.Rect(left, top, width, height), 1)
-		screen.blit(self.top_img, (200 - self.top_img.get_width() // 2, y))
-		screen.blit(self.bottom_img, (200 - self.bottom_img.get_width() // 2, 150 + 3))
+		Graphics2D.Draw.rectangle(left, top, width, height, 128, 128, 128)
+		Graphics2D.Draw.rectangle(left + 1, top + 1, width - 2, height - 2, 0, 0, 0)
+		self.top_img.draw(200 - self.top_img.width // 2, y)
+		self.bottom_img.draw(200 - self.bottom_img.width // 2, 150 + 3)
 		if self.show_tryanother:
-			screen.blit(self.tryanother, (200 - self.tryanother.get_width() // 2, top + height - 15))
-		
+			self.tryanother.draw(200 - self.tryanother.width // 2, top + height - 15)

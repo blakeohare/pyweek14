@@ -67,35 +67,35 @@ class SettingsScene:
 	
 	def render(self, screen, counter):
 		header = get_text("Sound Settings", 30, (255, 255, 255))
-		x = (screen.get_width() - header.get_width()) // 2
+		x = (GAME_WIDTH - header.width) // 2
 		y = 30
-		screen.blit(header, (x, y))
+		header.draw(x, y)
 		
-		y += header.get_height() + 30
+		y += header.height + 30
 		
 		g = (120, 120, 120)
 		w = (255, 255, 255)
 		
 		c = w if self.i == 0 else g
 		img = get_text("SFX Volume: " + str(self.jk.get_sfx_volume()) + "%", 18, c)
-		screen.blit(img, ((screen.get_width() - img.get_width()) // 2, y))
-		y += img.get_height() + 40
+		img.draw((GAME_WIDTH - img.width) // 2, y)
+		y += img.height + 40
 		
 		c = w if self.i == 1 else g
 		img = get_text("Music Volume: " + str(self.jk.get_music_volume()) + "%", 18, c)
-		screen.blit(img, ((screen.get_width() - img.get_width()) // 2, y))
-		y += img.get_height() + 40
+		img.draw((GAME_WIDTH - img.width) // 2, y)
+		y += img.height + 40
 		
 		c = w if self.i == 2 else g
 		t = "More Magic " if (get_persisted_forever_int('magic') == 1) else "Magic"
 		img = get_text(t, 18, c)
-		screen.blit(img, ((screen.get_width() - img.get_width()) // 2, y))
-		y += img.get_height() + 40
+		img.draw((GAME_WIDTH - img.width) // 2, y)
+		y += img.height + 40
 		
 		c = w if self.i == 3 else g
 		img = get_text("Return to Main Menu", 18, c)
-		screen.blit(img, ((screen.get_width() - img.get_width()) // 2, y))
-		y += img.get_height() + 40
+		img.draw((GAME_WIDTH - img.width) // 2, y)
+		y += img.height + 40
 		
 		
 		

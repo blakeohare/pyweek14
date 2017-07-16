@@ -6,7 +6,7 @@ s|p|You have no idea what I had to go through
 s|p|to get these.
 cc
 r
-snd|pickup.wav
+snd|pickup
 s|w|Handed over research.
 #if there are less than 15 papers
 i|supervisor

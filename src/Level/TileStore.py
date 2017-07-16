@@ -1,18 +1,18 @@
 class TileStore:
 	def __init__(self):
 		tiles = {}
-		manifest_dir = canonicalize_path('data/tile_manifests')
-		manifests = os.listdir(manifest_dir)
+		manifest_dir = 'data/tile_manifests'
+		manifests = Resources.directoryList(manifest_dir)
 		for manifest in manifests:
 			if '.svn' in manifest: continue
-			manifest_data = read_file(manifest_dir + os.sep + manifest).split('\n')
+			manifest_data = Resources.readText(manifest_dir + '/' + manifest).split('\n')
 			for line in manifest_data:
 				if line != '' and line[0] != '#':
 					cols = line.split('\t')
 					if len(cols) >= 4:
 						id = cols[0]
 						images = cols[1]
-						height = int(cols[2])
+						height = Core.parseInt(cols[2])
 						flags = cols[3]
 						tiles[id] = Tile(id, images, height, flags)
 		self.tiles = tiles

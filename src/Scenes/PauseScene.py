@@ -1,15 +1,8 @@
-_dark_overlay = None
 
 class PauseScene:
 	def __init__(self, playscene):
-		global _dark_overlay
 		self.next = self
 		self.playscene = playscene
-		if _dark_overlay == None:
-			_dark_overlay = pygame.Surface((400, 300)).convert()
-			_dark_overlay.fill((0, 0, 0))
-			_dark_overlay.set_alpha(180)
-		self.overlay = _dark_overlay
 		self.i = 0
 		self.options = [
 			"Continue",
@@ -61,12 +54,13 @@ class PauseScene:
 		set_persisted_session_int('research', 0)
 		get_persistent_state().set_string_forever('save_level', self.playscene.level.name)
 		get_persistent_state().save_game()
+
 	def update(self, counter):
 		pass
 	
 	def render(self, screen, counter):
 		self.playscene.render(screen, counter)
-		screen.blit(self.overlay, (0, 0))
+		Graphics2D.Draw.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, 0, 0, 0, 180)
 		y = 100
 		
 		i = 0
@@ -77,7 +71,7 @@ class PauseScene:
 				color = (255, 255, 255)
 			img = get_text(text, 18, color)
 			
-			x = screen.get_width() // 2 - img.get_width() // 2
-			screen.blit(img, (x, y))
+			x = (GAME_WIDTH - img.width) // 2
+			img.draw(x, y)
 			i += 1
-			y += img.get_height() + 20
+			y += img.height + 20

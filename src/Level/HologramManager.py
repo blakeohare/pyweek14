@@ -38,9 +38,9 @@ class HologramManager:
 		
 		cp = self.copy_pad
 		
-		col = int(player.x // 16)
-		row = int(player.y // 16)
-		layer = int(player.z // 8) - 1
+		col = Math.floor(player.x // 16)
+		row = Math.floor(player.y // 16)
+		layer = Math.floor(player.z // 8) - 1
 		
 		if cp[0] == col and cp[1] == row and cp[2] == layer:
 			self.copy_mode_counter = 180

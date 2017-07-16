@@ -73,8 +73,6 @@ class DialogPause:
 		self.remaining -= 1
 		return self.remaining >= 0
 		
-	
-
 class DialogScene:
 	def __init__(self, playscene, id):
 		self.id = id
@@ -86,7 +84,6 @@ class DialogScene:
 		self.text_printer = None
 		self.prompt_for_continue = False
 		self.pauser = None
-		self.surfaces = {}
 		self.i = 0
 		self.phase = 'init'
 		self.phase_counter = 0
@@ -106,7 +103,7 @@ class DialogScene:
 		self.buffer_shift_offset = 0
 	
 	def initialize_script(self, id):
-		file = read_file('data/dialog/' + id + '.txt')
+		file = Resources.readText('data/dialog/' + id + '.txt')
 		self.lines = file.split('\n')
 		self.labels = {}
 		i = 0
@@ -135,8 +132,6 @@ class DialogScene:
 			if self.clear_on_continue:
 				self.buffer = []
 				
-		
-	
 	def update(self, counter):
 		if self.wait_counter > 0:
 			self.playscene.update(counter)
@@ -148,7 +143,6 @@ class DialogScene:
 		if self.frame_yielding >= 0:
 			for s in self.playscene.sprites:
 				if s.issupervisor:
-					#print 'supervisor:', s.automation.counter
 					pass
 			self.playscene.update(counter)
 		
@@ -183,7 +177,7 @@ class DialogScene:
 				keep_going = False
 			else:
 				if self.i < len(self.lines):
-					line = trim(self.lines[self.i])
+					line = self.lines[self.i].strip()
 					if len(line) > 0:
 						parts = line.split('|')
 						command = parts[0]
@@ -192,7 +186,7 @@ class DialogScene:
 						elif command == 'r':
 							self.change_portrait(None)
 						elif command == 'p':
-							self.pauser = DialogPause(int(parts[1]))
+							self.pauser = DialogPause(Core.parseInt(parts[1]))
 						elif command == 's':
 							if len(self.buffer) == 3:
 								self.buffer_clear_counter = 10
@@ -222,13 +216,13 @@ class DialogScene:
 							hack_function = get_hacks_for_level(self.playscene.level.name, 'dialog_hack')[parts[1]]
 							hack_function(self.playscene, self.playscene.level)
 						elif command == 'y':
-							self.frame_yielding = int(parts[1])
+							self.frame_yielding = Core.parseInt(parts[1])
 						elif command == 'goto':
 							self.do_goto(parts[1])
 						elif command == 'if':
 							var = parts[1]
 							operator = parts[2]
-							value = int(parts[3])
+							value = Core.parseInt(parts[3])
 							label = parts[4]
 							self.do_if(operator, var, value, label)
 						elif command == 'end':
@@ -294,20 +288,14 @@ class DialogScene:
 				width = counter * 300 // half
 			else:
 				width = 300
-			
-		key = str(width) + '^' + str(height)
-		surface = self.surfaces.get(key, None)
-		if surface == None:
-			surface = pygame.Surface((width, height)).convert()
-			surface.fill((0, 0, 0))
-			surface.set_alpha(180)
-			self.surfaces[key] = surface
 		
-		x = screen.get_width() // 2 - width // 2
+		x = GAME_WIDTH // 2 - width // 2
 		y = 100 - height // 2
-		
-		screen.blit(surface, (x, y))
-		pygame.draw.rect(screen, (255, 255, 255), pygame.Rect(x, y, width, height), 1)
+		Graphics2D.Draw.rectangle(x, y, width, height, 0, 0, 0, 180)
+		Graphics2D.Draw.rectangle(x, y, width, 1, 255, 255, 255)
+		Graphics2D.Draw.rectangle(x, y, 1, height, 255, 255, 255)
+		Graphics2D.Draw.rectangle(x + width - 1, y, 1, height, 255, 255, 255)
+		Graphics2D.Draw.rectangle(x, y + height - 1, width, 1, 255, 255, 255)
 		
 	def render(self, screen, counter):
 		
@@ -319,7 +307,7 @@ class DialogScene:
 		
 		if self.phase == 'dialog':
 			if self.active_portrait != None:
-				screen.blit(self.active_portrait, (10, 10))
+				self.active_portrait.draw(10, 10)
 			
 			font_size = 18
 			line_height = 23
@@ -335,9 +323,9 @@ class DialogScene:
 				color = line[1]
 				last_color = color
 				img = get_text(text, font_size, color)
-				screen.blit(img, (89, y))
+				img.draw(89, y)
 				y += line_height
 			
 			if self.prompt_for_continue and (counter // 10) % 2 == 0:
 				y = cursor_height
-				pygame.draw.polygon(screen, last_color, [(300, y), (308, y), (304, y + 5)])
+				Graphics2D.Draw.triangle(300, y, 308, y, 304, y + 5, last_color[0], last_color[1], last_color[2])

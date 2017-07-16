@@ -66,7 +66,7 @@ class PersistentState:
 		self.level = {}
 	
 	def save_game(self):
-		write_file('data/save.txt', self.serialize())
+		UserData.fileWriteText('save.txt', self.serialize())
 	
 	def change_level(self):
 		self.level = {}
@@ -81,7 +81,9 @@ class PersistentState:
 		return '\n'.join(output)
 	
 	def load_game(self):
-		t = read_file('data/save.txt')
+		t = None
+		if UserData.fileExists('save.txt'):
+			t = UserData.fileReadText('save.txt')
 		values = {}
 		if t != None:
 			lines = t.split('\n')
@@ -95,7 +97,7 @@ class PersistentState:
 						name = key[1:]
 						if type == 'i':
 							try:
-								value = int(value)
+								value = Core.parseInt(value)
 							except:
 								value = 0
 							
@@ -103,8 +105,6 @@ class PersistentState:
 							type = 's'
 						values[name] = (type, value)
 		self.forever = values
-						
-					
 	
 	def set_int_forever(self, name, value):
 		self._set_int(name, value, self.forever)

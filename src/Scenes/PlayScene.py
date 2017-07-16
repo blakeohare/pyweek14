@@ -65,7 +65,7 @@ class PlayScene:
 		for event in events:
 			if event.key == 'spray' and event.down and self.player.spray_counter < 0:
 				if get_persisted_level_int('decontaminant') > 0:
-					play_sound('spray.wav')
+					play_sound('spray')
 					increment_persisted_level_int('decontaminant', -1)
 					self.player.spray_counter = 30
 					if self.level.spray_from([self.player] + self.holograms):
@@ -177,9 +177,9 @@ class PlayScene:
 		player_y = player_position[1]
 		
 		if self.fixed_x:
-			self.target_camera_x = screen.get_width() // 2
+			self.target_camera_x = GAME_WIDTH // 2
 		else:
-			self.target_camera_x = screen.get_width() // 2 - player_x
+			self.target_camera_x = GAME_WIDTH // 2 - player_x
 		
 		if self.fixed_y:
 			self.target_camera_y = 50
@@ -193,11 +193,11 @@ class PlayScene:
 		
 		max_pan_speed = 4
 		if self.camera_x != self.target_camera_x:
-			if abs(self.camera_x - self.target_camera_x) == 1:
+			if Math.abs(self.camera_x - self.target_camera_x) == 1:
 				self.camera_x = self.target_camera_x
 			else:
 				new_camera_x = (self.camera_x + self.target_camera_x) // 2
-				if abs(new_camera_x - self.camera_x) > max_pan_speed:
+				if Math.abs(new_camera_x - self.camera_x) > max_pan_speed:
 					if self.camera_x < new_camera_x:
 						self.camera_x += max_pan_speed
 					else:
@@ -206,11 +206,11 @@ class PlayScene:
 					self.camera_x = new_camera_x
 		
 		if self.camera_y != self.target_camera_y:
-			if abs(self.camera_y - self.target_camera_y) == 1:
+			if Math.abs(self.camera_y - self.target_camera_y) == 1:
 				self.camera_y = self.target_camera_y
 			else:
 				new_camera_y = (self.camera_y + self.target_camera_y) // 2
-				if abs(new_camera_y - self.camera_y) > max_pan_speed:
+				if Math.abs(new_camera_y - self.camera_y) > max_pan_speed:
 					if self.camera_y < new_camera_y:
 						self.camera_y += max_pan_speed
 					else:

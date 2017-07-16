@@ -11,11 +11,11 @@ class GoodbyeScene:
 	
 	def render(self, screen, counter):
 		bye = get_text("Goodbye", 16, (255, 255, 255))
-		x = (screen.get_width() - bye.get_width()) // 2
-		y = (screen.get_height() - bye.get_height()) // 2
-		screen.blit(bye, (x, y))
+		x = (GAME_WIDTH - bye.width) // 2
+		y = (GAME_HEIGHT - bye.height) // 2
+		bye.draw(x, y)
 		
 		img = get_image('protagonist/wave' + str(((counter // 3) % 4) + 1) + '.png')
 		
-		screen.blit(img, (192, y + 20))
+		img.draw(192, y + 20)
 		

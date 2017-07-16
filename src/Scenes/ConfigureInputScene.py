@@ -18,11 +18,11 @@ class ClickyButton:
 			self.on_img = get_text(text, size, on_color)
 			self.off_img = get_text(text, size, off_color)
 			self.pressed_img = get_text(text, size, pressed_color)
-			self.right = x + self.off_img.get_width()
-			self.bottom = y + self.off_img.get_height()
+			self.right = x + self.off_img.width
+			self.bottom = y + self.off_img.height
 		else:
 			self.right = x + 10
-			self.bottom = y + get_text("!y", size, (0, 0, 0)).get_height()
+			self.bottom = y + get_text("!y", size, 'black').height
 		self.im = get_input_manager()
 		self.action = action
 		self.get_label = get_label
@@ -48,8 +48,8 @@ class ClickyButton:
 				self.pressed_img = get_text(label, self.size, self.pressed_color)
 				self.on_img = get_text(label, self.size, self.on_color)
 				self.off_img = get_text(label, self.size, self.off_color)
-				self.bottom = self.on_img.get_height() + self.top
-				self.right = self.on_img.get_width() + self.left
+				self.bottom = self.on_img.height + self.top
+				self.right = self.on_img.width + self.left
 		
 		if not self.enabled:
 			img = self.off_img
@@ -60,7 +60,7 @@ class ClickyButton:
 		else:
 			img = self.off_img
 		
-		screen.blit(img, (self.left, self.top))
+		img.draw(self.left, self.top)
 	
 	def on_click(self):
 		if self.enabled:
@@ -87,7 +87,7 @@ class ConfigureInputScene:
 		
 		js_label = get_text("Select Active Joystick", heading_size, heading)
 		self.labels.append(((10, 10), js_label))
-		y = 10 + 10 + js_label.get_height()
+		y = 10 + 10 + js_label.height
 		x = 20
 		js_option_y_coords.append(y)
 		
@@ -163,7 +163,7 @@ class ConfigureInputScene:
 		else:
 			parts = id.split(' ')
 			if parts[0] == 'joystick':
-				im.set_active_actual_joystick(int(parts[1]) - 1)
+				im.set_active_actual_joystick(Core.parseInt(parts[1]) - 1)
 			elif parts[0] == 'keyconfig':
 				action = parts[1]
 				self.next = SetInputScene(action, True, self)
@@ -181,7 +181,6 @@ class ConfigureInputScene:
 						button.on_click()
 						break
 		
-		
 	def update(self, counter):
 		pass
 	
@@ -195,12 +194,12 @@ class ConfigureInputScene:
 		
 			pos = label[0]
 			img = label[1]
-			screen.blit(img, pos)
+			img.draw(pos[0], pos[1])
 		
 		if ((counter // 25) % 2) == 1:
-			screen.blit(self.use_mouse_label, (
-				200 - self.use_mouse_label.get_width() // 2,
-				300 - self.use_mouse_label.get_height()))
+			self.use_mouse_label.draw(
+				200 - self.use_mouse_label.width // 2,
+				300 - self.use_mouse_label.height)
 		
 		if im.active_actual_joystick == -1:
 			i = 0
@@ -208,4 +207,4 @@ class ConfigureInputScene:
 			i = im.active_actual_joystick + 1
 		x = 5
 		y = self.js_option_coords[i]
-		pygame.draw.rect(screen, (255, 0, 0), pygame.Rect(x, y + 2, 4, 4))
+		Graphics2D.Draw.rectangle(x, y + 2, 4, 4, 255, 0, 0)

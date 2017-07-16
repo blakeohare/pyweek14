@@ -1,15 +1,5 @@
 _block_images_for_sprites = None
-_surface_cache = {}
 
-def get_surface(width, height):
-	global _surface_cache
-	k = str(width) + '|' + str(height)
-	surface = _surface_cache.get(k, None)
-	if surface == None:
-		surface = pygame.Surface((width, height)).convert()
-		_surface_cache[k] = surface
-	return surface
-	
 def get_teleporter_image(going_out, counter, type):
 	counter = min(60, max(0, counter))
 	if going_out:
@@ -24,32 +14,20 @@ def get_teleporter_image(going_out, counter, type):
 	if type == 'main':
 		imgs = (
 			get_image('protagonist/s.png'),
-			get_image('static/character' + str((int(counter // 2) % 4) + 1) + '.png'))
+			get_image('static/character' + str((Math.floor(counter // 2) % 4) + 1) + '.png'))
 	else:
 		block_id = type[len('block|'):]
 		if going_out and counter < 6:
 			return None
 		ts = get_tile_store()
 		battery = block_id in('45' or '46')
-		img = get_image('static/block' + str((int(counter // 2) % 4) + 1) + '.png')
+		img = get_image('static/block' + str((Math.floor(counter // 2) % 4) + 1) + '.png')
 		if battery:
-			img = get_image('static/battery' + str((int(counter // 2) % 4) + 1) + '.png')
-		imgs = (
-			ts.get_tile(block_id).get_image(counter),
-			img)
+			img = get_image('static/battery' + str((Math.floor(counter // 2) % 4) + 1) + '.png')
+		imgs = (ts.get_tile(block_id).get_image(counter), img)
 
 	return (ao, bo, imgs[0], imgs[1])
 	
-
-def copy_surface(surface):
-	return pygame.Surface(surface)
-
-def blit_at_opacity(target, source, x, y, opacity):
-	t = get_surface(source.get_width(), source.get_height())
-	t.blit(screen, (-x, -y))
-	t.blit(source)
-	t.set_alpha(opacity)
-	screen.blit(t, (x, y))
 
 class Sprite:
 	# sprite coordinates are assuming the grid is 16x16 tiles
@@ -152,26 +130,18 @@ class Sprite:
 				for x in ((bo, bi), (ao, ai)):
 					o = x[0]
 					img = x[1]
-					
-					if o > 0:
-						t = get_surface(img.get_width(), img.get_height())
-						t.blit(screen, (-coords[0], -coords[1]))
-						t.blit(img, (0, 0))
-						t.set_alpha(o)
-						screen.blit(t, (coords[0], coords[1]))	
+					img.drawWithAlpha(coords[0], coords[1], o)
 			else:
-				screen.blit(img, coords)
+				img.draw(coords[0], coords[1])
 			
 		return (self, xOffset, yOffset, render_counter)
 		
-	
-	
 	def get_image(self, render_counter):
 		img = None
 		if self.main_or_hologram:
 			if not self.ismain:
 				if self.clone_creating:
-					return get_image('scan/character'+str(((render_counter // 2) % 4) + 1)+'.png')
+					return get_image('scan/character' + str(((render_counter // 2) % 4) + 1) +'.png')
 				if render_counter % 2 == 1:
 					return None #flickering holograms
 			else:
@@ -183,14 +153,14 @@ class Sprite:
 			if self.death_counter > 0:
 				path = 'protagonist/s.png'
 				if self.death_type == 'goo':
-					path = 'protagonist/goo' + str((int(render_counter // 3) % 4) + 1) + '.png'
+					path = 'protagonist/goo' + str((Math.floor(render_counter // 3) % 4) + 1) + '.png'
 				elif self.death_type == 'bazat':
-					path = 'protagonist/zap' + str((int(render_counter // 3) % 4) + 1) + '.png'
+					path = 'protagonist/zap' + str((Math.floor(render_counter // 3) % 4) + 1) + '.png'
 			elif self.death_by_rat > 0:
 				path = 'protagonist/rat'
-				path += str((int(self.death_by_rat // 3) % 4) + 1) + '.png'
+				path += str((Math.floor(self.death_by_rat // 3) % 4) + 1) + '.png'
 			elif self.standingon == None:
-				path = 'protagonist/fall' + str((int(render_counter // 3) % 4) + 1) + '.png'
+				path = 'protagonist/fall' + str((Math.floor(render_counter // 3) % 4) + 1) + '.png'
 			else:
 				dir = self.last_direction_of_movement
 				if self.pushing != None:
@@ -254,8 +224,8 @@ class Sprite:
 			w = 16
 			h = 32
 		else:
-			w = img.get_width()
-			h = img.get_height()
+			w = img.width
+			h = img.height
 		x = x - w / 2
 		y = y - self.z - h + 8
 		if self.isblock:
@@ -276,10 +246,10 @@ class Sprite:
 			else:
 				p = self.x % 16 + 0.0
 				ap = 16.0 - p
-			dy = int((left * ap + p * right) / 16.0)
+			dy = Math.floor((left * ap + p * right) / 16.0)
 			y -= dy
 			
-		output = (int(x + xOffset), int(y + yOffset))
+		output = (Math.floor(x + xOffset), Math.floor(y + yOffset))
 		
 		return output
 	
@@ -292,7 +262,6 @@ class Sprite:
 			'dy:', self.dy,
 			'dz:', self.dz]))
 		
-	
 	def get_replacement_sprite(self):
 		if self.trecv and self.garbage_collect:
 			self.prototype.garbage_collect = False
@@ -336,9 +305,9 @@ class Sprite:
 				
 				newx = self.x + self.dx
 				newy = self.y + self.dy
-				col = int(newx // 16)
-				row = int(newy // 16)
-				layer = int(self.z // 8) - 1
+				col = Math.floor(newx // 16)
+				row = Math.floor(newy // 16)
+				layer = Math.floor(self.z // 8) - 1
 				if layer >= 0:
 					tile = level.get_tile_at(col, row, layer)
 				else:
@@ -383,7 +352,7 @@ class Sprite:
 			self.dz = -1
 
 		if self.dz != 0:
-			platform_data = level.get_platform_below(int(self.x) // 16, int(self.y) // 16, self.z, True)
+			platform_data = level.get_platform_below(Math.floor(self.x) // 16, Math.floor(self.y) // 16, self.z, True)
 			if platform_data != None:
 				z = platform_data[0]
 				platform = platform_data[1]
@@ -400,12 +369,12 @@ class Sprite:
 		on_new_coordinates_now = False
 		new_platform = self.standingon
 		
-		starting_col = int(self.x) // 16
-		starting_row = int(self.y) // 16
+		starting_col = Math.floor(self.x) // 16
+		starting_row = Math.floor(self.y) // 16
 		
 		if self.standingon != None:
 			if self.standingon.teleporter and not self.staticy:
-				destination = level.teleporters.get_destination(starting_col, starting_row, int(self.z // 8) - 1)
+				destination = level.teleporters.get_destination(starting_col, starting_row, Math.floor(self.z // 8) - 1)
 				
 				if destination != None:
 					if destination == 'blocked':
@@ -416,8 +385,8 @@ class Sprite:
 		
 		if self.dz == 0:
 			
-			ending_col = int(self.x + self.dx) // 16
-			ending_row = int(self.y + self.dy) // 16
+			ending_col = Math.floor(self.x + self.dx) // 16
+			ending_row = Math.floor(self.y + self.dy) // 16
 			
 			check_these = []
 			if starting_col == ending_col and starting_row == ending_row:
@@ -595,37 +564,34 @@ class Sprite:
 				if blocked:
 					break
 			
-			
 			if not blocked:
-				old_col = int(self.x // 16)
-				old_row = int(self.y // 16)
+				old_col = Math.floor(self.x // 16)
+				old_row = Math.floor(self.y // 16)
 				self.x += self.dx
 				self.y += self.dy
 				self.impeded_last_go_round = False
-				new_col = int(self.x // 16)
-				new_row = int(self.y // 16)
+				new_col = Math.floor(self.x // 16)
+				new_row = Math.floor(self.y // 16)
 				if old_col != new_col or old_row != new_row:
 					on_new_coordinates_now = True
 				
-				new_layer = int(self.z // 8)
+				new_layer = Math.floor(self.z // 8)
 				
 				occupying = level.get_tile_at(new_col, new_row, new_layer)
 				if occupying != None and occupying.is_goo and self.main_or_hologram:
 					self.death_counter = 60
 					self.death_type = 'goo'
 					self.immobilized = True
-					play_sound("irradiated.wav")
+					play_sound("irradiated")
 			self.impeded_last_go_round = blocked
 					
 			omg_hax = self.dx != 0 or self.dy != 0
 			self.is_moving = omg_hax
 			if self.automation == None:
 				omg_hax = self.dx != 0 and self.dy != 0
-			
 				
 			if self.dx == 0 and self.dy == 0:
 				self.direction_queue = []
-			
 			
 			if omg_hax:
 				distance = (self.dx * self.dx + self.dy * self.dy) ** .5
@@ -672,16 +638,15 @@ class Sprite:
 							if len(foo) == 2:
 								self.last_direction_of_movement = foo
 								break
-				
-			
+		
 		if new_platform != None and new_platform.stairs and on_new_coordinates_now:
 			if direction == new_platform.entrance:
 				self.z -= new_platform.height * 8
 		
 		if self.dz == 0:
-			col = int(self.x // 16)
-			row = int(self.y // 16)
-			layer = int(self.z - 1) // 8
+			col = Math.floor(self.x // 16)
+			row = Math.floor(self.y // 16)
+			layer = Math.floor(self.z - 1) // 8
 			lookup = level.cellLookup[col][row]
 			if layer < len(lookup):
 				_t = lookup[layer]
@@ -699,7 +664,7 @@ class Sprite:
 		if self.isblock and self.standingon != None:
 			# turn me back into a real block
 			self.garbage_collect = True
-			level.modify_block(int(self.x // 16), int(self.y // 16), int(self.z // 8), self.block_tile)
+			level.modify_block(Math.floor(self.x // 16), Math.floor(self.y // 16), Math.floor(self.z // 8), self.block_tile)
 		
 		self.dx = 0
 		self.dy = 0
@@ -709,13 +674,13 @@ class Sprite:
 			self.try_pick_up_powerups(level)
 	
 	def try_pick_up_powerups(self, level):
-		col = int(self.x // 16)
-		row = int(self.y // 16)
-		layer = int(self.z // 8)
+		col = Math.floor(self.x // 16)
+		row = Math.floor(self.y // 16)
+		layer = Math.floor(self.z // 8)
 		if layer < 0: return
 		tile = level.get_tile_at(col, row, layer)
 		if tile != None and tile.powerup:
-			play_sound('pickup.wav')
+			play_sound('pickup')
 			level.modify_block(col, row, layer, None)
 			if tile.goo:
 				increment_persisted_level_int('decontaminant', tile.goo_size)

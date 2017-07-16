@@ -1,3 +1,9 @@
+FPS = 60.0
+GAME_WIDTH = 400
+GAME_HEIGHT = 300
+SCREEN_WIDTH = 800
+SCREEN_HEIGHT = 600
+
 _debug_message = None
 def set_user_debug_message(text):
 	global _debug_message
@@ -9,13 +15,13 @@ def get_user_debug_message():
 
 def main():
 
-	pygame.init()
-	pygame.display.set_caption("Sudo Science")
-	pygame.display.set_icon(pygame.image.load('icon.png'))
-	real_screen = pygame.display.set_mode((800, 600))
-	fake_screen = pygame.Surface((400, 300))
-	fps = 60
-
+	window = Game.GameWindow("Sudo Science", FPS, GAME_WIDTH, GAME_HEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT)
+	
+	real_screen = window.realScreen
+	fake_screen = window.virtualScreen
+	fps = window.fps
+	window.setIcon('icon.png')
+	
 	pressed = {
 		'start': False,
 		'left': False,
@@ -27,8 +33,8 @@ def main():
 	
 	load_persistent_state()
 	
-	if os.path.exists('start.txt'):
-		lines = trim(read_file('start.txt').split('\n'))
+	if UserData.fileExists('start.txt'):
+		lines = UserData.fileReadText('start.txt').strip().split('\n')
 		
 		if lines[0] == 'normal':
 			active_scene = MainMenuScene()
@@ -50,12 +56,14 @@ def main():
 	
 	input_manager = get_input_manager()
 	
+	# TODO: make an async loader scene
+	global _imageSheet
+	_imageSheet = ImageResources.ImageSheet.loadFromResources('everything')
+	
 	while active_scene != None:
-		start = time.time()
-		
 		counter += 1
 		event_list = []
-		event_list = input_manager.get_events()
+		event_list = input_manager.get_events(window)
 		pressed = input_manager.my_pressed
 		try_quit = input_manager.quitAttempt
 		axes = input_manager.axes
@@ -64,29 +72,19 @@ def main():
 		active_scene.process_input(event_list, pressed, axes, mouse_events)
 		active_scene.update(counter)
 		
-		fake_screen.fill((0, 0, 0))
+		Graphics2D.Draw.fill(0, 0, 0)
+		
 		active_scene.render(fake_screen, counter)
 		
 		debug_message = get_user_debug_message()
 		if debug_message != None:
-			fake_screen.blit(get_text(debug_message, 20, (255, 0, 0)), (10, 10))
-		
-		pygame.transform.scale(fake_screen, (real_screen.get_width(), real_screen.get_height()), real_screen)
+			txt = get_text(debug_message, 20, (255, 0, 0))
+			txt.draw(10, 10)
 		
 		active_scene = active_scene.next
 		
 		if try_quit:
 			active_scene = None
-			
-		pygame.display.flip()
 		
-		end = time.time()
-		
-		diff = end - start
-		if diff == 0:
-			rate = 'inf'
-		else:
-			rate = 1.0 / diff
-		delay = 1.0 / fps - diff
-		if delay > 0:
-			time.sleep(delay)
+		window.clockTick()
+

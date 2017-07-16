@@ -3,7 +3,7 @@ class Automation:
 		self.type = type
 		self.level = level
 		self.counter = 0
-		self.intro_dialog_start = 329 + 14
+		self.intro_dialog_start = 343
 	
 	# (dx, dy)
 	def get_next_values(self):
@@ -37,8 +37,6 @@ class Automation:
 		elif counter < 69:
 			return (-1.5, 0)
 		elif counter == 80:
-			
-			
 			drf2 = get_tile_store().get_tile('drf2')
 			sprite.level.modify_block(4, 4, 1, drf2)
 		return (0, 0)
@@ -55,10 +53,6 @@ class Automation:
 		sprite.garbage_collect = True
 	
 	def do_intro_janitor(self, level, counter, sprite):
-		#print counter
-		
-		
-		
 		ranges = [
 		# less than, then return, and do...
 		(8, (1, 2)),
@@ -90,14 +84,11 @@ class Automation:
 			if counter < cumulative:
 				if len(r) == 3:
 					r[2](sprite)
-				#print 'jan', counter, r
 				return r[1]
 		
 			
 	
 	def do_intro_supervisor(self, level, counter, sprite):
-		
-		
 		ranges = [
 		# less than, then return, and do...
 		(8, (1, 2)),
@@ -117,8 +108,6 @@ class Automation:
 					r[2](sprite)
 				
 				return r[1]
-		
-		
 		
 		leave_begin = 373
 		if counter < 116:
@@ -143,7 +132,7 @@ class Automation:
 		s = 180
 		if counter == s + 132:
 			sprite.intro_hack = True
-			level.modify_block(int(sprite.x // 16), int(sprite.y // 16), int(sprite.z // 8), get_tile_store().get_tile('54'))
+			level.modify_block(Math.floor(sprite.x // 16), Math.floor(sprite.y // 16), Math.floor(sprite.z // 8), get_tile_store().get_tile('54'))
 		if counter < s + 132:
 			return None
 		if counter < s + 148:

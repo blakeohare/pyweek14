@@ -41,15 +41,17 @@ class InputManager:
 	
 	def init_default_key_config(self):
 		self._key_mapping = {
-			pygame.K_RETURN: 'start',
-			pygame.K_LEFT: 'left',
-			pygame.K_RIGHT: 'right',
-			pygame.K_UP: 'up',
-			pygame.K_DOWN: 'down',
-			pygame.K_SPACE: 'spray',
-			pygame.K_w: 'walkie'
+			Game.KeyboardKey.ENTER: 'start',
+			Game.KeyboardKey.LEFT: 'left',
+			Game.KeyboardKey.RIGHT: 'right',
+			Game.KeyboardKey.UP: 'up',
+			Game.KeyboardKey.DOWN: 'down',
+			Game.KeyboardKey.SPACE: 'spray',
+			Game.KeyboardKey.W: 'walkie'
 		}
-		t = read_file('data/key_config.txt')
+		t = None
+		if (UserData.fileExists('key_config.txt')):
+			t = UserData.fileReadText('key_config.txt')
 		
 		things = 'start left right up down spray walkie'.split()
 		if t != None:
@@ -73,7 +75,7 @@ class InputManager:
 			action = self._key_mapping[key]
 			output.append(action + ':' + str(key))
 		output = '\r\n'.join(output)
-		write_file('data/key_config.txt', output)
+		UserData.fileWriteText('key_config.txt', output)
 	
 	def set_key_config(self, action, key):
 		for k in self._key_mapping.keys():
@@ -88,7 +90,7 @@ class InputManager:
 			self.active_joystick = -1
 		elif len(self.actual_joysticks) > id:
 			self.active_actual_joystick = id
-			name = trim(self.actual_joysticks[self.active_actual_joystick].get_name())
+			name = self.actual_joysticks[self.active_actual_joystick].getName().strip()
 			found = False
 			i = 0
 			for js in self.joysticks:
@@ -142,43 +144,30 @@ class InputManager:
 	def get_mouse_status(self):
 		return self.mouse_pressed
 	
-	def get_events(self):
+	def get_events(self, window):
 		events = []
 		self.raw_keyups = []
 		keyboard_only = True
 		self.axes = [0.0, 0.0]
-		pg_pressed = pygame.key.get_pressed()
-		for event in pygame.event.get():
-			if event.type in (pygame.MOUSEBUTTONDOWN, pygame.MOUSEBUTTONUP, pygame.MOUSEMOTION):
-				move = event.type == pygame.MOUSEMOTION
-				if move or event.button == 1:
-					down = event.type == pygame.MOUSEBUTTONDOWN
-					self.mouse_pressed = down
-					x, y = event.pos
-					x = x // 2
-					y = y // 2
-					self.mouse_events.append((x // 2, y // 2, move, down))
-					self.cursor = (x, y)
-			elif event.type == pygame.QUIT:
+		for event in window.pumpEvents():
+			if event.type == Game.EventType.QUIT:
 				self.quitAttempt = True
 				return []
-			elif event.type in (pygame.KEYDOWN, pygame.KEYUP):
-				down = event.type == pygame.KEYDOWN
-				if not down:
+			elif event.type == Game.EventType.MOUSE_LEFT_DOWN or event.type == Game.EventType.MOUSE_LEFT_UP:
+				self.mouse_events.append((event.x, event.y, False, event.down))
+				self.cursor = (event.x, event.y)
+				self.mouse_pressed = event.down
+			elif event.type == Game.EventType.MOUSE_MOVE:
+				self.mouse_events.append((event.x, event.y, True, False))
+				self.cursor = (event.x, event.y)
+			elif event.type == Game.EventType.KEY_DOWN or event.type == Game.EventType.KEY_UP:
+				if not event.down:
 					self.raw_keyups.append(event.key)
-				if down and event.key == pygame.K_F4:
-					if pg_pressed[pygame.K_LALT] or pg_pressed[pygame.K_RALT]:
-						self.quitAttempt = True
-						return []
-				elif down and event.key == pygame.K_ESCAPE:
-					self.quitAttempt = True
-					return []
-				
-				action = self._key_mapping.get(event.key, None)
+				action = self._key_mapping.get(event.key)
 				
 				if action != None:
-					self.my_pressed[action] = down
-					events.append(MyEvent(action, down))
+					self.my_pressed[action] = event.down
+					events.append(MyEvent(action, event.down))
 		self.axes[0] = 2.0 if self.my_pressed['right'] else 0.0
 		self.axes[0] = -2.0 if self.my_pressed['left'] else self.axes[0]
 		self.axes[1] = 2.0 if self.my_pressed['down'] else 0.0
@@ -191,7 +180,7 @@ class InputManager:
 			config = self.joysticks[self.active_joystick]
 			name = config.get('name', '')
 			for js in self.actual_joysticks:
-				name2 = js.get_name()
+				name2 = js.getName()
 				if name.lower() == name2.lower():
 					joystick = js
 					break
@@ -208,8 +197,8 @@ class InputManager:
 						direction = True
 						x = cached_poll.get('a' + str(n))
 						if x == None:
-							x = joystick.get_axis(n)
-							if abs(x) < 0.01:
+							x = joystick.getAxisState(n)
+							if Math.abs(x) < 0.01:
 								x = 0
 							cached_poll['a' + str(n)] = x
 						
@@ -221,7 +210,7 @@ class InputManager:
 								x = 0
 							else:
 								x *= -1
-						x = abs(x)
+						x = Math.abs(x)
 						
 						if x > 0.01:
 							keyboard_only = False
@@ -248,11 +237,11 @@ class InputManager:
 								x = 0
 							else:
 								x *= -1
-						x = abs(x)
+						x = Math.abs(x)
 					elif c[0] == 'button':
 						x = cached_poll.get('b' + str(n))
 						if x == None:
-							x = joystick.get_button(n)
+							x = joystick.getButtonState(n)
 							cached_poll['b' + str(n)] = x
 						
 					
@@ -279,19 +268,19 @@ class InputManager:
 							events.append(MyEvent(action, toggled))
 						
 						if action == 'left':
-							if abs(self.axes[0]) < 0.01 and pushed > 0.01:
+							if Math.abs(self.axes[0]) < 0.01 and pushed > 0.01:
 								self.axes[0] = -2 * pushed
 						
 						elif action == 'right':
-							if abs(self.axes[0]) < 0.01 and pushed > 0.01:
+							if Math.abs(self.axes[0]) < 0.01 and pushed > 0.01:
 								self.axes[0] = 2 * pushed
 								
 						elif action == 'up':
-							if abs(self.axes[1]) < 0.01 and pushed > 0.01:
+							if Math.abs(self.axes[1]) < 0.01 and pushed > 0.01:
 								self.axes[1] = -2 * pushed
 								
 						elif action == 'down':
-							if abs(self.axes[1]) < 0.01 and pushed > 0.01:
+							if Math.abs(self.axes[1]) < 0.01 and pushed > 0.01:
 								self.axes[1] = 2 * pushed
 		
 		self.axes[0] = self.axes[0] / 1.8
@@ -305,14 +294,14 @@ class InputManager:
 			x = 1.2 * xsign
 			y = 1.2 * ysign
 			
-		if abs(x) < 0.05 and abs(y) < 0.05:
+		if Math.abs(x) < 0.05 and Math.abs(y) < 0.05:
 			rx = 0.0
 			ry = 0.0
 			
 		else:
 			ang = 3.14159265 / 4.0
-			c = math.cos(ang)
-			s = math.sin(ang)
+			c = Math.cos(ang)
+			s = Math.sin(ang)
 			rx = x * c + y * s
 			ry = -x * s + y * c
 		
@@ -325,12 +314,11 @@ class InputManager:
 		self.actual_joysticks = []
 		active_joystick_name = None
 		if self.active_joystick != -1:
-			active_joystick_name = trim(self.joysticks[self.active_joystick].get('name', '')).lower()
-		for i in range(pygame.joystick.get_count()):
-			js = pygame.joystick.Joystick(i)
-			js.init()
+			active_joystick_name = self.joysticks[self.active_joystick].get('name', '').strip().lower()
+		for i in range(Gamepad.GamepadManager.getDeviceCount()):
+			js = Gamepad.GamepadManager.getDeviceByIndex(i)
 			self.actual_joysticks.append(js)
-			name = trim(js.get_name()).lower()
+			name = js.getName().strip().lower()
 			if name == active_joystick_name:
 				self.active_actual_joystick = i
 		
@@ -349,7 +337,7 @@ class InputManager:
 		for joystick in self.joysticks:
 			output.append(self._save_joystick(joystick))
 		output = '$'.join(output)
-		write_file('data/input_config.txt', output)
+		UserData.fileWriteText('input_config.txt', output)
 	
 	
 	def _save_joystick(self, config):
@@ -367,25 +355,27 @@ class InputManager:
 		return '\r\n'.join(output)
 	
 	def read_config_save(self):
-		prev = read_file('data/input_config.txt')
+		prev = None
+		if UserData.fileExists('input_config.txt'):
+			prev = UserData.fileReadText('input_config.txt')
 		if prev != None:
-			data = trim(prev).split('$')
+			data = prev.strip().split('$')
 			if len(data) > 0:
-				active = trim(data[0])
+				active = data[0].strip()
 				parts = active.split(':')
 				active_joystick_name = None
-				if len(parts) >= 2 and trim(parts[0]) == '#active':
-					active_joystick_name = trim(':'.join(parts[1:]))
+				if len(parts) >= 2 and parts[0].strip() == '#active':
+					active_joystick_name = ':'.join(parts[1:]).strip()
 				for config in data[1:]:
 					lines = config.split('\n')
 					data = {}
 					for line in lines:
-						line = trim(line)
+						line = line.strip()
 						if len(line) > 0 and line[0] == '#':
 							parts = line[1:].split(':')
 							if len(parts) == 2:
-								key = trim(parts[0])
-								value = trim(parts[1]).split(' ')
+								key = parts[0].strip()
+								value = parts[1].strip().split(' ')
 								if value[0] == 'axis':
 									if len(value) == 3:
 										n = parseInt(value[1])
@@ -401,7 +391,7 @@ class InputManager:
 										if self.verify_axis_value(value[2]):
 											data[key] = ('hat', n, value[2])
 								elif key == 'name':
-									data[key] = trim(' '.join(value))
+									data[key] = ' '.join(value).strip()
 					name = data.get('name', None)
 					if name != None and len(name) > 0:
 						if active_joystick_name != None and active_joystick_name.lower() == name.lower():

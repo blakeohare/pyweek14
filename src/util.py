@@ -1,26 +1,3 @@
-def trim(string):
-	while len(string) > 0 and string[0] in ' \n\r\t':
-		string = string[1:]
-	while len(string) > 0 and string[-1] in ' \r\n\t':
-		string = string[:-1]
-	return string
-
-def canonicalize_path(path):
-	return path.replace('\\', os.sep).replace('/', os.sep)
-
-def read_file(path):
-	path = canonicalize_path(path)
-	if os.path.exists(path):
-		c = open(canonicalize_path(path), 'rt')
-		t = c.read()
-		c.close()
-		return t
-	return None
-	
-def write_file(path, contents):
-	c = open(path, 'wt')
-	c.write(contents)
-	c.close()
 
 def make_grid(width, height, defaultValue):
 	cols = []
@@ -43,16 +20,6 @@ def safe_map(function, list):
 		output.append(function(list[i]))
 		i += 1
 	return output
-
-def max(a, b):
-	if a < b:
-		return b
-	return a
-	
-def min(a, b):
-	if a < b:
-		return a
-	return b
 
 _range_4 = [0, 1, 2, 3]
 _range_2 = [0, 1]
@@ -101,9 +68,10 @@ def safe_sorted_helper(list, compare):
 _assertions_break = True
 def assertion(message):
 	global _assertions_break
-	print(message)
 	if _assertions_break:
-		destroy = 1 / 0
+		raise Exception(message)
+	else:
+		print(message)
 
 def copy_array(target, source):
 	while len(target) > len(source):
@@ -122,16 +90,8 @@ def debug_list(list):
 	return '\n'.join(safe_map(str, list))
 
 def parseInt(string):
-	string = trim(string)
-	flip = 1
-	if len(string) > 0 and string[0] == '-':
-		flip = -1
-		string = string[1:]
-	for c in string:
-		if not c in '0123456789':
-			return 0
-	return flip * int(string)
-	
-def abs(num):
-	if num < 0: return -num
-	return num
+	try:
+		# TODO: perhaps just call raise?
+		return string.strip()
+	except:
+		return 0

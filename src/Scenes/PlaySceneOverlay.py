@@ -14,9 +14,9 @@ class PlaySceneOverlay:
 		goo = get_image('tiles/mediumdegoo.png')
 		rp = get_image('tiles/researchpapers.png')
 
-		screen.blit(bg, (0, screen.get_height() - bg.get_height()))
-		screen.blit(goo, (0, screen.get_height() - goo.get_height() - 14))
-		screen.blit(rp, (24, screen.get_height() - rp.get_height() - 0))
+		bg.draw(0, GAME_HEIGHT - bg.height)
+		goo.draw(0, GAME_HEIGHT - goo.height - 14)
+		rp.draw(24, GAME_HEIGHT - rp.height - 0)
 		
 		research_saved = get_persisted_forever_int('research')
 		session_research = get_persisted_session_int('research')
@@ -30,7 +30,7 @@ class PlaySceneOverlay:
 			loc = "Room Needs Name"
 		loc = get_text(loc, 12, (255, 255, 255))
 		
-		screen.blit(goo_count, (30, screen.get_height() - goo.get_height() - 5))
-		screen.blit(rp_count, (54, screen.get_height() - rp.get_height() + 11))
-		screen.blit(loc, (screen.get_width() - 90, screen.get_height() - loc.get_height() - 4))
+		goo_count.draw(30, GAME_HEIGHT - goo.height - 5)
+		rp_count.draw(54, GAME_HEIGHT - rp.height + 11)
+		loc.draw(GAME_WIDTH - 90, GAME_HEIGHT - loc.height - 4)
 		
