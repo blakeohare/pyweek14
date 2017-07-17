@@ -19,9 +19,11 @@ class MovingPlatformManager {
 		if (directions == null) {
 			directions = [];
 		} else {
+			new_directions = [];
 			for (i = 0; i < directions.length; ++i) {
-				directions[i] = directions[i].split(' ');
+				new_directions.add(directions[i].split(' '));
 			}
+			directions = new_directions;
 		}
 		this.platforms = this.level.get_moving_platforms();
 		this.num_platforms = this.platforms.length;

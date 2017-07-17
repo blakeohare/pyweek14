@@ -158,7 +158,10 @@ class TeleporterManager {
 		if (new_sprites == null) {
 			return [];
 		}
-		return this.new_sprites.pop(this.counter);
+		
+		output = this.new_sprites[this.counter];
+		this.new_sprites.remove(this.counter);
+		return output;
 	}
 	
 	function get_removed_sprites() {

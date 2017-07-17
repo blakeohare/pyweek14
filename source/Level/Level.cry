@@ -202,9 +202,9 @@ class Level {
 		ts = get_tile_store();
 		for (change : lookup.get(name).split('%')) {
 			parts = change.split('^');
-			col = Math.floor(parts[0]);
-			row = Math.floor(parts[1]);
-			layer = Math.floor(parts[2]);
+			col = Core.parseInt(parts[0]);
+			row = Core.parseInt(parts[1]);
+			layer = Core.parseInt(parts[2]);
 			id = parts[3];
 			tile = id == '0' ? null : ts.get_tile(id);
 			this.modify_block(col, row, layer, tile);
