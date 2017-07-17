@@ -20,7 +20,7 @@ function get_teleporter_image(going_out, counter, type) {
 		];
 	} else {
 		block_id = type[len('block|'):];
-		if (going_out and counter < 6) {
+		if (going_out && counter < 6) {
 			return None;
 		}
 		ts = get_tile_store();
@@ -92,7 +92,7 @@ class Sprite {
 			self.height = 2;
 		}
 		self.tsend = type.startsWith('teleport|');
-		self.trecv = type.startsWith('receiving|')
+		self.trecv = type.startsWith('receiving|');
 		self.staticy = self.tsend || self.trecv;
 		self.ttype = None;
 		if (self.staticy) {
@@ -234,7 +234,7 @@ class Sprite {
 		} else if (this.issupervisor) {
 			dir = self.last_direction_of_movement;
 			// TODO: get n, s, e, w images of supervisor|janitor
-			if (dir == 's' or dir == 'n') {
+			if (dir == 's' || dir == 'n') {
 				dir += 'e';
 			} else if (dir == 'e' || dir == 'w') {
 				dir = 's' + dir;
@@ -271,7 +271,7 @@ class Sprite {
 		}
 		
 		if (self.main_or_hologram || self.staticy || self.isjanitor || self.issupervisor || self.israt) {
-			if (self.staticy and self.ttype.startswith('block|')) {
+			if (self.staticy && self.ttype.startsWith('block|')) {
 				y += 16;
 			}
 			y += 8;
@@ -292,7 +292,7 @@ class Sprite {
 			y -= dy;
 		}
 		
-		output = (Math.floor(x + xOffset), Math.floor(y + yOffset));
+		output = [Math.floor(x + xOffset), Math.floor(y + yOffset)];
 		
 		return output;
 	}
@@ -308,7 +308,7 @@ class Sprite {
 	}
 		
 	function get_replacement_sprite() {
-		if (self.trecv and self.garbage_collect) {
+		if (self.trecv && self.garbage_collect) {
 			self.prototype.garbage_collect = False;
 			return self.prototype;
 		}
@@ -441,7 +441,7 @@ class Sprite {
 		starting_row = Math.floor(self.y) / 16;
 		
 		if (this.standingon != None) {
-			if (this.standingon.teleporter and not self.staticy) {
+			if (this.standingon.teleporter && !self.staticy) {
 				destination = level.teleporters.get_destination(starting_col, starting_row, Math.floor(self.z / 8) - 1);
 				
 				if (destination != None) {
@@ -757,7 +757,7 @@ class Sprite {
 							d == e && 
 							len(d) == len(e) && 
 							d.contains(a) &&
-							((b == c && (b == a || b == d)) || (b == a and c == d)) { // BWAHAHAHAHAHA
+							((b == c && (b == a || b == d)) || (b == a && c == d))) { // BWAHAHAHAHAHA
 							
 							self.last_direction_of_movement = d;
 						}
@@ -801,7 +801,7 @@ class Sprite {
 			}
 		}
 		
-		if (self.isblock and self.standingon != None) {
+		if (self.isblock && self.standingon != None) {
 			// turn me back into a real block
 			self.garbage_collect = True;
 			level.modify_block(Math.floor(self.x / 16), Math.floor(self.y / 16), Math.floor(self.z / 8), self.block_tile);

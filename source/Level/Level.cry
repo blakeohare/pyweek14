@@ -422,7 +422,7 @@ class Level {
 		q = sprite.render_me(screen, xOffset, yOffset, render_counter);
 		if (!re_render) {
 			if (sprite.x % 16 < 6 && sprite.y % 16 > 10) {
-				if (sprite.main_or_hologram or sprite.israt) {
+				if (sprite.main_or_hologram || sprite.israt) {
 					col = Math.floor(sprite.x / 16);
 					row = Math.floor(sprite.y / 16);
 					layer = Math.floor(sprite.z / 8);
@@ -483,7 +483,7 @@ class Level {
 			}
 		}
 		
-		prefix = col + '|' + row + '|'
+		prefix = col + '|' + row + '|';
 		
 		stack = self.grid[col][row];
 			
@@ -606,7 +606,7 @@ class Level {
 			if (len(rendered_sprites) > 0) {
 				new_sprites = [];
 				for (sprite : rendered_sprites) {
-					if (sprite : rendered_sprites) {
+					if (rendered_sprites.contains(sprite)) {
 						// pass
 					} else {
 						new_sprites.add(sprite);
@@ -712,7 +712,7 @@ class Level {
 				should_spritify = True;
 			} else {
 				standingon = stack[standingon];
-				if (not standingon.blocking) {
+				if (!standingon.blocking) {
 					should_spritify = True;
 				} else {
 					if (standingon.id == 'po' && block.id == '46' && self.circuitry.is_charged(end_col, end_row, below_layer)) {

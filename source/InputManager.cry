@@ -3,7 +3,7 @@ class MyEvent {
 	constructor(key, down) {
 		this.key = key;
 		this.down = down;
-		this.up = not down;
+		this.up = !down;
 	}
 }
 
@@ -42,6 +42,7 @@ class InputManager {
 		};
 		
 		this.axes = [0.0, 0.0];
+	}
 	
 	function init_default_key_config() {
 		this._key_mapping = {
@@ -85,7 +86,8 @@ class InputManager {
 		for (key : this._key_mapping.keys()) {
 			action = this._key_mapping[key];
 			output.append(action + ':' + str(key));
-		output = '\r\n'.join(output);
+		}
+		output = output.join('\r\n');
 		UserData.fileWriteText('key_config.txt', output);
 	}
 	
@@ -115,7 +117,7 @@ class InputManager {
 				}
 				i++;
 			}
-			if (not found) {
+			if (!found) {
 				this.active_joystick = len(this.joysticks);
 				this.joysticks.append({'name': name});
 			}
@@ -153,6 +155,7 @@ class InputManager {
 					output = "X " + output;
 				} else {
 					output = "Y " + output;
+				}
 				if (value[2].endswith('-')) {
 					output = "Negative " + output;
 				} else {
@@ -204,9 +207,9 @@ class InputManager {
 			}
 		}
 		this.axes[0] = this.my_pressed['right'] ? 2.0 : 0.0;
-		this.axes[0] = this.my_pressed['left'] ? -2.0 : this.axes[0]
-		this.axes[1] = this.my_pressed['down'] ? 2.0 : 0.0
-		this.axes[1] = this.my_pressed['up'] ? -2.0 : this.axes[1]
+		this.axes[0] = this.my_pressed['left'] ? -2.0 : this.axes[0];
+		this.axes[1] = this.my_pressed['down'] ? 2.0 : 0.0;
+		this.axes[1] = this.my_pressed['up'] ? -2.0 : this.axes[1];
 
 		joystick = None;
 		config = None;
@@ -294,7 +297,8 @@ class InputManager {
 						}
 					}
 					
-					if (action : ['start', 'spray', 'walkie']) {
+					// TODO: switch statement
+					if (action == 'start' || action == 'spray' || action == 'walkie') {
 						pushed = x;
 						if (direction) {
 							pushed = x >= .5;

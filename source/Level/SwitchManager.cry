@@ -19,7 +19,7 @@ function override_switch_behavior(manager, level, index, is_blue) {
 			// The index == 0 which is the switch ID
 			// The pause token is 0 which is the moving platform ID
 			// They're the same here because that's a coincidence
-			level.moving_platforms.set_pause_token('0', not enabled[index]);
+			level.moving_platforms.set_pause_token('0', !enabled[index]);
 			return True;
 		}
 	} else if (name == '18-0') {
@@ -35,7 +35,7 @@ function override_switch_behavior(manager, level, index, is_blue) {
 			[3, 6]
 		];
 		for (platform : mapping[index]) {
-			level.moving_platforms.set_pause_token(str(platform), not enabled[index]);
+			level.moving_platforms.set_pause_token(str(platform), !enabled[index]);
 		}
 		return True;
 	} else if (name == 'flipmaze') {
@@ -177,7 +177,7 @@ class SwitchManager {
 	constructor(level, playscene) {
 		self.playscene = playscene;
 		self.level = level;
-		self.flipmaze_hack = playscene.story_mode and level.name == 'flipmaze';
+		self.flipmaze_hack = playscene.story_mode && level.name == 'flipmaze';
 		self.switches = self.level.get_switches();
 		self.enabled = [False] * len(self.switches);
 		self.statuses = [None] * len(self.switches);

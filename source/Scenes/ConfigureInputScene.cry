@@ -145,7 +145,7 @@ class ConfigureInputScene {
 			self.js_config_y.add(y);
 			if (command == None) {
 				self.labels.add([[col2, y], get_text("Key", 14, heading)]);
-				self.labels.add([[col3, y, get_text("Joystick", 14, heading)]);
+				self.labels.add([[col3, y], get_text("Joystick", 14, heading)]);
 			} else {
 				self.labels.add([[col1, y], get_text(command[1], 14, command_color)]);
 				if (command[0] == None) {
@@ -221,11 +221,13 @@ class ConfigureInputScene {
 		
 		for (button : self.buttons) {
 			button.render(screen);
+		}
 		for (label : self.labels) {
 			
 			pos = label[0];
 			img = label[1];
 			img.draw(pos[0], pos[1]);
+		}
 		
 		if (((counter / 25) % 2) == 1) {
 			this.use_mouse_label.draw(

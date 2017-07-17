@@ -1,4 +1,4 @@
-const _MUSIC_ENABLED = True
+const _MUSIC_ENABLED = true;
 
 function get_jukebox() {
 	if (JukeBox.INSTANCE == None) {
@@ -103,6 +103,7 @@ class JukeBox {
 				}
 				if (path.contains('menumove')) {
 					volume = volume / 4;
+				}
 				snd.setDefaultVolume(volume);
 				this.sounds[path] = snd;
 			} else {

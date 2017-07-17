@@ -1,0 +1,30 @@
+<build>
+	<source>source</source>
+	<output>output/%TARGET_NAME%</output>
+	<projectname>SudoScience</projectname>
+	
+	<imagesheets>
+		<sheet id="all">
+			<prefix>images/</prefix>
+		</sheet>
+	</imagesheets>
+	
+	<guidseed>com.noisyprotozoa.sudoscience,v2.0,%TARGET_NAME%</guidseed>
+	
+	<target name="python">
+		<platform>python-app</platform>
+	</target>
+	
+	<target name="csharp">
+		<platform>csharp-app</platform>
+	</target>
+	
+	<target name="java">
+		<platform>java-app</platform>
+	</target>
+	
+	<target name="games_browser">
+		<platform>javascript-app</platform>
+		<jsfileprefix>games/sudoscienc</jsfileprefix>
+	</target>
+</build>

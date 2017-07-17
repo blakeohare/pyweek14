@@ -1,8 +1,8 @@
-const FPS = 60.0
-const GAME_WIDTH = 400
-const GAME_HEIGHT = 300
-const SCREEN_WIDTH = 800
-const SCREEN_HEIGHT = 600
+const FPS = 60.0;
+const GAME_WIDTH = 400;
+const GAME_HEIGHT = 300;
+const SCREEN_WIDTH = 800;
+const SCREEN_HEIGHT = 600;
 
 const None = null;
 const True = true;
@@ -15,7 +15,7 @@ class DebugMessageHelper {
 	static field msg = null;
 }
 
-function set_user_debug_message(text):
+function set_user_debug_message(text) {
 	DebugMessageHelper.msg = text;
 }
 
@@ -65,7 +65,7 @@ function main() {
 	input_manager = get_input_manager();
 	
 	// TODO: make an async loader scene
-	ImagesHelper._imageSheet = ImageResources.ImageSheet.loadFromResources('everything')
+	ImagesHelper._imageSheet = ImageResources.ImageSheet.loadFromResources('everything');
 	
 	// TODO: remove this from all the scene classes
 	fake_screen = null;

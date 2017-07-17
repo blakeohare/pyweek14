@@ -53,7 +53,7 @@ class LevelManager {
 			['27-0', "Many Me", [1, 9, 1, 'se']],
 			['28-0', "Simon Says", [1, 12, 1, 'se']],
 			['90-0', "Here There Be Ratmen", [1, 9, 3, 'se']],
-			['99-0', "Doctor What?", [8, 4, 1, 'nw']]]
+			['99-0', "Doctor What?", [8, 4, 1, 'nw']]];
 		if (story_mode) {
 			self.ordering = [['intro', "Your Cubicle", [12, 14, 1, 'nw']]] + self.ordering;
 		}

@@ -66,7 +66,7 @@ class TeleporterManager {
 	function update_tiles(index) {
 		sender = self.senders[index];
 		receiver = self.receivers[index];
-		level = self.level;;
+		level = self.level;
 		ts = get_tile_store();
 		s_tile = ts.get_tile('t1');
 		r_tile = ts.get_tile('t2');
@@ -79,9 +79,9 @@ class TeleporterManager {
 	}
 	
 	function get_destination(col, row, layer) {
-		final = self.get_sender([col, row, layer]);
-		if (final != None && self.enabled[final]) {
-			output = self.receivers[final];
+		_final = self.get_sender([col, row, layer]);
+		if (_final != None && self.enabled[_final]) {
+			output = self.receivers[_final];
 			for (i : py_range(4)) {
 				z = output[2] + i + 1;
 				tile = self.level.get_tile_at(output[0], output[1], z);
@@ -89,10 +89,10 @@ class TeleporterManager {
 					return 'blocked';
 				}
 			}
-			if (self.in_use[final] < 200) {
+			if (self.in_use[_final] < 200) {
 				return None;
 			}
-			self.in_use[final] = 0;
+			self.in_use[_final] = 0;
 			return output;
 		}
 		return None;

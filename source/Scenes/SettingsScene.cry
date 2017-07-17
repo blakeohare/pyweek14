@@ -85,7 +85,7 @@ class SettingsScene {
 		g = [120, 120, 120];
 		w = [255, 255, 255];
 		
-		c = self.i == 0 ? w : g
+		c = self.i == 0 ? w : g;
 		img = get_text("SFX Volume: " + str(self.jk.get_sfx_volume()) + "%", 18, c);
 		img.draw((GAME_WIDTH - img.width) / 2, y);
 		y += img.height + 40;

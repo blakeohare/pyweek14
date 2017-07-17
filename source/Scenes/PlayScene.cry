@@ -106,7 +106,7 @@ class PlayScene {
 		}
 	}
 	
-	functioon update(counter) {
+	function update(counter) {
 		level = self.level;
 		player = self.player;
 		

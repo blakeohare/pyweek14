@@ -14,14 +14,14 @@ class MainMenuScene {
 		self.first = True;
 		has_save_data = get_persisted_forever_string('save_level') != '';
 		self.options = [
-			('Start New Story Mode', True, MMS_startNewStoryMode),
-			('Resume Saved Game', has_save_data, MMS_resumeSaved),
-			('Level Picker', True, MMS_levelPicker),
-			('Configure Input', True, MMS_configureInput),
-			('Sound Settings', True, MMS_soundSettings),
-			('Credits', True, MMS_credits),
-			('Exit', True, MMS_exit)
-			];
+			['Start New Story Mode', True, MMS_startNewStoryMode],
+			['Resume Saved Game', has_save_data, MMS_resumeSaved],
+			['Level Picker', True, MMS_levelPicker],
+			['Configure Input', True, MMS_configureInput],
+			['Sound Settings', True, MMS_soundSettings],
+			['Credits', True, MMS_credits],
+			['Exit', True, MMS_exit]
+		];
 	}
 
 	function process_input(events, pressed, axes, mouse) {
@@ -66,7 +66,7 @@ class MainMenuScene {
 	}
 	
 	function update(counter) {
-		get_jukebox().ensure_current_song('title');;
+		get_jukebox().ensure_current_song('title');
 		if (self.first) {
 			self.first = False;
 			get_persistent_state().session = {};
@@ -76,7 +76,7 @@ class MainMenuScene {
 	function render(screen, counter) {
 		get_image('misc/title_screen.png').draw(0, 0);
 		
-		title = get_text("Sudo Science", 36, (255, 255, 255));
+		title = get_text("Sudo Science", 36, [255, 255, 255]);
 		w = title.width;
 		h = title.height;
 		title.draw(20, 20);

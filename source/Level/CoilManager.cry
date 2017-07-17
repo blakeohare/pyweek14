@@ -12,6 +12,7 @@ class CoilManager {
 			x = coil[0];
 			while (len(coil_map) <= x) {
 				coil_map.add([]);
+			}
 			coil_map[x].add(coil);
 		}
 		
@@ -28,7 +29,7 @@ class CoilManager {
 					for (coil : coil_column) {
 						if (Math.abs(coil[2] - Math.floor(sprite.z / 8)) < 2) {
 							dx = coil[0] * 16 + 8 - sprite.x;
-							dy = coil[1] * 16 + 8 - sprite.y
+							dy = coil[1] * 16 + 8 - sprite.y;
 							if (dx * dx + dy * dy < 24 * 24) {
 								sprite.death_counter = 90;
 								sprite.death_type = 'bazat';

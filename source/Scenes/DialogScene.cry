@@ -39,7 +39,7 @@ function get_startup_dialog(play_scene) {
 }
 
 class TextPrinter {
-	constructoor(text, speaker) {
+	constructor(text, speaker) {
 		self.text = text;
 		self.counter = 0;
 		self.speaker= speaker;
@@ -51,7 +51,7 @@ class TextPrinter {
 		if (len(self.text) == 0) {
 			return None;
 		}
-		amt = pressed and self.counter > 6 ? 20 : 1;
+		amt = (pressed && self.counter > 6) ? 20 : 1;
 		t = self.text[:amt];
 		self.text = self.text[amt:];
 		if (self.counter % 6 == 1) {
@@ -201,7 +201,7 @@ class DialogScene {
 					self.buffer = self.buffer[1:];
 				}
 				keep_going = False;
-			} else if s(elf.pauser != None) {
+			} else if (self.pauser != None) {
 				if (!self.pauser.keep_pausing()) {
 					self.pauser = None;
 				}
