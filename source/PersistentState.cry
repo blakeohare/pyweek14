@@ -48,16 +48,17 @@ function persistence_change_level() {
 }
 
 class PersistentState {
-	constructor() {
-		this.forever = {};
-		this.session = {};
-		this.level = {};
-	}
+	
+	field forever = {};
+	field session = {};
+	field level = {};
+	
+	constructor() { }
 	
 	function purge_all() {
-		this.forever = {};
-		this.session = {};
-		this.level = {};
+		this.forever.clear();
+		this.session.clear();
+		this.level.clear();
 	}
 	
 	function save_game() {
@@ -65,7 +66,7 @@ class PersistentState {
 	}
 	
 	function change_level() {
-		this.level = {};
+		this.level.clear();
 	}
 	
 	function serialize() {

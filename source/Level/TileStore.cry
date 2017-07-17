@@ -1,6 +1,8 @@
 class TileStore {
 	static field INSTANCE = null;
 	
+	field tiles;
+	
 	constructor() {
 		tiles = {};
 		manifest_dir = 'data/tile_manifests';

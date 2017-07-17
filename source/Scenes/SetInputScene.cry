@@ -1,4 +1,15 @@
 class SetInputScene {
+
+	field next;
+	field prev;
+	field is_keyboard;
+	field action;
+	field tryanother;
+	field show_tryanother;
+	field counter = 0;
+	field top_img;
+	field bottom_img;
+
 	constructor(action, is_keyboard, prev_scene) {
 		this.next = this;
 		this.prev = prev_scene;
@@ -8,7 +19,6 @@ class SetInputScene {
 		this.tryanother = get_text("Key in use, try another", 12, [255, 0, 0]);
 		this.show_tryanother = false;
 		font_color = [255, 255, 255];
-		this.counter = 0;
 		if (this.is_keyboard) {
 			this.top_img = get_text("Press the key on the keyboard", font_size, font_color);
 		} else {

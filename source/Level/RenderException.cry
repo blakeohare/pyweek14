@@ -11,6 +11,19 @@ class RenderException {
 		[14, 7], // 1
 	];
 
+	field is_block;
+	field is_sprite;
+	field z;
+	field counter;
+	field expired;
+	field do_show;
+	field dont_show;
+	field direction;
+	field tile;
+	field on_key;
+	field off_key;
+	field offsets;
+	
 	// start is a set of 3D coordinates
 	constructor(start, direction, tile, is_block) {
 		this.is_block = is_block;
@@ -55,12 +68,12 @@ class RenderException {
 			yflip = -1;
 			reverse = -1;
 		} else {
-			throw Exception(); // this won't happen.
+			throw new Exception(); // this won't happen.
 		}
 		
 		this.offsets = RenderException._render_exceptions_coords[::reverse];
 		for (i = 0; i < offsets.length; ++i) {
-			this.offsetes[i] = [this.offsets[i][0] * xflip, this.offsets[i][1] * yflip];
+			this.offsets[i] = [this.offsets[i][0] * xflip, this.offsets[i][1] * yflip];
 		}
 	}
 	

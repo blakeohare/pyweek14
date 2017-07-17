@@ -1,4 +1,25 @@
 class ClickyButton {
+
+	field id;
+	field text;
+	field on_color;
+	field off_color;
+	field pressed_color;
+	field pressed;
+	field left;
+	field top;
+	field size;
+	field enabled;
+	field on_img;
+	field off_img;
+	field pressed_img;
+	field right;
+	field bottom;
+	field im;
+	field action;
+	field get_label;
+	field last_text;
+	
 	constructor(id, x, y, text, on_color, off_color, pressed_color, action, get_label) {
 		this.id = id;
 		this.text = text;
@@ -6,9 +27,6 @@ class ClickyButton {
 		this.off_color = off_color;
 		this.pressed_color = pressed_color;
 		this.pressed = false;
-		this.on_color = on_color;
-		this.off_color = off_color;
-		this.pressed_color = pressed_color;
 		this.left = x;
 		this.top = y;
 		size = 14;
@@ -74,7 +92,7 @@ class ClickyButton {
 		img.draw(this.left, this.top);
 	}
 	
-	function on_click(this) {
+	function on_click() {
 		if (this.enabled) {
 			this.action(this.id);
 		}
@@ -82,6 +100,18 @@ class ClickyButton {
 }
 
 class ConfigureInputScene {
+
+	field next;
+	field key_command_color;
+	field use_mouse_label;
+	field labels;
+	field buttons;
+	field im;
+	field js_option_coords;
+	field js_config_x;
+	field js_config_y;
+	field keys;
+	
 	constructor() {
 		this.next = this;
 		hb = this.handle_button;

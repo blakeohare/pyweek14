@@ -1,9 +1,14 @@
 class TransitionScene {
+	
+	field next;
+	field before;
+	field after;
+	field counter = 0;
+	
 	constructor(before, after) {
 		this.next = this;
 		this.before = before;
 		this.after = after;
-		this.counter = 0;
 	}
 		
 	function process_input(events, pressed, axes, mouse) {

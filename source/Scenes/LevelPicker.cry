@@ -1,6 +1,11 @@
 
 class LevelPickerScene {
 
+	field next;
+	field x;
+	field y;
+	field regions;
+	
 	constructor() {
 		this.next = this;
 		this.x = 0;

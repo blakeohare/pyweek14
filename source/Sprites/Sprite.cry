@@ -37,6 +37,55 @@ function get_teleporter_image(going_out, counter, type) {
 
 class Sprite {
 	static field _block_images_for_sprites = null;
+
+	field garbage_collect = false;
+	field x;
+	field y;
+	field z;
+	field dx = 0;
+	field dy = 0;
+	field dz = 0;
+	field level = null; // for intro hack, only
+	field automation = null;
+	field falling = false;
+	field standingon = null;
+	field type;
+	field immobilized = false;
+	field spray_counter = -1;
+	field ismain;
+	field main_or_hologram;
+	field isjanitor;
+	field holding_spray = false;
+	field clone_creating = false;
+	field holding_walkie = false;
+	field intro_hack = false;
+	field issupervisor;
+	field isblock;
+	field israt;
+	field death_by_rat = 0;
+	field impeded_last_go_round = false;
+	field rat_trot_mode = null;
+	field rat_blocked_counter = -42;
+	field rat_trot_mode;
+	field rat_move_max = 27;
+	field rat_move_counter;
+	field death_counter = -1;
+	field death_type = null;
+	field height = 4;
+	field tsend;
+	field trecv;
+	field staticy;
+	field ttype = null;
+	field ttl = null;
+	field ttl = 60;
+	field last_direction_of_movement = 's';
+	field direction_queue;
+	field is_moving = false;
+	field pushing = null;
+	field height = 2;
+	field block_id;
+	field block_tile;
+	field prototype;
 	
 	// sprite coordinates are assuming the grid is 16x16 tiles
 	// these get transposed into pixel coordinates and
@@ -46,30 +95,13 @@ class Sprite {
 		this.x = x + 0.0;
 		this.y = y + 0.0;
 		this.z = z;
-		this.dx = 0;
-		this.dy = 0;
-		this.dz = 0;
-		this.level = null; // for intro hack, only
-		this.automation = null;
-		this.falling = false;
-		this.standingon = null;
 		this.type = type;
-		this.immobilized = false;
-		this.spray_counter = -1;
 		this.ismain = type == 'main';
 		this.main_or_hologram = this.ismain || type == 'hologram|main';
 		this.isjanitor = type == 'janitor';
-		this.holding_spray = false;
-		this.clone_creating = false;
-		this.holding_walkie = false;
-		this.intro_hack = false;
 		this.issupervisor = type == 'supervisor';
 		this.isblock = type.startsWith('block|');
 		this.israt = type.startsWith('rat|');
-		this.death_by_rat = 0;
-		this.impeded_last_go_round = false;
-		this.rat_trot_mode = null;
-		this.rat_blocked_counter = -42;
 		if (this.israt) {
 			if (type.endsWith('nw')) {
 				this.rat_trot_mode = 'nw';

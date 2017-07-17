@@ -1,9 +1,14 @@
 class Automation {
+
+	field type;
+	field level;
+	field counter = 0;
+	field intro_dialog_start = 343;
+	field sprite;
+	
 	constructor(level, type) {
 		this.type = type;
 		this.level = level;
-		this.counter = 0;
-		this.intro_dialog_start = 343;
 	}
 	
 	// (dx, dy)

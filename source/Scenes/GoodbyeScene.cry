@@ -1,4 +1,6 @@
 class GoodbyeScene {
+	field next;
+	
 	constructor() {
 		this.next = this;
 	}

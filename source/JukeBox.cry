@@ -20,8 +20,14 @@ class JukeBox {
 
 	static field INSTANCE = null;
 
+	field current = null;
+	field sounds = {};
+	field musics = {};
+	field music_map;
+	field music_volume;
+	field sfx_volume;
+	
 	constructor() {
-		this.current = null;
 		
 		ps = get_persistent_state();
 		if (ps.forever.get('sfx') != null) {
@@ -31,8 +37,6 @@ class JukeBox {
 			this.set_music_volume(70);
 			this.set_sfx_volume(70);
 		}
-		this.sounds = {};
-		this.musics = {};
 		this.music_map = {
 			'intro': 'biologytake2',
 			'12-0': 'chemistry',

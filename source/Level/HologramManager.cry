@@ -1,4 +1,12 @@
 class HologramManager {
+	field level;
+	field copy_pad;
+	field output_pads;
+	field copy_mode_counter;
+	field used;
+	field new_sprites;
+	field sprites_created;
+	
 	constructor(level) {
 		this.level = level;
 		pads = level.get_hologram_pads();

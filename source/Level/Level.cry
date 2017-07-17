@@ -1,4 +1,9 @@
 class PushTracker {
+	field push_counter;
+	field max_push_counter;
+	field push_target;
+	field owner;
+	
 	constructor(sprite) {
 		this.push_counter = -1;
 		this.max_push_counter = 25;
@@ -12,6 +17,37 @@ function sprite_z_key(sprite) {
 }
 
 class Level {
+	field name;
+	field push_trackers;
+	field newsprites;
+	field circuitry;
+	field counter;
+	field render_exceptions;
+	field complete;
+	field spritify_counters;
+	field moving_platforms;
+	field teleporters;
+	field switch_manager;
+	field sprite_introducer;
+	field hologram_manager;
+	field coil_manager;
+	field counter;
+	field hologram_pads;
+	field rats;
+	field values;
+	field width;
+	field height;
+	field pswitches;
+	field nswitches;
+	field switches;
+	field coils;
+	field grid;
+	field cellLookup;
+	field teleporter_tiles;
+	field allsprites;
+	field any_res;
+	field re_blits;
+	
 	constructor(name, playscene) {
 		this.name = name;
 		this.initialize();

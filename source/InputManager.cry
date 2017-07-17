@@ -1,5 +1,9 @@
 
 class MyEvent {
+	field key;
+	field down;
+	field up;
+	
 	constructor(key, down) {
 		this.key = key;
 		this.down = down;
@@ -18,6 +22,20 @@ class InputManager {
 
 	static field _input_manager = null;
 
+	field cursor = [0, 0];
+	field mouse_pressed = false;
+	field mouse_events = [];
+	field joysticks = [];
+	field active_joystick = -1;
+	field raw_keyups = [];
+	field active_actual_joystick = -1;
+	field events = [];
+	field quitAttempt = false;
+	field my_pressed;
+	field axes = [0.0, 0.0];
+	field _key_mapping;
+	field actual_joysticks;
+	
 	constructor() {
 		this.cursor = [0, 0];
 		this.mouse_pressed = false;
@@ -40,8 +58,6 @@ class InputManager {
 			'spray': false,
 			'walkie': false
 		};
-		
-		this.axes = [0.0, 0.0];
 	}
 	
 	function init_default_key_config() {

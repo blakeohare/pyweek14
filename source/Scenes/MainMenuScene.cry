@@ -5,9 +5,14 @@ function MMS_levelPicker() { return new LevelPickerScene(); }
 function MMS_configureInput() { return new ConfigureInputScene(); }
 function MMS_soundSettings() { return new SettingsScene(); }
 function MSS_credits() { return new CreditsScene(true); }
-function MMS_exit() { return new GoodbyScene(); }
+function MMS_exit() { return new GoodbyeScene(); }
 
 class MainMenuScene {
+	field next;
+	field index;
+	field first;
+	field options;
+	
 	constructor() {
 		this.next = this;
 		this.index = 0;

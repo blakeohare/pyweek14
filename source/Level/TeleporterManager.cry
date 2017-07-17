@@ -1,4 +1,14 @@
 class TeleporterManager {
+
+	field level;
+	field counter;
+	field senders;
+	field receivers;
+	field new_sprites;
+	field remove_sprites;
+	field in_use;
+	field enabled;
+	
 	constructor(level) {
 		this.level = level;
 		transporters = level.get_teleporters();

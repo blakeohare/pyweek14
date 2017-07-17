@@ -173,6 +173,17 @@ class SwitchManager {
 			'yellow'
 		]
 	};
+	
+	field playscene;
+	field level;
+	field flipmaze_hack;
+	field switches;
+	field enabled;
+	field statuses;
+	field locations;
+	field rubiks;
+	field colors;
+	field activator_lookup;
 
 	constructor(level, playscene) {
 		this.playscene = playscene;

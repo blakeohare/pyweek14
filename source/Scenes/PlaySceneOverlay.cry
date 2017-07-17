@@ -1,4 +1,8 @@
 class PlaySceneOverlay {
+	
+	field playscene;
+	field level;
+	
 	constructor(playscene, level) {
 		this.playscene = playscene;
 		this.level = level;

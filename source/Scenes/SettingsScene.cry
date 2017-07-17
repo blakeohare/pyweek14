@@ -1,5 +1,9 @@
 // Sound* settings
 class SettingsScene {
+	field next;
+	field i;
+	field jk;
+	
 	constructor() {
 		this.next = this;
 		this.i = 0;

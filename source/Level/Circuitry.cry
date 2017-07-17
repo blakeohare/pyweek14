@@ -7,6 +7,15 @@ function make_ckey(c) {
 }
 
 class Circuits {
+
+	field level;
+	field groups_by_coords;
+	field power_in;
+	field permanently_on;
+	field coords_by_group;
+	field on_groups;
+	field groups;
+
 	constructor(level) {
 		this.level = level;
 		this.refresh_groups(true);

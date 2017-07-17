@@ -39,10 +39,14 @@ function get_startup_dialog(play_scene) {
 }
 
 class TextPrinter {
+
+	field text;
+	field counter = 0;
+	field speaker;
+
 	constructor(text, speaker) {
 		this.text = text;
-		this.counter = 0;
-		this.speaker= speaker;
+		this.speaker = speaker;
 	}
 		
 	function get_next_char(pressed) {
@@ -73,6 +77,9 @@ class TextPrinter {
 }
 
 class DialogPause {
+	
+	field remaining;
+	
 	constructor(amount) {
 		this.remaining = amount;
 	}
@@ -84,6 +91,28 @@ class DialogPause {
 }
 
 class DialogScene {
+	field id;
+	field next;
+	field wait_counter;
+	field phase_duration;
+	field playscene;
+	field text_printer;
+	field prompt_for_continue;
+	field pauser;
+	field i;
+	field phase;
+	field phase_counter;
+	field active_portrait;
+	field buffer;
+	field clear_on_continue;
+	field fast_speed;
+	field colors;
+	field buffer_clear_counter;
+	field frame_yielding;
+	field buffer_shift_offset;
+	field lines;
+	field labels;
+	
 	constructor(playscene, id) {
 		this.id = id;
 		this.next = this;

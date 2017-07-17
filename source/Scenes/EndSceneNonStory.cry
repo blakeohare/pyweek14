@@ -1,4 +1,7 @@
 class EndSceneNonStory {
+
+	field next;
+	
 	constructor() {
 		this.next = this;
 	}

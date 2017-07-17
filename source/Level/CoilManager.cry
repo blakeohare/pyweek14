@@ -1,5 +1,7 @@
 class CoilManager {
 	
+	field coils;
+	
 	constructor(level) { }
 	
 	function set_fresh_coils(coils) {

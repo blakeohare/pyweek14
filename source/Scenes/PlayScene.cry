@@ -1,4 +1,24 @@
 class PlayScene {
+	field story_mode;
+	field research_collected;
+	field next;
+	field level_name;
+	field level;
+	field player;
+	field sprites;
+	field overlay;
+	field do_not_override_start;
+	field counter = 0;
+	field do_stuff;
+	field holograms;
+	field x_offset_override = 0;
+	field fixed_x;
+	field fixed_y;
+	field target_camera_x;
+	field target_camera_y;
+	field camera_x;
+	field camera_y;
+	
 	constructor(level_name, story_mode, temp_suppress = false) {
 		this.story_mode = story_mode;
 		persistence_change_level();
@@ -20,7 +40,6 @@ class PlayScene {
 		this.overlay = new PlaySceneOverlay(this, this.level);
 		this.do_not_override_start = false;
 		level_manager = get_level_manager();
-		this.counter = 0;
 		start = level_manager.get_starting_point_for_level(level_name);
 		this.do_stuff = get_hacks_for_level(level_name, 'do_stuff');
 		if (level_name == '99-0') {
@@ -45,7 +64,6 @@ class PlayScene {
 		}
 		
 		this.holograms = [];
-		this.x_offset_override = 0;
 		level_pixel_width = this.level.height * 16 + this.level.width * 16;
 		level_pixel_height = level_pixel_width / 2 + 12 * 8;
 		this.fixed_x = level_pixel_width < 400;
@@ -201,7 +219,7 @@ class PlayScene {
 		this.counter += 1;
 	}
 	
-	function restart_level(this) {
+	function restart_level() {
 		this.next = new TransitionScene(this, new PlayScene(this.level.name, this.story_mode, true));
 	}
 	

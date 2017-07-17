@@ -1,4 +1,10 @@
 class CreditsScene {
+	field next;
+	field canSkip;
+	field speed;
+	field counter;
+	field things;
+	
 	constructor(canSkip) {
 		this.next = this;
 		this.canSkip = canSkip;
@@ -47,7 +53,7 @@ class CreditsScene {
 		for (event : events) {
 			if (event.down) {
 				if (event.key == 'start' || event.key == 'spray' || event.key == 'walkie') {
-					if (this.canskip) {
+					if (this.canSkip) {
 						this.next = new TransitionScene(this, new MainMenuScene());
 					}
 				}
