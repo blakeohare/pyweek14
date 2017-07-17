@@ -1,737 +1,905 @@
-class PushTracker:
-	def __init__(self, sprite):
-		self.push_counter = -1
-		self.max_push_counter = 25
-		self.push_target = None
-		self.owner = sprite
-	
-class Level:
-	def __init__(self, name, playscene):
-		self.name = name
-		self.initialize()
-		self.sprite_z_sorter = lambda x,y:x.z < y.z
-		self.push_trackers = []
-		self.newsprites = []
-		self.circuitry = Circuits(self)
-		self.counter = 0
-		self.render_exceptions = []
-		self.complete = False
-		self.spritify_counters = []
-		self.moving_platforms = MovingPlatformManager(self)
-		self.teleporters = TeleporterManager(self)
-		self.switch_manager = SwitchManager(self, playscene)
-		self.sprite_introducer = get_hacks_for_level(name, 'introduce_sprites')
-		self.hologram_manager = HologramManager(self)
-		self.coil_manager = CoilManager(self)
-		self.counter = 0
-		self.hologram_pads = []
-	
-	def get_push_tracker(self, sprite):
-		for p in self.push_trackers:
-			if p.owner == sprite:
-				return p
-		p = PushTracker(sprite)
-		self.push_trackers.append(p)
-		return p
-	
-	def get_hologram_pads(self):
-		return self.hologram_pads
-	
-	def spray_from(self, sprites):
-		success = False
-		
-		for sprite in sprites:
-			col = Math.floor(sprite.x // 16)
-			row = Math.floor(sprite.y // 16)
-			layer = Math.floor(sprite.z // 8)
-			dir = sprite.last_direction_of_movement
-			x = sprite.x % 16
-			y = sprite.y % 16
-			
-			if dir == 'n':
-				if y < x:
-					dir = 'ne'
-				else:
-					dir = 'nw'
-			elif dir == 's':
-				if y < x:
-					dir = 'se'
-				else:
-					dir = 'sw'
-			elif dir == 'e':
-				if x + y > 16:
-					dir = 'se'
-				else:
-					dir = 'ne'
-			elif dir == 'w':
-				if x + y > 16:
-					dir = 'sw'
-				else:
-					dir = 'nw'
-			
-			
-			if dir == 'nw':
-				col -= 1
-			elif dir == 'ne':
-				row -= 1
-			elif dir == 'sw':
-				row += 1
-			elif dir == 'se':
-				col += 1
-			
-			maybe_goo = self.get_tile_at(col, row, layer)
-			if maybe_goo != None and maybe_goo.is_goo:
-				self.modify_block(col, row, layer, None)
-				success = True
-		return success
-	
-	def get_new_sprites(self):
-		output = self.newsprites
-		self.newsprites = []
-		return output
-	
-	def initialize(self):
-		self.rats = []
-		lines = Resources.readText('data/levels/' + self.name + '.txt').split('\n')
-		values = {}
-		for line in lines:
-			line = line.strip()
-			if len(line) > 0 and line[0] == '#':
-				parts = line.split(':')
-				if len(parts) > 1:
-					key = parts[0][1:]
-					value = ':'.join(parts[1:])
-					values[key] = value.strip()
-		self.values = values
-		self.width = Core.parseInt(self.values['width'])
-		self.height = Core.parseInt(self.values['height'])
-		self.initialize_tiles(self.values['tiles'].split(','))
-		
-		self.initialize_switch_actions(values)
-	
-	def initialize_switch_actions(self, values):
-		pswitches = {}
-		nswitches = {}
-		for key in values.keys():
-			if key.startswith('action|'):
-				sign = 1
-				if key.startswith('action|negative|'):
-					sign = -1
-				name = key.split('|')[-1]
-				value = values[key]
-				if sign == 1:
-					pswitches[name] = value
-				else:
-					nswitches[name] = value
-				
-		self.pswitches = pswitches
-		self.nswitches = nswitches
-	
-	def activate_switch(self, name, is_positive):
-		lookup = self.nswitches
-		if is_positive:
-			lookup = self.pswitches
-		ts = get_tile_store()
-		for change in lookup.get(name).split('%'):
-			parts = change.split('^')
-			col = Math.floor(parts[0])
-			row = Math.floor(parts[1])
-			layer = Math.floor(parts[2])
-			id = parts[3]
-			tile = None if (id == '0') else ts.get_tile(id)
-			self.modify_block(col, row, layer, tile)
-	
-	def get_switches(self):
-		return self.switches
-	
-	def get_coils(self):
-		if self.coils == None:
-			self.coils = []
-			stacks = self.grid
-			lookups = self.cellLookup
-			y = 0
-			while y < self.height:
-				x = 0
-				while x < self.width:
-					z = 0
-					stack = stacks[x][y]
-					stacklen = len(stack)
-					while z < stacklen:
-						cell = stack[z]
-						if cell != None and cell.teslaon:
-							lookup = lookups[x][y]
-							z = 0
-							while z < len(lookup):
-								t = lookup[z]
-								if t != None and stack[t].teslaon:
-									self.coils.append((x, y, z))
-								z += 1
-							break
-						z += 1
-					x += 1
-				y += 1
-		return self.coils
-	
-	def initialize_tiles(self, tiles):
-		width = self.width
-		height = self.height
-		grid = make_grid(self.width, self.height, None)
-		references = make_grid(self.width, self.height, None)
-		moving_platforms = []
-		self.switches = []
-		self.coils = []
-		self.hologram_pads = []
-		self.teleporter_tiles = []
-		tilestore = get_tile_store()
-		i = 0
-		for tile in tiles:
-			x = i % width
-			y = i // width
-			tileStack = []
-			referenceStack = []
-			grid[x][y] = tileStack
-			references[x][y] = referenceStack
-			cells = tile.split('|')
-			
-			if len(cells) == 1 and len(cells[0]) == 0:
-				pass
-			else:
-				for cell in cells:
-					
-					if cell == '0':
-						referenceStack.append(None)
-						tileStack.append(None)
-					else:
-						t = tilestore.get_tile(cell)
-						if t.id == '16': # moving platform
-							moving_platforms.append((x, y, len(referenceStack)))
-						if t.id in ('t1', 't2', 't3'):
-							self.teleporter_tiles.append((x, y, len(referenceStack), t.id))
-						
-						if t.isswitch:
-							self.switches.append((x, y, len(referenceStack), t))
-						
-						if t.teslaon:
-							self.coils.append((x, y, len(referenceStack)))
-						
-						if t.isholopad:
-							self.hologram_pads.append((x, y, len(referenceStack), t.id == 'clone'))
-						
-						if t.id in ('rat', 'rat2', 'rat3', 'rat4'):
-							if t.id == 'rat':
-								dir = 'se'
-							elif t.id == 'rat2':
-								dir = 'ne'
-							elif t.id == 'rat3':
-								dir = 'sw'
-							else:
-								dir = 'nw'
-							sprite = Sprite(x * 16 + 8, y * 16 + 8, len(tileStack) * 8, 'rat|' + dir)
-							self.rats.append(sprite)
-							sprite.standingon = tileStack[-1] # This will explode if a rat is placed on the bottom row of the map
-							
-							referenceStack.append(None)
-							tileStack.append(None)
-						else:
-								
-							z = 0
-							while z < t.height:
-								referenceStack.append(len(tileStack))
-								z += 1
-							
-							tileStack.append(t)
-				
-			
-			i += 1
-		self.grid = grid
-		self.cellLookup = references
-		self.moving_platforms = moving_platforms
-		
-	def get_tile_at(self, x, y=None, z=None):
-		if y == None:
-			y = x[1]
-			z = x[2]
-			x = x[0]
-		if z < 0: return None
-		lookup = self.cellLookup[x][y]
-		if len(lookup) <= z:
-			return None
-		index = lookup[z]
-		if index == None:
-			return None
-		return self.grid[x][y][index]
-	
-	def get_platform_below(self, col, row, z, blocking_only):
-	
-		# TODO: interlace the block list here
-		# so that blocks get included in the collision
-		# results
-		
-		# Alternatively, pushed blocks can be part of the 
-		# primary model and will be updated when they move
-		# around.
-		refStack = self.cellLookup[col][row]
-		tileStack = self.grid[col][row]
-		i = min(len(refStack) - 1, z // 8)
-		
-		while i >= 0:
-			t = refStack[i]
-			if t == None:
-				pass
-			else:
-				tile = self.grid[col][row][t]
-				if not blocking_only or tile.blocking:
-					return ((i + 1) * 8, tile)
-			i -= 1
-	
-	def render(self, screen, xOffset, yOffset, sprites, render_counter):
-		self.counter += 1
-		self.allsprites = sprites
-		self.any_res = False
-		self.re_blits = {}
-		
-		width = self.width
-		height = self.height
-		sprite_lookup = {}
-		for sprite in sprites:
-			x = Math.floor(sprite.x // 16)
-			y = Math.floor(sprite.y // 16)
-			key = str(x) + '_' + str(y)
-			list = sprite_lookup.get(key)
-			if list == None:
-				list = []
-				sprite_lookup[key] = list
-			list.append(sprite)
-		empty_list = []
-		
-		re_on_keys = {}
-		re_off_keys = {}
-		for re in self.render_exceptions:
-			re_on_keys[re.on_key] = re_on_keys.get(re.on_key, [])
-			re_on_keys[re.on_key].append(re)
-			re_off_keys[re.off_key] = re_off_keys.get(re.off_key, [])
-			re_off_keys[re.off_key].append(re)
-		
-		z_sorter = lambda a,b: a.z < b.z
-		for k in re_on_keys.keys():
-			re_on_keys[k] = safe_sorted(re_on_keys[k], z_sorter)
-		for k in re_off_keys.keys():
-			re_off_keys[k] = safe_sorted(re_off_keys[k], z_sorter)
-		
-		i = 0
-		while i < width + height:
-			col = i
-			row = 0
-			
-			while row < height and col >= 0:
-				if col < width:
-					sprite_list = sprite_lookup.get(str(col) + '_' + str(row))
-					k = str(col) + '|' + str(row)
-					re_on = re_on_keys.get(k)
-					re_off = re_off_keys.get(k)
-					
-					if re_on != None:
-						re_on = re_on[:]
-					if re_off != None:
-						re_off = re_off[:]
-					
-					self.render_tile_stack(screen, col, row, xOffset, yOffset, render_counter, sprite_list, re_on, re_off)
-				row += 1
-				col -= 1
-			i += 1
-		
-		
-	def render_sprite(self, screen, sprite, xOffset, yOffset, render_counter, re_render=False):
-		
-		q = sprite.render_me(screen, xOffset, yOffset, render_counter)
-		if not re_render:
-			if sprite.x % 16 < 6 and sprite.y % 16 > 10:
-				if sprite.main_or_hologram or sprite.israt:
-					col = Math.floor(sprite.x // 16)
-					row = Math.floor(sprite.y // 16)
-					layer = Math.floor(sprite.z // 8)
-					k = str(col) + '^' + str(row)
-					r = (layer + sprite.height, q)
-					if self.re_blits.get(k) == None:
-						self.re_blits[k] = [r]
-					else:
-						if self.re_blits[k][-1][0] < r[0]:
-							self.re_blits[k].append(r)
-						else:
-							i = 0
-							while i < len(self.re_blits[k]):
-								if self.re_blits[k][i][0] > r[0]:
-									self.re_blits[k] = self.re_blits[k][:i] + [r] + self.re_blits[k][i:]
-									break
-								i += 1
-		
-	def render_tile_stack(self, screen, col, row, xOffset, yOffset, render_counter, sprites, re_on, re_off):
-		re_sprite_on = None
-		re_sprite_off = None
-		re_block_on = None
-		re_block_off = None
-		
-		re_blits = self.re_blits.get(str(col + 1) + '^' + str(row - 1))
-		
-		if re_on != None:
-			re_block_on = []
-			re_sprite_on = []
-			for re in re_on:
-				if re.is_block:
-					self.any_res = True
-					re_block_on.append(re)
-				else:
-					re_sprite_on.append(re)
-			
-		if re_off != None:
-			re_block_off = []
-			re_sprite_off = []
-			for re in re_off:
-				if re.is_block:
-					self.any_res = True
-					re_block_off.append(re)
-				else:
-					re_sprite_off.append(re)				
-		
-		prefix = str(col) + '|' + str(row) + '|'
-		
-		stack = self.grid[col][row]
-			
-		z = 0
-		x = xOffset + col * 16 - row * 16 - 16
-		y = yOffset + col * 8 + row * 8
-		i = 0
-		while i < len(stack):
-			
-			# re blit stuff from the right
-			
-			if re_blits != None:
-				while re_blits != None and len(re_blits) > 0 and re_blits[0][0] <= z:
-					q = re_blits[0][1]
-					sprite = q[0]
-					sprite.render_me(screen, q[1], q[2], q[3])
-					re_blits = re_blits[1:]
-			
-			tile = stack[i]
-			if sprites != None:
-				new_sprites = []
-				for sprite in sprites:
-					if sprite.z <= z * 8:
-						if re_sprite_off != None and len(re_sprite_off) > 0 and re_sprite_off[0].z == z and re_sprite_off[0].tile == sprite:
-							re = re_sprite_off.pop(0)
-						else:
-							re_offset = (0, 0)
-							if re_sprite_on != None:
-								rei = 0
-								while rei < len(re_sprite_on):
-									re = re_sprite_on[rei]
-									if re.tile == sprite:
-										re_sprite_on.pop(rei)
-										re_offset = re.get_offset()
-									else:
-										rei += 1
-							
-							self.render_sprite(screen, sprite, xOffset + re_offset[0], yOffset + re_offset[1], render_counter)
-					else:
-						new_sprites.append(sprite)
-				sprites = new_sprites
-			
-			while re_sprite_on != None and len(re_sprite_on) > 0 and re_sprite_on[0].z < z:
-				re = re_sprite_on.pop(0)
-				offset = re.get_offset()
-				_x = xOffset + offset[0]
-				_y = yOffset + offset[1]
-				xdiff = re.do_show[0] - re.dont_show[0]
-				ydiff = re.do_show[1] - re.dont_show[1]
-				xdiff_pixel = xdiff * 16 - ydiff * 16
-				ydiff_pixel = xdiff * 8 + ydiff * 8
-				self.render_sprite(screen, re.tile, _x + xdiff_pixel, _y + ydiff_pixel, render_counter)
-				
-			if tile == None:
-				if re_block_on != None and len(re_block_on) > 0 and re_block_on[0].z == z:
-					re = re_block_on.pop(0)
-					offset = re.get_offset()
-					re.tile.render(screen, x + offset[0], y - z * 8 + offset[1], render_counter)
-					#z += re.tile.height - 1
-				z += 1
-			else:
-				if re_block_off != None and len(re_block_off) > 0 and re_block_off[0].z == z:
-					re = re_block_off.pop(0)
-				elif re_block_on != None and len(re_block_on) > 0 and re_block_on[0].z == z:
-					re = re_block_on.pop(0)
-					offset = re.get_offset()
-					tile.render(screen, x + offset[0], y - z * 8 + offset[1], render_counter)
-				else:
-					tile.render(screen, x, y - z * 8, render_counter)
-				z += tile.height
-			i += 1
-		
-		
-		if re_blits != None:
-			
-			while re_blits != None and len(re_blits) > 0 and re_blits[0][0] <= z:
-				q = re_blits[0][1]
-				sprite = q[0]
-				sprite.render_me(screen, q[1], q[2], q[3])
-				re_blits = re_blits[1:]
-		
-		
-		if (sprites != None and len(sprites) > 0) or (re_sprite_on != None and len(re_sprite_on) > 0):
-			sprites = [] if sprites == None else safe_sorted(sprites, self.sprite_z_sorter)
-			sprite_i = 0
-			re_i = 0
-			if re_sprite_on == None:
-				re_sprite_on = []
-			
-			rendered_sprites = []
-			for re in re_sprite_on:
-				for sprite in sprites:
-					if re.tile == sprite:
-						rendered_sprites.append(sprite)
-			if len(rendered_sprites) > 0:
-				new_sprites = []
-				for sprite in rendered_sprites:
-					if sprite in rendered_sprites:
-						pass
-					else:
-						new_sprites.append(sprite)
-				sprites = new_sprites
-			
-			while sprite_i < len(sprites) or re_i < len(re_sprite_on):
-				sprite = None
-				re = None
-				if sprite_i == len(sprites):
-					re = re_sprite_on[re_i]
-					re_i += 1
-				elif re_i == len(re_sprite_on):
-					sprite = sprites[sprite_i]
-					sprite_i += 1
-				else:
-					re = re_sprite_on[re_i]
-					sprite = sprites[sprite_i]
-					if re.z < Math.floor(sprite.z // 8):
-						sprite = None
-						re_i += 1
-					else:
-						re = None
-						sprite_i += 1
-				
-				if re != None:
-					offset = re.get_offset()
-					_x = xOffset + offset[0]
-					_y = yOffset + offset[1]
-					if re.direction == 'NE' or re.direction == 'NW':
-						xdiff = re.do_show[0] - re.dont_show[0]
-						ydiff = re.do_show[1] - re.dont_show[1]
-						xdiff_pixel = xdiff * 16 - ydiff * 16
-						ydiff_pixel = xdiff * 8 + ydiff * 8
-						_x += xdiff_pixel
-						_y += ydiff_pixel
-					
-					self.render_sprite(screen, re.tile, _x, _y, render_counter)
+class PushTracker {
+	constructor(sprite) {
+		self.push_counter = -1;
+		self.max_push_counter = 25;
+		self.push_target = None;
+		self.owner = sprite;
+	}
+}
 
-				else:
-					suppress = False
-					if re_sprite_off != None:
-						rei = 0
-						while rei < len(re_sprite_off):
-							re = re_sprite_off[rei]
-							if sprite == re.tile:
-								re_sprite_off.pop(rei)
-								suppress = True
-							else:
-								rei += 1
-					if not suppress:
-						self.render_sprite(screen, sprite, xOffset, yOffset, render_counter)
+function sprite_z_key(sprite) {
+	return sprite.z;
+}
+
+class Level {
+	constructor(name, playscene) {
+		self.name = name;
+		self.initialize();
+		self.push_trackers = [];
+		self.newsprites = [];
+		self.circuitry = new Circuits(self);
+		self.counter = 0;
+		self.render_exceptions = [];
+		self.complete = False;
+		self.spritify_counters = [];
+		self.moving_platforms = new MovingPlatformManager(self);
+		self.teleporters = new TeleporterManager(self);
+		self.switch_manager = new SwitchManager(self, playscene);
+		self.sprite_introducer = get_hacks_for_level(name, 'introduce_sprites');
+		self.hologram_manager = new HologramManager(self);
+		self.coil_manager = new CoilManager(self);
+		self.counter = 0;
+		self.hologram_pads = [];
+	}
+	
+	function get_push_tracker(sprite) {
+		for (p : self.push_trackers) {
+			if (p.owner == sprite) {
+				return p;
+			}
+		}
+		p = new PushTracker(sprite);
+		self.push_trackers.add(p);
+		return p;
+	}
+	
+	function get_hologram_pads() {
+		return self.hologram_pads;
+	}
+	
+	function spray_from(sprites) {
+		success = False;
+		
+		for (sprite : sprites) {
+			col = Math.floor(sprite.x / 16);
+			row = Math.floor(sprite.y / 16);
+			layer = Math.floor(sprite.z / 8);
+			dir = sprite.last_direction_of_movement;
+			x = sprite.x % 16;
+			y = sprite.y % 16;
+			
+			// TODO: switch statement
+			if (dir == 'n') {
+				if (y < x) {
+					dir = 'ne';
+				} else {
+					dir = 'nw';
+				}
+			} else if (dir == 's') {
+				if (y < x) {
+					dir = 'se';
+				} else {
+					dir = 'sw';
+				}
+			} else if (dir == 'e') {
+				if (x + y > 16) {
+					dir = 'se';
+				} else {
+					dir = 'ne';
+				}
+			} else if (dir == 'w') {
+				if (x + y > 16) {
+					dir = 'sw';
+				} else {
+					dir = 'nw';
+				}
+			}
+			
+			if (dir == 'nw') {
+				col -= 1;
+			} else if (dir == 'ne') {
+				row -= 1;
+			} else if (dir == 'sw') {
+				row += 1;
+			} else if (dir == 'se') {
+				col += 1;
+			}
+			
+			maybe_goo = self.get_tile_at(col, row, layer);
+			if (maybe_goo != None && maybe_goo.is_goo) {
+				self.modify_block(col, row, layer, None);
+				success = True;
+			}
+		}
+		
+		return success;
+	}
+	
+	function get_new_sprites() {
+		output = self.newsprites;
+		self.newsprites = [];
+		return output;
+	}
+	
+	function initialize() {
+		self.rats = [];
+		lines = Resources.readText('data/levels/' + self.name + '.txt').split('\n');
+		values = {};
+		for (line : lines) {
+			line = line.strip();
+			if (len(line) > 0 && line[0] == '#') {
+				parts = line.split(':');
+				if (len(parts) > 1) {
+					key = parts[0][1:];
+					value = parts[1:].join(':');
+					values[key] = value.trim();
+				}
+			}
+		}
+		self.values = values;
+		self.width = Core.parseInt(self.values['width']);
+		self.height = Core.parseInt(self.values['height']);
+		self.initialize_tiles(self.values['tiles'].split(','));
+		
+		self.initialize_switch_actions(values);
+	}
+	
+	function initialize_switch_actions(values) {
+		pswitches = {};
+		nswitches = {};
+		for (key : values.keys()) {
+			if (key.startsWith('action|')) {
+				sign = 1;
+				if (key.startswith('action|negative|')) {
+					sign = -1;
+				}
+				name = key.split('|')[-1];
+				value = values[key];
+				if (sign == 1) {
+					pswitches[name] = value;
+				} else {
+					nswitches[name] = value;
+				}
+			}
+		}
+		
+		self.pswitches = pswitches;
+		self.nswitches = nswitches;
+	}
+	
+	function activate_switch(name, is_positive) {
+		lookup = self.nswitches;
+		if (is_positive) {
+			lookup = self.pswitches;
+		}
+		ts = get_tile_store();
+		for (change : lookup.get(name).split('%')) {
+			parts = change.split('^');
+			col = Math.floor(parts[0]);
+			row = Math.floor(parts[1]);
+			layer = Math.floor(parts[2]);
+			id = parts[3];
+			tile = id == '0' ? null : ts.get_tile(id);
+			self.modify_block(col, row, layer, tile);
+		}
+	}
+	
+	function get_switches() {
+		return self.switches;
+	}
+	
+	function get_coils() {
+		if (self.coils == None) {
+			self.coils = [];
+			stacks = self.grid;
+			lookups = self.cellLookup;
+			
+			// TODO: for loop
+			y = 0;
+			while (y < self.height) {
+				x = 0;
+				while (x < self.width) {
+					z = 0;
+					stack = stacks[x][y];
+					stacklen = len(stack);
+					while (z < stacklen) {
+						cell = stack[z];
+						if (cell != None && cell.teslaon) {
+							lookup = lookups[x][y];
+							z = 0;
+							while (z < len(lookup)) {
+								t = lookup[z];
+								if (t != None && stack[t].teslaon) {
+									self.coils.add([x, y, z]);
+								}
+								z += 1;
+							}
+							break;
+						}
+						z += 1;
+					}
+					x += 1;
+				}
+				y += 1;
+			}
+		}
+		return self.coils;
+	}
+	
+	function initialize_tiles(tiles) {
+		width = self.width;
+		height = self.height;
+		grid = make_grid(self.width, self.height, None);
+		references = make_grid(self.width, self.height, None);
+		moving_platforms = [];
+		self.switches = [];
+		self.coils = [];
+		self.hologram_pads = [];
+		self.teleporter_tiles = [];
+		tilestore = get_tile_store();
+		i = 0;
+		for (tile : tiles) {
+			x = i % width;
+			y = i / width;
+			tileStack = [];
+			referenceStack = [];
+			grid[x][y] = tileStack;
+			references[x][y] = referenceStack;
+			cells = tile.split('|');
+			
+			if (len(cells) == 1 && len(cells[0]) == 0) {
+				// pass
+			} else {
+				for (cell : cells) {
+					
+					if (cell == '0') {
+						referenceStack.add(None);
+						tileStack.append(None);
+					} else {
+						t = tilestore.get_tile(cell);
+						tid = t.id;
+						if (tid == '16') { // moving platform
+							moving_platforms.add([x, y, len(referenceStack)]);
+						}
+						if (tid == 't1' || tid == 't2' || tid == 't3') {
+							self.teleporter_tiles.add([x, y, len(referenceStack), t.id]);
+						}
+						
+						if (t.isswitch) {
+							self.switches.add([x, y, len(referenceStack), t]);
+						}
+						
+						if (t.teslaon) {
+							self.coils.add([x, y, len(referenceStack)]);
+						}
+						
+						if (t.isholopad) {
+							self.hologram_pads.add([x, y, len(referenceStack), tid == 'clone']);
+						}
+						
+						// TODO: switch
+						if (tid == 'rat' || tid == 'rat2' || tid == 'rat3' || tid == 'rat4') {
+							if (tid == 'rat') {
+								dir = 'se';
+							} else if (tid == 'rat2') {
+								dir = 'ne';
+							} else if (tid == 'rat3') {
+								dir = 'sw';
+							} else {
+								dir = 'nw';
+							}
+							sprite = new Sprite(x * 16 + 8, y * 16 + 8, len(tileStack) * 8, 'rat|' + dir);
+							self.rats.add(sprite);
+							sprite.standingon = tileStack[-1]; // This will explode if a rat is placed on the bottom row of the map
+							
+							referenceStack.add(None);
+							tileStack.add(None);
+						} else {
+							
+							// TODO: for loop
+							z = 0;
+							while (z < t.height) {
+								referenceStack.add(len(tileStack));
+								z += 1;
+							}
+							
+							tileStack.add(t);
+						}
+					}
+				}
+			}
+			
+			i += 1;
+		}
+		self.grid = grid;
+		self.cellLookup = references;
+		self.moving_platforms = moving_platforms;
+	}
+		
+	function get_tile_at(x, y=None, z = None) {
+		if (y == None) {
+			y = x[1];
+			z = x[2];
+			x = x[0];
+		}
+		if (z < 0) return None;
+		lookup = self.cellLookup[x][y];
+		if (len(lookup) <= z) {
+			return None;
+		}
+		index = lookup[z];
+		if (index == None) {
+			return None;
+		}
+		return self.grid[x][y][index];
+	}
+	
+	function get_platform_below(col, row, z, blocking_only) {
+	
+		// TODO: interlace the block list here
+		// so that blocks get included in the collision
+		// results
+		
+		// Alternatively, pushed blocks can be part of the 
+		// primary model and will be updated when they move
+		// around.
+		refStack = self.cellLookup[col][row];
+		tileStack = self.grid[col][row];
+		i = Math.min(len(refStack) - 1, z / 8);
+		
+		while (i >= 0) {
+			t = refStack[i];
+			if (t == None) {
+				// pass
+			} else {
+				tile = self.grid[col][row][t];
+				if (!blocking_only || tile.blocking) {
+					return [(i + 1) * 8, tile];
+				}
+			}
+			i -= 1;
+		}
+	}
+	
+	function render(screen, xOffset, yOffset, sprites, render_counter) {
+		self.counter += 1;
+		self.allsprites = sprites;
+		self.any_res = False;
+		self.re_blits = {};
+		
+		width = self.width;
+		height = self.height;
+		sprite_lookup = {};
+		for (sprite : sprites) {
+			x = Math.floor(sprite.x / 16);
+			y = Math.floor(sprite.y / 16);
+			key = x + '_' + y;
+			list = sprite_lookup.get(key);
+			if (list == None) {
+				list = [];
+				sprite_lookup[key] = list;
+			}
+			list.add(sprite);
+		}
+		empty_list = [];
+		
+		re_on_keys = {};
+		re_off_keys = {};
+		for (re : self.render_exceptions) {
+			re_on_keys[re.on_key] = re_on_keys.get(re.on_key, []);
+			re_on_keys[re.on_key].add(re);
+			re_off_keys[re.off_key] = re_off_keys.get(re.off_key, []);
+			re_off_keys[re.off_key].add(re);
+		}
+		
+		for (k : re_on_keys.keys()) {
+			re_on_keys[k].sort(sprite_z_key);
+		}
+		for (k : re_off_keys.keys()) {
+			re_off_keys[k].sort(sprite_z_key);
+		}
+		
+		i = 0;
+		while (i < width + height) {
+			col = i;
+			row = 0;
+			
+			while (row < height && col >= 0) {
+				if (col < width) {
+					sprite_list = sprite_lookup.get(col + '_' + row);
+					k = col + '|' + row;
+					re_on = re_on_keys.get(k);
+					re_off = re_off_keys.get(k);
+					
+					if (re_on != None) {
+						re_on = re_on.clone();
+					}
+					if (re_off != None) {
+						re_off = re_off.clone();
+					}
+					
+					self.render_tile_stack(screen, col, row, xOffset, yOffset, render_counter, sprite_list, re_on, re_off);
+				}
+				row += 1;
+				col -= 1;
+			}
+			i += 1;
+		}
+	}
+		
+	function render_sprite(screen, sprite, xOffset, yOffset, render_counter, re_render=False) {
+		
+		q = sprite.render_me(screen, xOffset, yOffset, render_counter);
+		if (!re_render) {
+			if (sprite.x % 16 < 6 && sprite.y % 16 > 10) {
+				if (sprite.main_or_hologram or sprite.israt) {
+					col = Math.floor(sprite.x / 16);
+					row = Math.floor(sprite.y / 16);
+					layer = Math.floor(sprite.z / 8);
+					k = col + '^' + row;
+					r = [layer + sprite.height, q];
+					if (self.re_blits.get(k) == None) {
+						self.re_blits[k] = [r];
+					} else {
+						if (self.re_blits[k][-1][0] < r[0]) {
+							self.re_blits[k].add(r);
+						} else {
+							i = 0;
+							while (i < len(self.re_blits[k])) {
+								if (self.re_blits[k][i][0] > r[0]) {
+									self.re_blits[k] = self.re_blits[k][:i] + [r] + self.re_blits[k][i:];
+									break;
+								}
+								i += 1;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	function render_tile_stack(screen, col, row, xOffset, yOffset, render_counter, sprites, re_on, re_off) {
+		re_sprite_on = None;
+		re_sprite_off = None;
+		re_block_on = None;
+		re_block_off = None;
+		
+		re_blits = self.re_blits.get((col + 1) + '^' + (row - 1));
+		
+		if (re_on != None) {
+			re_block_on = [];
+			re_sprite_on = [];
+			for (re : re_on) {
+				if (re.is_block) {
+					self.any_res = True;
+					re_block_on.add(re);
+				} else {
+					re_sprite_on.add(re);
+				}
+			}
+		}
+		
+		if (re_off != None) {
+			re_block_off = [];
+			re_sprite_off = [];
+			for (re : re_off) {
+				if (re.is_block) {
+					self.any_res = True;
+					re_block_off.add(re);
+				} else {
+					re_sprite_off.add(re);
+				}
+			}
+		}
+		
+		prefix = col + '|' + row + '|'
+		
+		stack = self.grid[col][row];
+			
+		z = 0;
+		x = xOffset + col * 16 - row * 16 - 16;
+		y = yOffset + col * 8 + row * 8;
+		i = 0;
+		while (i < len(stack)) {
+			
+			// re blit stuff from the right
+			
+			if (re_blits != None) {
+				while (re_blits != None && len(re_blits) > 0 && re_blits[0][0] <= z) {
+					q = re_blits[0][1];
+					sprite = q[0];
+					sprite.render_me(screen, q[1], q[2], q[3]);
+					re_blits = re_blits[1:];
+				}
+			}
+			
+			tile = stack[i];
+			if (sprites != None) {
+				new_sprites = [];
+				for (sprite : sprites) {
+					if (sprite.z <= z * 8) {
+						if (re_sprite_off != None && len(re_sprite_off) > 0 && re_sprite_off[0].z == z && re_sprite_off[0].tile == sprite) {
+							re = re_sprite_off.removeAt(0);
+						} else {
+							re_offset = [0, 0];
+							if (re_sprite_on != None) {
+								rei = 0;
+								while (rei < len(re_sprite_on)) {
+									re = re_sprite_on[rei];
+									if (re.tile == sprite) {
+										re_sprite_on.removeAt(rei);
+										re_offset = re.get_offset();
+									} else {
+										rei += 1;
+									}
+								}
+							}
+							
+							self.render_sprite(screen, sprite, xOffset + re_offset[0], yOffset + re_offset[1], render_counter);
+						}
+					} else {
+						new_sprites.add(sprite);
+					}
+				}
+				sprites = new_sprites;
+			}
+			
+			while (re_sprite_on != None && len(re_sprite_on) > 0 && re_sprite_on[0].z < z) {
+				re = re_sprite_on.removeAt(0);
+				offset = re.get_offset();
+				_x = xOffset + offset[0];
+				_y = yOffset + offset[1];
+				xdiff = re.do_show[0] - re.dont_show[0];
+				ydiff = re.do_show[1] - re.dont_show[1];
+				xdiff_pixel = xdiff * 16 - ydiff * 16;
+				ydiff_pixel = xdiff * 8 + ydiff * 8;
+				self.render_sprite(screen, re.tile, _x + xdiff_pixel, _y + ydiff_pixel, render_counter);
+			}
+			
+			if (tile == None) {
+				if (re_block_on != None && len(re_block_on) > 0 && re_block_on[0].z == z) {
+					re = re_block_on.removeAt(0);
+					offset = re.get_offset();
+					re.tile.render(screen, x + offset[0], y - z * 8 + offset[1], render_counter);
+					//z += re.tile.height - 1;
+				}
+				z += 1;
+			} else {
+				if (re_block_off != None && len(re_block_off) > 0 && re_block_off[0].z == z) {
+					re = re_block_off.removeAt(0);
+				} else if (re_block_on != None && len(re_block_on) > 0 && re_block_on[0].z == z) {
+					re = re_block_on.removeAt(0);
+					offset = re.get_offset();
+					tile.render(screen, x + offset[0], y - z * 8 + offset[1], render_counter);
+				} else {
+					tile.render(screen, x, y - z * 8, render_counter);
+				}
+				z += tile.height;
+			}
+			i += 1;
+		}
+		
+		if (re_blits != None) {
+			
+			while (re_blits != None && len(re_blits) > 0 && re_blits[0][0] <= z) {
+				q = re_blits[0][1];
+				sprite = q[0];
+				sprite.render_me(screen, q[1], q[2], q[3]);
+				re_blits = re_blits[1:];
+			}
+		}
+		
+		if ((sprites != None && len(sprites) > 0) || (re_sprite_on != None && len(re_sprite_on) > 0)) {
+			
+			if (sprites == null) {
+				sprites = [];
+			} else {
+				sprites.sort(sprite_z_key);
+			}
+			
+			sprite_i = 0;
+			re_i = 0;
+			if (re_sprite_on == None) {
+				re_sprite_on = [];
+			}
+			
+			rendered_sprites = [];
+			for (re : re_sprite_on) {
+				for (sprite : sprites) {
+					if (re.tile == sprite) {
+						rendered_sprites.add(sprite);
+					}
+				}
+			}
+			
+			if (len(rendered_sprites) > 0) {
+				new_sprites = [];
+				for (sprite : rendered_sprites) {
+					if (sprite : rendered_sprites) {
+						// pass
+					} else {
+						new_sprites.add(sprite);
+					}
+				}
+				sprites = new_sprites;
+			}
+			
+			while (sprite_i < len(sprites) || re_i < len(re_sprite_on)) {
+				sprite = None;
+				re = None;
+				if (sprite_i == len(sprites)) {
+					re = re_sprite_on[re_i];
+					re_i += 1;
+				} else if (re_i == len(re_sprite_on)) {
+					sprite = sprites[sprite_i];
+					sprite_i += 1;
+				} else {
+					re = re_sprite_on[re_i];
+					sprite = sprites[sprite_i];
+					if (re.z < Math.floor(sprite.z / 8)) {
+						sprite = None;
+						re_i += 1;
+					} else {
+						re = None;
+						sprite_i += 1;
+					}
+				}
+				
+				if (re != None) {
+					offset = re.get_offset();
+					_x = xOffset + offset[0];
+					_y = yOffset + offset[1];
+					if (re.direction == 'NE' || re.direction == 'NW') {
+						xdiff = re.do_show[0] - re.dont_show[0];
+						ydiff = re.do_show[1] - re.dont_show[1];
+						xdiff_pixel = xdiff * 16 - ydiff * 16;
+						ydiff_pixel = xdiff * 8 + ydiff * 8;
+						_x += xdiff_pixel;
+						_y += ydiff_pixel;
+					}
+					
+					self.render_sprite(screen, re.tile, _x, _y, render_counter);
+
+				} else {
+					suppress = False;
+					if (re_sprite_off != None) {
+						rei = 0;
+						while (rei < len(re_sprite_off)) {
+							re = re_sprite_off[rei];
+							if (sprite == re.tile) {
+								re_sprite_off.removeAt(rei);
+								suppress = True;
+							} else {
+								rei += 1;
+							}
+						}
+					}
+					
+					if (!suppress) {
+						self.render_sprite(screen, sprite, xOffset, yOffset, render_counter);
+					}
+				}
+			}
+		}
+	}
 	
 	// there are no blockages. It's already been verified by the time this function
 	// has been called.
-	def push_block(self, sprite, start_col, start_row, end_col, end_row, layer):
-		play_sound('blockpush')
-		pt = self.get_push_tracker(sprite)
-		pt.push_counter = -1
-		pt.push_target = None
+	function push_block(sprite, start_col, start_row, end_col, end_row, layer) {
+		play_sound('blockpush');
+		pt = self.get_push_tracker(sprite);
+		pt.push_counter = -1;
+		pt.push_target = None;
 		
-		block = self.modify_block(start_col, start_row, layer, None)
-		self.modify_block(end_col, end_row, layer, block)
+		block = self.modify_block(start_col, start_row, layer, None);
+		self.modify_block(end_col, end_row, layer, block);
 		
-		if start_row == end_row:
-			if start_col < end_col:
-				dir = 'SE'
-			else:
-				dir = 'NW'
-		elif start_row < end_row:
-			dir = 'SW'
-		else:
-			dir = 'NE'
-			
-		self.render_exceptions.append(RenderException((start_col, start_row, layer), dir, block, True))
+		if (start_row == end_row) {
+			if (start_col < end_col) {
+				dir = 'SE';
+			} else {
+				dir = 'NW';
+			}
+		} else if (start_row < end_row) {
+			dir = 'SW';
+		} else {
+			dir = 'NE';
+		}
 		
-		below_layer = layer - 1
+		self.render_exceptions.add(new RenderException([start_col, start_row, layer], dir, block, True));
 		
-		was_standing_on = self.get_tile_at(start_col, start_row, below_layer)
+		below_layer = layer - 1;
 		
-		target_lookup = self.cellLookup[end_col][end_row]
-		stack = self.grid[end_col][end_row]
-		should_spritify = False
-		if below_layer < len(target_lookup):
-			standingon = target_lookup[below_layer]
-			if standingon == None:
-				should_spritify = True
-			else:
-				standingon = stack[standingon]
-				if not standingon.blocking:
-					should_spritify = True
-				else:
-					if standingon.id == 'po' and block.id == '46' and self.circuitry.is_charged(end_col, end_row, below_layer):
-						play_sound('battery_charge')
-						self.modify_block(end_col, end_row, layer, get_tile_store().get_tile('45'))
-					if standingon.id == 'pi':
-						if block.id == '45':
-							play_sound('electricity_flows')
-							self.circuitry.refresh_charges()
-					if was_standing_on != None and was_standing_on.id == 'pi' and block.id == '45':
-						play_sound('battery_deplete')
-						self.modify_block(end_col, end_row, layer, get_tile_store().get_tile('46'))
-						self.circuitry.refresh_charges()
-						
-		else:
-			should_spritify = True
+		was_standing_on = self.get_tile_at(start_col, start_row, below_layer);
 		
-		if should_spritify:
-			self.spritify_counters.append([end_col, end_row, layer, 5])
+		target_lookup = self.cellLookup[end_col][end_row];
+		stack = self.grid[end_col][end_row];
+		should_spritify = False;
+		if (below_layer < len(target_lookup)) {
+			standingon = target_lookup[below_layer];
+			if (standingon == None) {
+				should_spritify = True;
+			} else {
+				standingon = stack[standingon];
+				if (not standingon.blocking) {
+					should_spritify = True;
+				} else {
+					if (standingon.id == 'po' && block.id == '46' && self.circuitry.is_charged(end_col, end_row, below_layer)) {
+						play_sound('battery_charge');
+						self.modify_block(end_col, end_row, layer, get_tile_store().get_tile('45'));
+					}
+					if (standingon.id == 'pi') {
+						if (block.id == '45') {
+							play_sound('electricity_flows');
+							self.circuitry.refresh_charges();
+						}
+					}
+					
+					if (was_standing_on != None && was_standing_on.id == 'pi' && block.id == '45') {
+						play_sound('battery_deplete');
+						self.modify_block(end_col, end_row, layer, get_tile_store().get_tile('46'));
+						self.circuitry.refresh_charges();
+					}
+				}
+			}
+		} else {
+			should_spritify = True;
+		}
+		
+		if (should_spritify) {
+			self.spritify_counters.add([end_col, end_row, layer, 5]);
+		}
+	}
 	
-	def spritify_block(self, col, row, layer):
-		block = self.modify_block(col, row, layer, None)
-		self.newsprites.append(Sprite(col * 16 + 8, row * 16 + 8, layer * 8, 'block|' + block.id))
-		
+	function spritify_block(col, row, layer) {
+		block = self.modify_block(col, row, layer, None);
+		self.newsprites.add(new Sprite(col * 16 + 8, row * 16 + 8, layer * 8, 'block|' + block.id));
+	}
 	
-	def modify_block(self, col, row, layer, type):
-		self.coils = None
-		output = None
-		z = 0
-		stack = self.grid[col][row]
-		newstack = []
-		layer_bottom = layer
-		layer_top = layer
-		if type != None:
-			layer_top += type.height - 1
+	function modify_block(col, row, layer, type) {
+		self.coils = None;
+		output = None;
+		z = 0;
+		stack = self.grid[col][row];
+		newstack = [];
+		layer_bottom = layer;
+		layer_top = layer;
+		if (type != None) {
+			layer_top += type.height - 1;
+		}
 		
-		for item in stack:
-			if item == None:
-				newstack.append(None)
-				z += 1
-			else:
-				
-				if z >= layer_bottom and z <= layer_top:
-					if z == layer_bottom:
-						output = item
-					newstack += [None] * item.height
-				else:
-					newstack.append(item)
-				z += item.height
-		while z <= layer_top:
-			newstack.append(None)
-			z += 1
+		for (item : stack) {
+			if (item == None) {
+				newstack.add(None);
+				z += 1;
+			} else {
+				if (z >= layer_bottom && z <= layer_top) {
+					if (z == layer_bottom) {
+						output = item;
+					}
+					newstack += [None] * item.height;
+				} else {
+					newstack.add(item);
+				}
+				z += item.height;
+			}
+		}
+		while (z <= layer_top) {
+			newstack.add(None);
+			z += 1;
+		}
 		// at this point newstack has all None's where the modification will go
 		
-		i = 0
-		z = 0
-		while i < len(newstack):
-			item = newstack[i]
-			if z == layer_bottom:
-				newstack[i] = type
-				for q in range(layer_top - layer_bottom):
-					newstack.pop(i + 1)
-				break
-			if item == None:
-				z += 1
-			else:
-				z += item.height
-			i += 1
+		i = 0;
+		z = 0;
+		while (i < len(newstack)) {
+			item = newstack[i];
+			if (z == layer_bottom) {
+				newstack[i] = type;
+				for (q : py_range(layer_top - layer_bottom)) {
+					newstack.removeAt(i + 1);
+				}
+				break;
+			}
+			if (item == None) {
+				z += 1;
+			} else {
+				z += item.height;
+			}
+			i += 1;
+		}
 		
-		teleported = False
-		if type != None and type.pushable:
-			# check to see if we just placed a pushable block onto a teleporter platform
-			t = self.get_tile_at(col, row, layer - 1)
-			if t != None and t.teleporter:
-				d = self.teleporters.get_destination(col, row, layer - 1)
-				if d == 'blocked':
-					self.announce_teleporter_blocked()
-				elif d == None:
-					pass
-				else:
-					teleported = True
-					source = (col, row, layer)
-					self.teleporters.teleport_block(type, source, d)
+		teleported = False;
+		if (type != None && type.pushable) {
+			// check to see if we just placed a pushable block onto a teleporter platform
+			t = self.get_tile_at(col, row, layer - 1);
+			if (t != None && t.teleporter) {
+				d = self.teleporters.get_destination(col, row, layer - 1);
+				if (d == 'blocked') {
+					self.announce_teleporter_blocked();
+				} else if (d == None) {
+					// pass
+				} else {
+					teleported = True;
+					source = [col, row, layer];
+					self.teleporters.teleport_block(type, source, d);
+				}
+			}
+		}
 		
-		if not teleported:
-			copy_array(stack, newstack)
-			self.canonicalize_stack(col, row)
+		if (!teleported) {
+			copy_array(stack, newstack);
+			self.canonicalize_stack(col, row);
+		}
 		
-		return output
+		return output;
+	}
 	
-	def announce_teleporter_blocked(self):
-		pass
+	function announce_teleporter_blocked() {
 		// TODO: play sound
+	}
 	
-	def canonicalize_stack(self, col, row):
-		stack = self.grid[col][row]
-		lookup = []
-		i = 0
-		for item in stack:
-			if item == None:
-				lookup.append(None)
-			else:
-				lookup += [i] * item.height
-			i += 1
-		copy_array(self.cellLookup[col][row], lookup)
+	function canonicalize_stack(col, row) {
+		stack = self.grid[col][row];
+		lookup = [];
+		i = 0;
+		for (item : stack) {
+			if (item == None) {
+				lookup.add(None);
+			} else {
+				lookup += [i] * item.height;
+			}
+			i += 1;
+		}
+		copy_array(self.cellLookup[col][row], lookup);
+	}
 	
-	def update(self, sprites, sprite_additions, sprite_removals):
-		created = None
-		if self.sprite_introducer != None:
-			created = self.sprite_introducer(self, self.counter)
+	function update(sprites, sprite_additions, sprite_removals) {
+		created = None;
+		if (self.sprite_introducer != None) {
+			created = self.sprite_introducer(self, self.counter);
+		}
 		
-		if created != None:
-			for c in created:
-				col = Math.floor(c.x // 16)
-				row = Math.floor(c.y // 16)
-				layer = Math.floor(c.z // 8)
-				c.standingon = self.get_tile_at(col, row, layer - 1)
-				sprite_additions.append(c)
+		if (created != None) {
+			for (c : created) {
+				col = Math.floor(c.x / 16);
+				row = Math.floor(c.y / 16);
+				layer = Math.floor(c.z / 8);
+				c.standingon = self.get_tile_at(col, row, layer - 1);
+				sprite_additions.add(c);
+			}
+		}
 		
-		new_re = []
-		self.moving_platforms.update(sprites, new_re)
-		self.teleporters.update()
+		new_re = [];
+		self.moving_platforms.update(sprites, new_re);
+		self.teleporters.update();
 		
-		for sprite in self.teleporters.get_new_sprites():
-			sprite_additions.append(sprite)
-		for sprite in self.teleporters.get_removed_sprites():
-			sprite_removals.append(sprite)
+		for (sprite : self.teleporters.get_new_sprites()) {
+			sprite_additions.add(sprite);
+		}
+		for (sprite : self.teleporters.get_removed_sprites()) {
+			sprite_removals.add(sprite);
+		}
 		
+		for (re : self.render_exceptions) {
+			re.update();
+			if (!re.expired) {
+				new_re.add(re);
+			}
+		}
+		self.render_exceptions = new_re;
 		
-		for re in self.render_exceptions:
-			re.update()
-			if not re.expired:
-				new_re.append(re)
-		self.render_exceptions = new_re
+		i = 0;
+		while (i < len(self.spritify_counters)) {
+			t = self.spritify_counters[i];
+			if (t[-1] == 0) {
+				self.spritify_counters = self.spritify_counters[:i] + self.spritify_counters[i + 1:];
+				self.spritify_block(t[0], t[1], t[2]);
+			} else {
+				t[-1] -= 1;
+				i += 1;
+			}
+		}
 		
-		i = 0
-		while i < len(self.spritify_counters):
-			t = self.spritify_counters[i]
-			if t[-1] == 0:
-				self.spritify_counters = self.spritify_counters[:i] + self.spritify_counters[i + 1:]
-				self.spritify_block(t[0], t[1], t[2])
-			else:
-				t[-1] -= 1
-				i += 1
-		
-		
-		self.counter += 1
-		
+		self.counter += 1;
+	}
 	
-	def get_moving_platforms(self):
-		return self.moving_platforms
+	function get_moving_platforms() {
+		return self.moving_platforms;
+	}
 	
-	def get_teleporters(self):
-		return self.teleporter_tiles
+	function get_teleporters() {
+		return self.teleporter_tiles;
+	}
+}

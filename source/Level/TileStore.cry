@@ -1,36 +1,46 @@
-class TileStore:
-	def __init__(self):
-		tiles = {}
-		manifest_dir = 'data/tile_manifests'
-		manifests = Resources.directoryList(manifest_dir)
-		for manifest in manifests:
-			if '.svn' in manifest: continue
-			manifest_data = Resources.readText(manifest_dir + '/' + manifest).split('\n')
-			for line in manifest_data:
-				if line != '' and line[0] != '#':
-					cols = line.split('\t')
-					if len(cols) >= 4:
-						id = cols[0]
-						images = cols[1]
-						height = Core.parseInt(cols[2])
-						flags = cols[3]
-						tiles[id] = Tile(id, images, height, flags)
-		self.tiles = tiles
+class TileStore {
+	static field INSTANCE = null;
 	
-	def get_tile(self, id):
-		return self.tiles[id]
-					
-	def get_all_block_tiles(self):
-		output = []
-		for k in self.tiles.keys():
-			if self.tiles[k].pushable:
-				output.append(k)
-		return output
+	constructor() {
+		tiles = {};
+		manifest_dir = 'data/tile_manifests';
+		manifests = Resources.directoryList(manifest_dir);
+		for (manifest : manifests) {
+			manifest_data = Resources.readText(manifest_dir + '/' + manifest).split('\n');
+			for (line : manifest_data) {
+				if (line != '' && line[0] != '#') {
+					cols = line.split('\t');
+					if (len(cols) >= 4) {
+						id = cols[0];
+						images = cols[1];
+						height = Core.parseInt(cols[2]) ?? 0;
+						flags = cols[3];
+						tiles[id] = new Tile(id, images, height, flags);
+					}
+				}
+			}
+		}
+		self.tiles = tiles;
+	}
+	
+	function get_tile(id) {
+		return self.tiles[id];
+	}
+	
+	function get_all_block_tiles() {
+		output = [];
+		for (k : self.tiles.keys()) {
+			if (self.tiles[k].pushable) {
+				output.add(k);
+			}
+		}
+		return output;
+	}
+}
 
-
-_tile_store = None
-def get_tile_store():
-	global _tile_store
-	if _tile_store == None:
-		_tile_store = TileStore()
-	return _tile_store
+function get_tile_store() {
+	if (TileStore.INSTANCE == None) {
+		TileStore.INSTANCE = new TileStore();
+	}
+	return TileStore.INSTANCE;
+}

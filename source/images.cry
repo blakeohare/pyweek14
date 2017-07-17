@@ -1,5 +1,5 @@
 
-class ImagesHelpelr {
+class ImagesHelper {
 	static field _image_library = {};
 	static field _imageSheet = null;
 }
