@@ -40,27 +40,27 @@ function get_startup_dialog(play_scene) {
 
 class TextPrinter {
 	constructor(text, speaker) {
-		self.text = text;
-		self.counter = 0;
-		self.speaker= speaker;
+		this.text = text;
+		this.counter = 0;
+		this.speaker= speaker;
 	}
 		
 	function get_next_char(pressed) {
-		self.counter += 1;
+		this.counter += 1;
 		t = '';
-		if (len(self.text) == 0) {
+		if (len(this.text) == 0) {
 			return None;
 		}
-		amt = (pressed && self.counter > 6) ? 20 : 1;
-		t = self.text[:amt];
-		self.text = self.text[amt:];
-		if (self.counter % 6 == 1) {
+		amt = (pressed && this.counter > 6) ? 20 : 1;
+		t = this.text[:amt];
+		this.text = this.text[amt:];
+		if (this.counter % 6 == 1) {
 			sound = None;
-			if (self.speaker == 's') {
+			if (this.speaker == 's') {
 				sound = 'talkbloop';
-			} else if ('jf'.contains(self.speaker)) {
+			} else if ('jf'.contains(this.speaker)) {
 				sound = 'talkblooplow';
-			} else if (self.speaker == 'p') {
+			} else if (this.speaker == 'p') {
 				sound = 'talkbloophigh';
 			}
 			
@@ -74,34 +74,34 @@ class TextPrinter {
 
 class DialogPause {
 	constructor(amount) {
-		self.remaining = amount;
+		this.remaining = amount;
 	}
 	
 	function keep_pausing() {
-		self.remaining -= 1;
-		return self.remaining >= 0;
+		this.remaining -= 1;
+		return this.remaining >= 0;
 	}
 }
 
 class DialogScene {
 	constructor(playscene, id) {
-		self.id = id;
-		self.next = self;
-		self.wait_counter = id == 'hologram' ? 240 : 0;
-		self.phase_duration = 60;
-		self.playscene = playscene;
-		self.initialize_script(id);
-		self.text_printer = None;
-		self.prompt_for_continue = False;
-		self.pauser = None;
-		self.i = 0;
-		self.phase = 'init';
-		self.phase_counter = 0;
-		self.active_portrait = None;
-		self.buffer = [];
-		self.clear_on_continue = False;
-		self.fast_speed = False;
-		self.colors = {
+		this.id = id;
+		this.next = this;
+		this.wait_counter = id == 'hologram' ? 240 : 0;
+		this.phase_duration = 60;
+		this.playscene = playscene;
+		this.initialize_script(id);
+		this.text_printer = None;
+		this.prompt_for_continue = False;
+		this.pauser = None;
+		this.i = 0;
+		this.phase = 'init';
+		this.phase_counter = 0;
+		this.active_portrait = None;
+		this.buffer = [];
+		this.clear_on_continue = False;
+		this.fast_speed = False;
+		this.colors = {
 			'w': [255, 255, 255],
 			's': [220, 180, 140],
 			'j': [140, 180, 230],
@@ -109,20 +109,20 @@ class DialogScene {
 			'p': [255, 120, 180]
 		};
 		
-		self.buffer_clear_counter = -42;
-		self.frame_yielding = -42;
-		self.buffer_shift_offset = 0;
+		this.buffer_clear_counter = -42;
+		this.frame_yielding = -42;
+		this.buffer_shift_offset = 0;
 	}
 	
 	function initialize_script(id) {
 		file = Resources.readText('data/dialog/' + id + '.txt');
-		self.lines = file.split('\n');
-		self.labels = {};
+		this.lines = file.split('\n');
+		this.labels = {};
 		i = 0;
-		while (i < len(self.lines)) {
-			parts = self.lines[i].split('|');
+		while (i < len(this.lines)) {
+			parts = this.lines[i].split('|');
 			if (parts[0] == 'label' && len(parts) == 2) {
-				self.labels[parts[1]] = i;
+				this.labels[parts[1]] = i;
 			}
 			i += 1;
 		}
@@ -130,7 +130,7 @@ class DialogScene {
 	
 	function process_input(events, pressed, axes, mouse) {
 		pushed = False;
-		self.fast_speed = False;
+		this.fast_speed = False;
 		for (event : events) {
 			if (event.down && ['start', 'spray', 'walkie'].contains(event.key)) {
 				pushed = True;
@@ -140,97 +140,97 @@ class DialogScene {
 		
 		for (j : ['start', 'spray', 'walkie']) {
 			if (pressed[j]) {
-				self.fast_speed = True;
+				this.fast_speed = True;
 			}
 		}
 		
-		if (pushed && self.prompt_for_continue) {
+		if (pushed && this.prompt_for_continue) {
 			// TODO: this can be improved so it isn't quite as jumpy
 			// should also flush all text_printer queues
-			self.prompt_for_continue = False;
-			if (self.clear_on_continue) {
-				self.buffer = [];
+			this.prompt_for_continue = False;
+			if (this.clear_on_continue) {
+				this.buffer = [];
 			}
 		}
 	}
 	
 	function update(counter) {
-		if (self.wait_counter > 0) {
-			self.playscene.update(counter);
-			self.wait_counter -= 1;
+		if (this.wait_counter > 0) {
+			this.playscene.update(counter);
+			this.wait_counter -= 1;
 			return;
 		}
-		self.phase_counter += 1;
-		self.frame_yielding -= 1;
+		this.phase_counter += 1;
+		this.frame_yielding -= 1;
 		
-		if (self.frame_yielding >= 0) {
-			for (s : self.playscene.sprites) {
+		if (this.frame_yielding >= 0) {
+			for (s : this.playscene.sprites) {
 				if (s.issupervisor) {
 					// TODO: figure out why this empty block was here
 				}
 			}
-			self.playscene.update(counter);
+			this.playscene.update(counter);
 		}
 		
 		keep_going = True;
 		while (keep_going) {
-			if (self.phase == 'init') {
-				if (self.phase_counter == self.phase_duration) {
-					self.phase = 'dialog';
+			if (this.phase == 'init') {
+				if (this.phase_counter == this.phase_duration) {
+					this.phase = 'dialog';
 				}
 				keep_going = False;
-			} else if (self.phase == 'end') {
-				if (self.phase_counter == self.phase_duration) {
-					self.next = self.playscene;
-					self.next.next = self.next;
+			} else if (this.phase == 'end') {
+				if (this.phase_counter == this.phase_duration) {
+					this.next = this.playscene;
+					this.next.next = this.next;
 				}
 				keep_going = False;
-			} else if (self.prompt_for_continue) {
+			} else if (this.prompt_for_continue) {
 				keep_going = False;
-			} else if (self.text_printer != None) {
-				n = self.text_printer.get_next_char(self.fast_speed);
+			} else if (this.text_printer != None) {
+				n = this.text_printer.get_next_char(this.fast_speed);
 				if (n == None) {
-					self.text_printer = None;
+					this.text_printer = None;
 				} else {
-					self.buffer[-1][0] += n;
+					this.buffer[-1][0] += n;
 					keep_going = False;
 				}
-			} else if (self.buffer_clear_counter > 0) {
-				self.buffer_clear_counter -= 1;
-				if (self.buffer_clear_counter == 0) {
-					self.buffer = self.buffer[1:];
+			} else if (this.buffer_clear_counter > 0) {
+				this.buffer_clear_counter -= 1;
+				if (this.buffer_clear_counter == 0) {
+					this.buffer = this.buffer[1:];
 				}
 				keep_going = False;
-			} else if (self.pauser != None) {
-				if (!self.pauser.keep_pausing()) {
-					self.pauser = None;
+			} else if (this.pauser != None) {
+				if (!this.pauser.keep_pausing()) {
+					this.pauser = None;
 				}
 				keep_going = False;
 			} else {
-				if (self.i < len(self.lines)) {
-					line = self.lines[self.i].trim();
+				if (this.i < len(this.lines)) {
+					line = this.lines[this.i].trim();
 					if (len(line) > 0) {
 						parts = line.split('|');
 						command = parts[0];
 						if (command == 'i') {
-							self.change_portrait(parts[1]);
+							this.change_portrait(parts[1]);
 						} else if (command == 'r') {
-							self.change_portrait(None);
+							this.change_portrait(None);
 						} else if (command == 'p') {
-							self.pauser = new DialogPause(Core.parseInt(parts[1]) ?? 0);
+							this.pauser = new DialogPause(Core.parseInt(parts[1]) ?? 0);
 						} else if (command == 's') {
-							if (len(self.buffer) == 3) {
-								self.buffer_clear_counter = 10;
+							if (len(this.buffer) == 3) {
+								this.buffer_clear_counter = 10;
 								keep_going = False;
-								self.i -= 1;
+								this.i -= 1;
 							} else {
-								color = self.colors[parts[1]];
+								color = this.colors[parts[1]];
 								text = parts[2];
-								self.buffer.add(['', color]);
-								self.text_printer = new TextPrinter(text, parts[1]);
+								this.buffer.add(['', color]);
+								this.text_printer = new TextPrinter(text, parts[1]);
 							}
 						} else if (command == 'credits') {
-							self.next = new TransitionScene(self, new CreditsScene(False));
+							this.next = new TransitionScene(this, new CreditsScene(False));
 							keep_going = False;
 						} else if (command == 'music') {
 							get_jukebox().ensure_current_song(parts[1]);
@@ -239,35 +239,35 @@ class DialogScene {
 								play_sound(parts[1]);
 							}
 						} else if (command == 'c') {
-							self.prompt_for_continue = True;
-							self.clear_on_continue = False;
+							this.prompt_for_continue = True;
+							this.clear_on_continue = False;
 							keep_going = False;
 						} else if (command == 'cc') {
-							self.prompt_for_continue = True;
-							self.clear_on_continue = True;
+							this.prompt_for_continue = True;
+							this.clear_on_continue = True;
 						} else if (command == 'h') {
-							hack_function = get_hacks_for_level(self.playscene.level.name, 'dialog_hack')[parts[1]];
-							hack_function(self.playscene, self.playscene.level);
+							hack_function = get_hacks_for_level(this.playscene.level.name, 'dialog_hack')[parts[1]];
+							hack_function(this.playscene, this.playscene.level);
 						} else if (command == 'y') {
-							self.frame_yielding = Core.parseInt(parts[1]) ?? 0;
+							this.frame_yielding = Core.parseInt(parts[1]) ?? 0;
 						} else if (command == 'goto') {
-							self.do_goto(parts[1]);
+							this.do_goto(parts[1]);
 						} else if (command == 'if') {
 							var = parts[1];
 							operator = parts[2];
 							value = Core.parseInt(parts[3]) ?? 0;
 							label = parts[4];
-							self.do_if(operator, var, value, label);
+							this.do_if(operator, var, value, label);
 						} else if (command == 'end') {
-							self.phase_counter = 0;
-							self.phase = 'end';
+							this.phase_counter = 0;
+							this.phase = 'end';
 						}
 					}
 					
 					this.i += 1;
 				} else {
-					self.phase = 'end';
-					self.phase_counter = 0;
+					this.phase = 'end';
+					this.phase_counter = 0;
 					keep_going = False;
 				}
 			}
@@ -276,14 +276,14 @@ class DialogScene {
 	
 	function change_portrait(id) {
 		if (id == None) {
-			self.active_portrait = None;
+			this.active_portrait = None;
 		} else {
-			self.active_portrait = get_image('portraits/' + id + '.png');
+			this.active_portrait = get_image('portraits/' + id + '.png');
 		}
 	}
 	
 	function do_goto(label) {
-		line = self.labels.get(label);
+		line = this.labels.get(label);
 		if (line != None) {
 			i = line;
 		}
@@ -324,17 +324,17 @@ class DialogScene {
 		width = 300;
 		height = 100;
 		if (phase == 'end') {
-			counter = self.phase_duration - counter;
+			counter = this.phase_duration - counter;
 		}
 		
 		if (phase == 'dialog') {
 			// pass
 		} else {
-			half = self.phase_duration / 2;
-			if (counter < self.phase_duration / 2) {
+			half = this.phase_duration / 2;
+			if (counter < this.phase_duration / 2) {
 				height = 10;
 			} else {
-				height = 90 * (counter - self.phase_duration / 2) / (self.phase_duration / 2) + 10;
+				height = 90 * (counter - this.phase_duration / 2) / (this.phase_duration / 2) + 10;
 			}
 			if (counter < half) {
 				width = counter * 300 / half;
@@ -354,15 +354,15 @@ class DialogScene {
 		
 	function render(screen, counter) {
 		
-		self.playscene.render(screen, counter);
+		this.playscene.render(screen, counter);
 		
-		if (self.wait_counter > 0) return;
+		if (this.wait_counter > 0) return;
 		
-		self.render_box(screen, self.phase, self.phase_counter);
+		this.render_box(screen, this.phase, this.phase_counter);
 		
-		if (self.phase == 'dialog') {
-			if (self.active_portrait != None) {
-				self.active_portrait.draw(10, 10);
+		if (this.phase == 'dialog') {
+			if (this.active_portrait != None) {
+				this.active_portrait.draw(10, 10);
 			}
 			
 			font_size = 18;
@@ -372,11 +372,11 @@ class DialogScene {
 			
 			cursor_height = y + line_height * 3;
 			
-			if (self.buffer_clear_counter > 0) {
-				y -= (10 - self.buffer_clear_counter) * line_height / 10;
+			if (this.buffer_clear_counter > 0) {
+				y -= (10 - this.buffer_clear_counter) * line_height / 10;
 			}
 			
-			for (line : self.buffer) {
+			for (line : this.buffer) {
 				text = line[0];
 				color = line[1];
 				last_color = color;
@@ -385,7 +385,7 @@ class DialogScene {
 				y += line_height;
 			}
 			
-			if (self.prompt_for_continue && (counter / 10) % 2 == 0) {
+			if (this.prompt_for_continue && (counter / 10) % 2 == 0) {
 				y = cursor_height;
 				Graphics2D.Draw.triangle(300, y, 308, y, 304, y + 5, last_color[0], last_color[1], last_color[2]);
 			}

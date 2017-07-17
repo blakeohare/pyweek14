@@ -1,10 +1,10 @@
 class CreditsScene {
 	constructor(canSkip) {
 		this.next = this;
-		self.canSkip = canSkip;
-		self.speed = .7;
-		self.counter = 0;
-		self.things = [
+		this.canSkip = canSkip;
+		this.speed = .7;
+		this.counter = 0;
+		this.things = [
 			[None, [' ', "Credits"], None],
 			[None, ["Programming", "Blake O'Hare"], 'blake'],
 			['spears', ["Level Art", "Angel McLaughlin"], None],
@@ -16,17 +16,17 @@ class CreditsScene {
 			[None, [" ", "Thank you for playing."], None]
 		];
 		
-		if (!self.canSkip) {
+		if (!this.canSkip) {
 			r = get_persisted_forever_int('research');
 			r += get_persisted_session_int('research');
-			self.things.add(
+			this.things.add(
 				[None, [" ", "Research papers collected: " + str(r) + " out of 36"], None]
 			);
 		}
 		
 		i = 0;
-		while (i < len(self.things)) {
-			thing = self.things[i];
+		while (i < len(this.things)) {
+			thing = this.things[i];
 			left = thing[0];
 			right = thing[2];
 			if (left != None) {
@@ -36,8 +36,8 @@ class CreditsScene {
 				right = get_image('us/' + right + '.png');
 				right = right.flip(True, False);
 			}
-			self.things[i][0] = left;
-			self.things[i][2] = right;
+			this.things[i][0] = left;
+			this.things[i][2] = right;
 			
 			i += 1;
 		}
@@ -47,8 +47,8 @@ class CreditsScene {
 		for (event : events) {
 			if (event.down) {
 				if (event.key == 'start' || event.key == 'spray' || event.key == 'walkie') {
-					if (self.canskip) {
-						self.next = new TransitionScene(this, new MainMenuScene());
+					if (this.canskip) {
+						this.next = new TransitionScene(this, new MainMenuScene());
 					}
 				}
 			}
@@ -57,14 +57,14 @@ class CreditsScene {
 	
 	function update(counter) {
 		get_jukebox().ensure_current_song('stringtheory');
-		self.counter += 1;
+		this.counter += 1;
 	}
 	
 	function render(screen, counter) {
 		
-		y = 350 - Math.floor(self.counter * self.speed);
+		y = 350 - Math.floor(this.counter * this.speed);
 		
-		for (item : self.things) {
+		for (item : this.things) {
 			left = item[0];
 			right = item[2];
 			top = get_text(item[1][0], 14, [123, 123, 123]);

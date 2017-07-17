@@ -1,9 +1,9 @@
 class PushTracker {
 	constructor(sprite) {
-		self.push_counter = -1;
-		self.max_push_counter = 25;
-		self.push_target = None;
-		self.owner = sprite;
+		this.push_counter = -1;
+		this.max_push_counter = 25;
+		this.push_target = None;
+		this.owner = sprite;
 	}
 }
 
@@ -13,38 +13,38 @@ function sprite_z_key(sprite) {
 
 class Level {
 	constructor(name, playscene) {
-		self.name = name;
-		self.initialize();
-		self.push_trackers = [];
-		self.newsprites = [];
-		self.circuitry = new Circuits(self);
-		self.counter = 0;
-		self.render_exceptions = [];
-		self.complete = False;
-		self.spritify_counters = [];
-		self.moving_platforms = new MovingPlatformManager(self);
-		self.teleporters = new TeleporterManager(self);
-		self.switch_manager = new SwitchManager(self, playscene);
-		self.sprite_introducer = get_hacks_for_level(name, 'introduce_sprites');
-		self.hologram_manager = new HologramManager(self);
-		self.coil_manager = new CoilManager(self);
-		self.counter = 0;
-		self.hologram_pads = [];
+		this.name = name;
+		this.initialize();
+		this.push_trackers = [];
+		this.newsprites = [];
+		this.circuitry = new Circuits(this);
+		this.counter = 0;
+		this.render_exceptions = [];
+		this.complete = False;
+		this.spritify_counters = [];
+		this.moving_platforms = new MovingPlatformManager(this);
+		this.teleporters = new TeleporterManager(this);
+		this.switch_manager = new SwitchManager(this, playscene);
+		this.sprite_introducer = get_hacks_for_level(name, 'introduce_sprites');
+		this.hologram_manager = new HologramManager(this);
+		this.coil_manager = new CoilManager(this);
+		this.counter = 0;
+		this.hologram_pads = [];
 	}
 	
 	function get_push_tracker(sprite) {
-		for (p : self.push_trackers) {
+		for (p : this.push_trackers) {
 			if (p.owner == sprite) {
 				return p;
 			}
 		}
 		p = new PushTracker(sprite);
-		self.push_trackers.add(p);
+		this.push_trackers.add(p);
 		return p;
 	}
 	
 	function get_hologram_pads() {
-		return self.hologram_pads;
+		return this.hologram_pads;
 	}
 	
 	function spray_from(sprites) {
@@ -95,9 +95,9 @@ class Level {
 				col += 1;
 			}
 			
-			maybe_goo = self.get_tile_at(col, row, layer);
+			maybe_goo = this.get_tile_at(col, row, layer);
 			if (maybe_goo != None && maybe_goo.is_goo) {
-				self.modify_block(col, row, layer, None);
+				this.modify_block(col, row, layer, None);
 				success = True;
 			}
 		}
@@ -106,14 +106,14 @@ class Level {
 	}
 	
 	function get_new_sprites() {
-		output = self.newsprites;
-		self.newsprites = [];
+		output = this.newsprites;
+		this.newsprites = [];
 		return output;
 	}
 	
 	function initialize() {
-		self.rats = [];
-		lines = Resources.readText('data/levels/' + self.name + '.txt').split('\n');
+		this.rats = [];
+		lines = Resources.readText('data/levels/' + this.name + '.txt').split('\n');
 		values = {};
 		for (line : lines) {
 			line = line.trim();
@@ -126,12 +126,12 @@ class Level {
 				}
 			}
 		}
-		self.values = values;
-		self.width = Core.parseInt(self.values['width']);
-		self.height = Core.parseInt(self.values['height']);
-		self.initialize_tiles(self.values['tiles'].split(','));
+		this.values = values;
+		this.width = Core.parseInt(this.values['width']);
+		this.height = Core.parseInt(this.values['height']);
+		this.initialize_tiles(this.values['tiles'].split(','));
 		
-		self.initialize_switch_actions(values);
+		this.initialize_switch_actions(values);
 	}
 	
 	function initialize_switch_actions(values) {
@@ -153,14 +153,14 @@ class Level {
 			}
 		}
 		
-		self.pswitches = pswitches;
-		self.nswitches = nswitches;
+		this.pswitches = pswitches;
+		this.nswitches = nswitches;
 	}
 	
 	function activate_switch(name, is_positive) {
-		lookup = self.nswitches;
+		lookup = this.nswitches;
 		if (is_positive) {
-			lookup = self.pswitches;
+			lookup = this.pswitches;
 		}
 		ts = get_tile_store();
 		for (change : lookup.get(name).split('%')) {
@@ -170,25 +170,25 @@ class Level {
 			layer = Math.floor(parts[2]);
 			id = parts[3];
 			tile = id == '0' ? null : ts.get_tile(id);
-			self.modify_block(col, row, layer, tile);
+			this.modify_block(col, row, layer, tile);
 		}
 	}
 	
 	function get_switches() {
-		return self.switches;
+		return this.switches;
 	}
 	
 	function get_coils() {
-		if (self.coils == None) {
-			self.coils = [];
-			stacks = self.grid;
-			lookups = self.cellLookup;
+		if (this.coils == None) {
+			this.coils = [];
+			stacks = this.grid;
+			lookups = this.cellLookup;
 			
 			// TODO: for loop
 			y = 0;
-			while (y < self.height) {
+			while (y < this.height) {
 				x = 0;
-				while (x < self.width) {
+				while (x < this.width) {
 					z = 0;
 					stack = stacks[x][y];
 					stacklen = len(stack);
@@ -200,7 +200,7 @@ class Level {
 							while (z < len(lookup)) {
 								t = lookup[z];
 								if (t != None && stack[t].teslaon) {
-									self.coils.add([x, y, z]);
+									this.coils.add([x, y, z]);
 								}
 								z += 1;
 							}
@@ -213,19 +213,19 @@ class Level {
 				y += 1;
 			}
 		}
-		return self.coils;
+		return this.coils;
 	}
 	
 	function initialize_tiles(tiles) {
-		width = self.width;
-		height = self.height;
-		grid = make_grid(self.width, self.height, None);
-		references = make_grid(self.width, self.height, None);
+		width = this.width;
+		height = this.height;
+		grid = make_grid(this.width, this.height, None);
+		references = make_grid(this.width, this.height, None);
 		moving_platforms = [];
-		self.switches = [];
-		self.coils = [];
-		self.hologram_pads = [];
-		self.teleporter_tiles = [];
+		this.switches = [];
+		this.coils = [];
+		this.hologram_pads = [];
+		this.teleporter_tiles = [];
 		tilestore = get_tile_store();
 		i = 0;
 		for (tile : tiles) {
@@ -252,19 +252,19 @@ class Level {
 							moving_platforms.add([x, y, len(referenceStack)]);
 						}
 						if (tid == 't1' || tid == 't2' || tid == 't3') {
-							self.teleporter_tiles.add([x, y, len(referenceStack), t.id]);
+							this.teleporter_tiles.add([x, y, len(referenceStack), t.id]);
 						}
 						
 						if (t.isswitch) {
-							self.switches.add([x, y, len(referenceStack), t]);
+							this.switches.add([x, y, len(referenceStack), t]);
 						}
 						
 						if (t.teslaon) {
-							self.coils.add([x, y, len(referenceStack)]);
+							this.coils.add([x, y, len(referenceStack)]);
 						}
 						
 						if (t.isholopad) {
-							self.hologram_pads.add([x, y, len(referenceStack), tid == 'clone']);
+							this.hologram_pads.add([x, y, len(referenceStack), tid == 'clone']);
 						}
 						
 						// TODO: switch
@@ -279,7 +279,7 @@ class Level {
 								dir = 'nw';
 							}
 							sprite = new Sprite(x * 16 + 8, y * 16 + 8, len(tileStack) * 8, 'rat|' + dir);
-							self.rats.add(sprite);
+							this.rats.add(sprite);
 							sprite.standingon = tileStack[-1]; // This will explode if a rat is placed on the bottom row of the map
 							
 							referenceStack.add(None);
@@ -301,9 +301,9 @@ class Level {
 			
 			i += 1;
 		}
-		self.grid = grid;
-		self.cellLookup = references;
-		self.moving_platforms = moving_platforms;
+		this.grid = grid;
+		this.cellLookup = references;
+		this.moving_platforms = moving_platforms;
 	}
 		
 	function get_tile_at(x, y=None, z = None) {
@@ -313,7 +313,7 @@ class Level {
 			x = x[0];
 		}
 		if (z < 0) return None;
-		lookup = self.cellLookup[x][y];
+		lookup = this.cellLookup[x][y];
 		if (len(lookup) <= z) {
 			return None;
 		}
@@ -321,7 +321,7 @@ class Level {
 		if (index == None) {
 			return None;
 		}
-		return self.grid[x][y][index];
+		return this.grid[x][y][index];
 	}
 	
 	function get_platform_below(col, row, z, blocking_only) {
@@ -333,8 +333,8 @@ class Level {
 		// Alternatively, pushed blocks can be part of the 
 		// primary model and will be updated when they move
 		// around.
-		refStack = self.cellLookup[col][row];
-		tileStack = self.grid[col][row];
+		refStack = this.cellLookup[col][row];
+		tileStack = this.grid[col][row];
 		i = Math.min(len(refStack) - 1, z / 8);
 		
 		while (i >= 0) {
@@ -342,7 +342,7 @@ class Level {
 			if (t == None) {
 				// pass
 			} else {
-				tile = self.grid[col][row][t];
+				tile = this.grid[col][row][t];
 				if (!blocking_only || tile.blocking) {
 					return [(i + 1) * 8, tile];
 				}
@@ -352,13 +352,13 @@ class Level {
 	}
 	
 	function render(screen, xOffset, yOffset, sprites, render_counter) {
-		self.counter += 1;
-		self.allsprites = sprites;
-		self.any_res = False;
-		self.re_blits = {};
+		this.counter += 1;
+		this.allsprites = sprites;
+		this.any_res = False;
+		this.re_blits = {};
 		
-		width = self.width;
-		height = self.height;
+		width = this.width;
+		height = this.height;
 		sprite_lookup = {};
 		for (sprite : sprites) {
 			x = Math.floor(sprite.x / 16);
@@ -375,7 +375,7 @@ class Level {
 		
 		re_on_keys = {};
 		re_off_keys = {};
-		for (re : self.render_exceptions) {
+		for (re : this.render_exceptions) {
 			re_on_keys[re.on_key] = re_on_keys.get(re.on_key, []);
 			re_on_keys[re.on_key].add(re);
 			re_off_keys[re.off_key] = re_off_keys.get(re.off_key, []);
@@ -408,7 +408,7 @@ class Level {
 						re_off = re_off.clone();
 					}
 					
-					self.render_tile_stack(screen, col, row, xOffset, yOffset, render_counter, sprite_list, re_on, re_off);
+					this.render_tile_stack(screen, col, row, xOffset, yOffset, render_counter, sprite_list, re_on, re_off);
 				}
 				row += 1;
 				col -= 1;
@@ -428,16 +428,16 @@ class Level {
 					layer = Math.floor(sprite.z / 8);
 					k = col + '^' + row;
 					r = [layer + sprite.height, q];
-					if (self.re_blits.get(k) == None) {
-						self.re_blits[k] = [r];
+					if (this.re_blits.get(k) == None) {
+						this.re_blits[k] = [r];
 					} else {
-						if (self.re_blits[k][-1][0] < r[0]) {
-							self.re_blits[k].add(r);
+						if (this.re_blits[k][-1][0] < r[0]) {
+							this.re_blits[k].add(r);
 						} else {
 							i = 0;
-							while (i < len(self.re_blits[k])) {
-								if (self.re_blits[k][i][0] > r[0]) {
-									self.re_blits[k] = self.re_blits[k][:i] + [r] + self.re_blits[k][i:];
+							while (i < len(this.re_blits[k])) {
+								if (this.re_blits[k][i][0] > r[0]) {
+									this.re_blits[k] = this.re_blits[k][:i] + [r] + this.re_blits[k][i:];
 									break;
 								}
 								i += 1;
@@ -455,14 +455,14 @@ class Level {
 		re_block_on = None;
 		re_block_off = None;
 		
-		re_blits = self.re_blits.get((col + 1) + '^' + (row - 1));
+		re_blits = this.re_blits.get((col + 1) + '^' + (row - 1));
 		
 		if (re_on != None) {
 			re_block_on = [];
 			re_sprite_on = [];
 			for (re : re_on) {
 				if (re.is_block) {
-					self.any_res = True;
+					this.any_res = True;
 					re_block_on.add(re);
 				} else {
 					re_sprite_on.add(re);
@@ -475,7 +475,7 @@ class Level {
 			re_sprite_off = [];
 			for (re : re_off) {
 				if (re.is_block) {
-					self.any_res = True;
+					this.any_res = True;
 					re_block_off.add(re);
 				} else {
 					re_sprite_off.add(re);
@@ -485,7 +485,7 @@ class Level {
 		
 		prefix = col + '|' + row + '|';
 		
-		stack = self.grid[col][row];
+		stack = this.grid[col][row];
 			
 		z = 0;
 		x = xOffset + col * 16 - row * 16 - 16;
@@ -526,7 +526,7 @@ class Level {
 								}
 							}
 							
-							self.render_sprite(screen, sprite, xOffset + re_offset[0], yOffset + re_offset[1], render_counter);
+							this.render_sprite(screen, sprite, xOffset + re_offset[0], yOffset + re_offset[1], render_counter);
 						}
 					} else {
 						new_sprites.add(sprite);
@@ -544,7 +544,7 @@ class Level {
 				ydiff = re.do_show[1] - re.dont_show[1];
 				xdiff_pixel = xdiff * 16 - ydiff * 16;
 				ydiff_pixel = xdiff * 8 + ydiff * 8;
-				self.render_sprite(screen, re.tile, _x + xdiff_pixel, _y + ydiff_pixel, render_counter);
+				this.render_sprite(screen, re.tile, _x + xdiff_pixel, _y + ydiff_pixel, render_counter);
 			}
 			
 			if (tile == None) {
@@ -649,7 +649,7 @@ class Level {
 						_y += ydiff_pixel;
 					}
 					
-					self.render_sprite(screen, re.tile, _x, _y, render_counter);
+					this.render_sprite(screen, re.tile, _x, _y, render_counter);
 
 				} else {
 					suppress = False;
@@ -667,7 +667,7 @@ class Level {
 					}
 					
 					if (!suppress) {
-						self.render_sprite(screen, sprite, xOffset, yOffset, render_counter);
+						this.render_sprite(screen, sprite, xOffset, yOffset, render_counter);
 					}
 				}
 			}
@@ -678,12 +678,12 @@ class Level {
 	// has been called.
 	function push_block(sprite, start_col, start_row, end_col, end_row, layer) {
 		play_sound('blockpush');
-		pt = self.get_push_tracker(sprite);
+		pt = this.get_push_tracker(sprite);
 		pt.push_counter = -1;
 		pt.push_target = None;
 		
-		block = self.modify_block(start_col, start_row, layer, None);
-		self.modify_block(end_col, end_row, layer, block);
+		block = this.modify_block(start_col, start_row, layer, None);
+		this.modify_block(end_col, end_row, layer, block);
 		
 		if (start_row == end_row) {
 			if (start_col < end_col) {
@@ -697,14 +697,14 @@ class Level {
 			dir = 'NE';
 		}
 		
-		self.render_exceptions.add(new RenderException([start_col, start_row, layer], dir, block, True));
+		this.render_exceptions.add(new RenderException([start_col, start_row, layer], dir, block, True));
 		
 		below_layer = layer - 1;
 		
-		was_standing_on = self.get_tile_at(start_col, start_row, below_layer);
+		was_standing_on = this.get_tile_at(start_col, start_row, below_layer);
 		
-		target_lookup = self.cellLookup[end_col][end_row];
-		stack = self.grid[end_col][end_row];
+		target_lookup = this.cellLookup[end_col][end_row];
+		stack = this.grid[end_col][end_row];
 		should_spritify = False;
 		if (below_layer < len(target_lookup)) {
 			standingon = target_lookup[below_layer];
@@ -715,21 +715,21 @@ class Level {
 				if (!standingon.blocking) {
 					should_spritify = True;
 				} else {
-					if (standingon.id == 'po' && block.id == '46' && self.circuitry.is_charged(end_col, end_row, below_layer)) {
+					if (standingon.id == 'po' && block.id == '46' && this.circuitry.is_charged(end_col, end_row, below_layer)) {
 						play_sound('battery_charge');
-						self.modify_block(end_col, end_row, layer, get_tile_store().get_tile('45'));
+						this.modify_block(end_col, end_row, layer, get_tile_store().get_tile('45'));
 					}
 					if (standingon.id == 'pi') {
 						if (block.id == '45') {
 							play_sound('electricity_flows');
-							self.circuitry.refresh_charges();
+							this.circuitry.refresh_charges();
 						}
 					}
 					
 					if (was_standing_on != None && was_standing_on.id == 'pi' && block.id == '45') {
 						play_sound('battery_deplete');
-						self.modify_block(end_col, end_row, layer, get_tile_store().get_tile('46'));
-						self.circuitry.refresh_charges();
+						this.modify_block(end_col, end_row, layer, get_tile_store().get_tile('46'));
+						this.circuitry.refresh_charges();
 					}
 				}
 			}
@@ -738,20 +738,20 @@ class Level {
 		}
 		
 		if (should_spritify) {
-			self.spritify_counters.add([end_col, end_row, layer, 5]);
+			this.spritify_counters.add([end_col, end_row, layer, 5]);
 		}
 	}
 	
 	function spritify_block(col, row, layer) {
-		block = self.modify_block(col, row, layer, None);
-		self.newsprites.add(new Sprite(col * 16 + 8, row * 16 + 8, layer * 8, 'block|' + block.id));
+		block = this.modify_block(col, row, layer, None);
+		this.newsprites.add(new Sprite(col * 16 + 8, row * 16 + 8, layer * 8, 'block|' + block.id));
 	}
 	
 	function modify_block(col, row, layer, type) {
-		self.coils = None;
+		this.coils = None;
 		output = None;
 		z = 0;
-		stack = self.grid[col][row];
+		stack = this.grid[col][row];
 		newstack = [];
 		layer_bottom = layer;
 		layer_top = layer;
@@ -803,24 +803,24 @@ class Level {
 		teleported = False;
 		if (type != None && type.pushable) {
 			// check to see if we just placed a pushable block onto a teleporter platform
-			t = self.get_tile_at(col, row, layer - 1);
+			t = this.get_tile_at(col, row, layer - 1);
 			if (t != None && t.teleporter) {
-				d = self.teleporters.get_destination(col, row, layer - 1);
+				d = this.teleporters.get_destination(col, row, layer - 1);
 				if (d == 'blocked') {
-					self.announce_teleporter_blocked();
+					this.announce_teleporter_blocked();
 				} else if (d == None) {
 					// pass
 				} else {
 					teleported = True;
 					source = [col, row, layer];
-					self.teleporters.teleport_block(type, source, d);
+					this.teleporters.teleport_block(type, source, d);
 				}
 			}
 		}
 		
 		if (!teleported) {
 			copy_array(stack, newstack);
-			self.canonicalize_stack(col, row);
+			this.canonicalize_stack(col, row);
 		}
 		
 		return output;
@@ -831,7 +831,7 @@ class Level {
 	}
 	
 	function canonicalize_stack(col, row) {
-		stack = self.grid[col][row];
+		stack = this.grid[col][row];
 		lookup = [];
 		i = 0;
 		for (item : stack) {
@@ -842,13 +842,13 @@ class Level {
 			}
 			i += 1;
 		}
-		copy_array(self.cellLookup[col][row], lookup);
+		copy_array(this.cellLookup[col][row], lookup);
 	}
 	
 	function update(sprites, sprite_additions, sprite_removals) {
 		created = None;
-		if (self.sprite_introducer != None) {
-			created = self.sprite_introducer(self, self.counter);
+		if (this.sprite_introducer != None) {
+			created = this.sprite_introducer(this, this.counter);
 		}
 		
 		if (created != None) {
@@ -856,50 +856,50 @@ class Level {
 				col = Math.floor(c.x / 16);
 				row = Math.floor(c.y / 16);
 				layer = Math.floor(c.z / 8);
-				c.standingon = self.get_tile_at(col, row, layer - 1);
+				c.standingon = this.get_tile_at(col, row, layer - 1);
 				sprite_additions.add(c);
 			}
 		}
 		
 		new_re = [];
-		self.moving_platforms.update(sprites, new_re);
-		self.teleporters.update();
+		this.moving_platforms.update(sprites, new_re);
+		this.teleporters.update();
 		
-		for (sprite : self.teleporters.get_new_sprites()) {
+		for (sprite : this.teleporters.get_new_sprites()) {
 			sprite_additions.add(sprite);
 		}
-		for (sprite : self.teleporters.get_removed_sprites()) {
+		for (sprite : this.teleporters.get_removed_sprites()) {
 			sprite_removals.add(sprite);
 		}
 		
-		for (re : self.render_exceptions) {
+		for (re : this.render_exceptions) {
 			re.update();
 			if (!re.expired) {
 				new_re.add(re);
 			}
 		}
-		self.render_exceptions = new_re;
+		this.render_exceptions = new_re;
 		
 		i = 0;
-		while (i < len(self.spritify_counters)) {
-			t = self.spritify_counters[i];
+		while (i < len(this.spritify_counters)) {
+			t = this.spritify_counters[i];
 			if (t[-1] == 0) {
-				self.spritify_counters = self.spritify_counters[:i] + self.spritify_counters[i + 1:];
-				self.spritify_block(t[0], t[1], t[2]);
+				this.spritify_counters = this.spritify_counters[:i] + this.spritify_counters[i + 1:];
+				this.spritify_block(t[0], t[1], t[2]);
 			} else {
 				t[-1] -= 1;
 				i += 1;
 			}
 		}
 		
-		self.counter += 1;
+		this.counter += 1;
 	}
 	
 	function get_moving_platforms() {
-		return self.moving_platforms;
+		return this.moving_platforms;
 	}
 	
 	function get_teleporters() {
-		return self.teleporter_tiles;
+		return this.teleporter_tiles;
 	}
 }

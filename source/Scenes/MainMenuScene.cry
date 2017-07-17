@@ -9,11 +9,11 @@ function MMS_exit() { return new GoodbyScene(); }
 
 class MainMenuScene {
 	constructor() {
-		this.next = self;
-		self.index = 0;
-		self.first = True;
+		this.next = this;
+		this.index = 0;
+		this.first = True;
 		has_save_data = get_persisted_forever_string('save_level') != '';
-		self.options = [
+		this.options = [
 			['Start New Story Mode', True, MMS_startNewStoryMode],
 			['Resume Saved Game', has_save_data, MMS_resumeSaved],
 			['Level Picker', True, MMS_levelPicker],
@@ -29,25 +29,25 @@ class MainMenuScene {
 		for (event : events) {
 			if (event.down) {
 				if (event.key == 'down') {
-					self.index += 1;
-					if (self.index < len(self.options) && !self.options[self.index][1]) {
-						self.index += 1;
+					this.index += 1;
+					if (this.index < len(this.options) && !this.options[this.index][1]) {
+						this.index += 1;
 					}
-					if (self.index < len(self.options)) {
+					if (this.index < len(this.options)) {
 						play_sound('menumove');
 					} else {
-						self.index = len(self.options) - 1;
+						this.index = len(this.options) - 1;
 					}
 				} else if (event.key == 'up') {
-					self.index -= 1;
-					if (!self.options[self.index][1]) {
-						self.index -= 1;
+					this.index -= 1;
+					if (!this.options[this.index][1]) {
+						this.index -= 1;
 					}
 					
-					if (self.index >= 0) {
+					if (this.index >= 0) {
 						play_sound('menumove');
 					} else {
-						self.index == 0;
+						this.index == 0;
 					}
 				} else if (event.key == 'start') {
 					go = True;
@@ -55,20 +55,20 @@ class MainMenuScene {
 			}
 		}
 		
-		self.index = max(self.index, 0);
-		self.index = min(self.index, len(self.options) - 1);
+		this.index = max(this.index, 0);
+		this.index = min(this.index, len(this.options) - 1);
 		
 		if (go) {
-			lamb = self.options[self.index][2];
+			lamb = this.options[this.index][2];
 			next_scene = lamb(None);
-			self.next = new TransitionScene(self, next_scene);
+			this.next = new TransitionScene(this, next_scene);
 		}
 	}
 	
 	function update(counter) {
 		get_jukebox().ensure_current_song('title');
-		if (self.first) {
-			self.first = False;
+		if (this.first) {
+			this.first = False;
 			get_persistent_state().session = {};
 		}
 	}
@@ -83,10 +83,10 @@ class MainMenuScene {
 		
 		y = h + 30 + 20;
 		i = 0;
-		for (option : self.options) {
+		for (option : this.options) {
 			x = 20;
 			color = [190, 190, 190];
-			if (self.index == i) {
+			if (this.index == i) {
 				Graphics2D.Draw.rectangle(x, y + 5, 5, 5, 255, 255, 255);
 			} else if (!option[1]) {
 				color = [80, 80, 80];

@@ -2,25 +2,25 @@ class Automation {
 	constructor(level, type) {
 		this.type = type;
 		this.level = level;
-		self.counter = 0;
-		self.intro_dialog_start = 343;
+		this.counter = 0;
+		this.intro_dialog_start = 343;
 	}
 	
 	// (dx, dy)
 	function get_next_values() {
-		c = self.counter;
-		sprite = self.sprite;
-		self.counter += 1;
+		c = this.counter;
+		sprite = this.sprite;
+		this.counter += 1;
 		o = None;
-		if (self.level == '99-0') {
-			o = self.do_99_player(self.level, c, sprite);
+		if (this.level == '99-0') {
+			o = this.do_99_player(this.level, c, sprite);
 		} else {
-			if (self.type == 'intro_janitor') {
-				o = self.do_intro_janitor(self.level, c, sprite);
-			} else if (self.type == 'intro_supervisor') {
-				o = self.do_intro_supervisor(self.level, c, sprite);
-			} else if (self.type == 'intro_protagonist') {
-				o = self.do_intro_protagonist(self.level, c, sprite);
+			if (this.type == 'intro_janitor') {
+				o = this.do_intro_janitor(this.level, c, sprite);
+			} else if (this.type == 'intro_supervisor') {
+				o = this.do_intro_supervisor(this.level, c, sprite);
+			} else if (this.type == 'intro_protagonist') {
+				o = this.do_intro_protagonist(this.level, c, sprite);
 			}
 			
 			if (o == None) {
@@ -117,7 +117,7 @@ class Automation {
 			[320, [0, 0]],
 			[4, [1, 0]],
 			[60, [0, 1]],
-			[1, [0, 0], self.kill_me],
+			[1, [0, 0], this.kill_me],
 			[999, [0, -4]]
 		];
 		cumulative = 0;

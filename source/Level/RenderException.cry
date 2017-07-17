@@ -13,44 +13,44 @@ class RenderException {
 
 	// start is a set of 3D coordinates
 	constructor(start, direction, tile, is_block) {
-		self.is_block = is_block;
-		self.is_sprite = !is_block;
-		self.z = start[2];
-		self.counter = 0;
-		self.expired = False;
+		this.is_block = is_block;
+		this.is_sprite = !is_block;
+		this.z = start[2];
+		this.counter = 0;
+		this.expired = False;
 		if (direction == 'NE' || direction == 'NW') {
-			self.do_show = start;
+			this.do_show = start;
 			if (direction == 'NE') {
-				self.dont_show = [start[0], start[1] - 1, start[2]];
+				this.dont_show = [start[0], start[1] - 1, start[2]];
 			} else { // NW
-				self.dont_show = [start[0] - 1, start[1], start[2]];
+				this.dont_show = [start[0] - 1, start[1], start[2]];
 			}
 		} else { // SW || SE
-			self.dont_show = start;
+			this.dont_show = start;
 			if (direction == 'SE') {
-				self.do_show = [start[0] + 1, start[1], start[2]];
+				this.do_show = [start[0] + 1, start[1], start[2]];
 			} else { // SW
-				self.do_show = [start[0], start[1] + 1, start[2]];
+				this.do_show = [start[0], start[1] + 1, start[2]];
 			}
 		}
-		self.direction = direction;
-		self.tile = tile;
-		self.on_key = self.do_show[0] + '|' + self.do_show[1];
-		self.off_key = self.dont_show[0] + '|' + self.dont_show[1];
+		this.direction = direction;
+		this.tile = tile;
+		this.on_key = this.do_show[0] + '|' + this.do_show[1];
+		this.off_key = this.dont_show[0] + '|' + this.dont_show[1];
 		
-		if (self.direction == 'NW') {
+		if (this.direction == 'NW') {
 			xflip = -1;
 			yflip = -1;
 			reverse = 1;
-		} else if (self.direction == 'NE') {
+		} else if (this.direction == 'NE') {
 			xflip = 1;
 			yflip = -1;
 			reverse = 1;
-		} else if (self.direction == 'SW') {
+		} else if (this.direction == 'SW') {
 			xflip = 1;
 			yflip = -1;
 			reverse = -1;
-		} else if (self.direction == 'SE') {
+		} else if (this.direction == 'SE') {
 			xflip = -1;
 			yflip = -1;
 			reverse = -1;
@@ -65,13 +65,13 @@ class RenderException {
 	}
 	
 	function update() {
-		self.counter += 1;
-		if (self.counter > 6) {
-			self.expired = True;
+		this.counter += 1;
+		if (this.counter > 6) {
+			this.expired = True;
 		}
 	}
 	
 	function get_offset() {
-		return self.offsets[min(6, self.counter)];
+		return this.offsets[min(6, this.counter)];
 	}
 }

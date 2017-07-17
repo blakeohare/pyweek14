@@ -8,30 +8,30 @@ function make_ckey(c) {
 
 class Circuits {
 	constructor(level) {
-		self.level = level;
-		self.refresh_groups(True);
+		this.level = level;
+		this.refresh_groups(True);
 	}
 	
 	function LAMBDA_1(x) {
-		return self.groups_by_coords[make_ckey(x)];
+		return this.groups_by_coords[make_ckey(x)];
 	}
 	
 	function refresh_charges() {
 		goo_was_fried = False;
-		on_circuits = get_hacks_for_level(self.level.name, 'on_circuits');
+		on_circuits = get_hacks_for_level(this.level.name, 'on_circuits');
 		if (on_circuits == None) {
 			on_circuits = [];
 		}
 		active_input_panels = [];
-		for (input_panel : self.power_in) {
+		for (input_panel : this.power_in) {
 			x = input_panel[0];
 			y = input_panel[1];
 			z = input_panel[2];
-			lookup = self.level.cellLookup[x][y];
+			lookup = this.level.cellLookup[x][y];
 			if (z + 1 < len(lookup)) {
 				ti = lookup[z + 1];
 				if (ti != None) {
-					t = self.level.grid[x][y][ti];
+					t = this.level.grid[x][y][ti];
 					if (t != None && t.id == '45') {
 						active_input_panels.add(input_panel);
 					}
@@ -39,13 +39,13 @@ class Circuits {
 			}
 		}
 		
-		on_groups = (on_circuits + active_input_panels + self.permanently_on).map(this.LAMBDA_1);
+		on_groups = (on_circuits + active_input_panels + this.permanently_on).map(this.LAMBDA_1);
 		group_id = 1;
-		max_group_id = len(self.coords_by_group) - 1;
+		max_group_id = len(this.coords_by_group) - 1;
 		while (group_id <= max_group_id) {
 			is_group_on = on_groups.contains(group_id);
-			for (coord : self.coords_by_group[group_id]) {
-				tile = self.level.get_tile_at(coord);
+			for (coord : this.coords_by_group[group_id]) {
+				tile = this.level.get_tile_at(coord);
 				if (tile.actual_circuit) {
 					id = tile.id;
 					if (id.endsWith('on')) {
@@ -53,11 +53,11 @@ class Circuits {
 					}
 					id = is_group_on ? (id + 'on') : id;
 					tile = get_tile_store().get_tile(id);
-					self.level.modify_block(coord[0], coord[1], coord[2], tile);
+					this.level.modify_block(coord[0], coord[1], coord[2], tile);
 					if (is_group_on) {
-						goo_check = self.level.get_tile_at(coord[0], coord[1], coord[2] + 1);
+						goo_check = this.level.get_tile_at(coord[0], coord[1], coord[2] + 1);
 						if (goo_check != None && goo_check.is_goo) {
-							self.level.modify_block(coord[0], coord[1], coord[2] + 1, None);
+							this.level.modify_block(coord[0], coord[1], coord[2] + 1, None);
 							goo_was_fried = True;
 						}
 					}
@@ -65,21 +65,21 @@ class Circuits {
 			}
 			group_id += 1;
 		}
-		self.on_groups = on_groups;
+		this.on_groups = on_groups;
 		if (goo_was_fried) {
 			// TODO: play frying goo noise
 		}
 	}
 	
 	function refresh_groups(first_time=False) {
-		self.groups = [];
+		this.groups = [];
 		permanently_on = [];
-		grid = self.level.grid;
-		width = self.level.width;
-		height = self.level.height;
+		grid = this.level.grid;
+		width = this.level.width;
+		height = this.level.height;
 		circuits = [];
 		circuits_by_loc = {};
-		self.power_in = [];
+		this.power_in = [];
 		y = 0;
 		while (y < height) {
 			x = 0;
@@ -98,7 +98,7 @@ class Circuits {
 							}
 						}
 						if (item.power_input) {
-							self.power_in.add([x, y, z]);
+							this.power_in.add([x, y, z]);
 						}
 						z += item.height;
 					}
@@ -164,19 +164,19 @@ class Circuits {
 			coords = k.split('|').map(Core.parseInt);
 			groups_to_coords[group_id].add([coords[0], coords[1], coords[2]]);
 		}
-		self.coords_by_group = groups_to_coords;
-		self.groups_by_coords = tags;
+		this.coords_by_group = groups_to_coords;
+		this.groups_by_coords = tags;
 		if (first_time) {
-			self.permanently_on = permanently_on;
+			this.permanently_on = permanently_on;
 		}
-		self.refresh_charges();
+		this.refresh_charges();
 	}
 	
 	function is_charged(x, y, z) {
 		k = make_key(x, y, z);
-		group_id = self.groups_by_coords.get(k, 0);
+		group_id = this.groups_by_coords.get(k, 0);
 		if (group_id > 0) {
-			return self.on_groups.contains(group_id);
+			return this.on_groups.contains(group_id);
 		}
 		return false;
 	}

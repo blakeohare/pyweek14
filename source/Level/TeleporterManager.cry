@@ -1,8 +1,8 @@
 class TeleporterManager {
 	constructor(level) {
-		self.level = level;
+		this.level = level;
 		transporters = level.get_teleporters();
-		self.counter = 0;
+		this.counter = 0;
 		senders = [];
 		receivers = [];
 		enabled = [];
@@ -16,21 +16,21 @@ class TeleporterManager {
 			}
 		}
 		
-		self.senders = senders;
-		self.receivers = receivers;
+		this.senders = senders;
+		this.receivers = receivers;
 		
-		self.manual_level_config(level.name);
+		this.manual_level_config(level.name);
 
-		self.new_sprites = {};
-		self.remove_sprites = [];
-		self.in_use = len(self.senders) * [999];
-		self.enabled = enabled;
+		this.new_sprites = {};
+		this.remove_sprites = [];
+		this.in_use = len(this.senders) * [999];
+		this.enabled = enabled;
 	}
 
 	function manual_level_config(name) {
 		if (name == '13-0') {
-			r = self.receivers;
-			self.receivers = [
+			r = this.receivers;
+			this.receivers = [
 				r[0], r[9], r[4], r[5], r[2], r[10], r[3], r[1], r[8], r[6], r[7]
 			];
 		}
@@ -38,39 +38,39 @@ class TeleporterManager {
 	
 	function set_teleporter_status(col, row, layer, isenabled) {
 		i = 0;
-		total = len(self.senders);
+		total = len(this.senders);
 		while (i < total) {
-			sender = self.senders[i];
+			sender = this.senders[i];
 			if (sender[0] == col && sender[1] == row && sender[2] == layer) {
 				enabled[i] = isenabled;
-				self.update_tiles(i);
+				this.update_tiles(i);
 				return;
 			}
-			receiver = self.receivers[i];
+			receiver = this.receivers[i];
 			if (receiver[0] == col && receiver[1] == row && receiver[2] == layer) {
 				enabled[i] = isenabled;
-				self.update_tiles(i);
+				this.update_tiles(i);
 				return;
 			}
 		}
 	}
 	
 	function enable_teleporter(col, row, layer) {
-		self.set_teleporter_status(col, row, layer, True);
+		this.set_teleporter_status(col, row, layer, True);
 	}
 	
 	function disable_teleporter(col, row, layer) {
-		self.set_teleporter_status(col, row, layer, False);
+		this.set_teleporter_status(col, row, layer, False);
 	}
 	
 	function update_tiles(index) {
-		sender = self.senders[index];
-		receiver = self.receivers[index];
-		level = self.level;
+		sender = this.senders[index];
+		receiver = this.receivers[index];
+		level = this.level;
 		ts = get_tile_store();
 		s_tile = ts.get_tile('t1');
 		r_tile = ts.get_tile('t2');
-		if (!self.enabled[index]) {
+		if (!this.enabled[index]) {
 			s_tile = ts.get_tile('t3');
 			r_tile = ts.get_tile('t3');
 		}
@@ -79,20 +79,20 @@ class TeleporterManager {
 	}
 	
 	function get_destination(col, row, layer) {
-		_final = self.get_sender([col, row, layer]);
-		if (_final != None && self.enabled[_final]) {
-			output = self.receivers[_final];
+		_final = this.get_sender([col, row, layer]);
+		if (_final != None && this.enabled[_final]) {
+			output = this.receivers[_final];
 			for (i : py_range(4)) {
 				z = output[2] + i + 1;
-				tile = self.level.get_tile_at(output[0], output[1], z);
+				tile = this.level.get_tile_at(output[0], output[1], z);
 				if (tile != None && tile.blocking) {
 					return 'blocked';
 				}
 			}
-			if (self.in_use[_final] < 200) {
+			if (this.in_use[_final] < 200) {
 				return None;
 			}
-			self.in_use[_final] = 0;
+			this.in_use[_final] = 0;
 			return output;
 		}
 		return None;
@@ -100,41 +100,41 @@ class TeleporterManager {
 	
 	function teleport_block(blocktype, source, target) {
 		sprite = new Sprite(source[0] * 16 + 8, source[1] * 16 + 8, source[2] * 8, 'block|' + blocktype.id);
-		self.teleport_sprite(sprite, target);
+		this.teleport_sprite(sprite, target);
 	}
 	
 	function teleport_sprite(sprite, target) {
 		play_sound('teleport');
 		sprite.immobilized = True;
-		self.remove_sprites.add(sprite);
+		this.remove_sprites.add(sprite);
 		
-		self.new_sprites[self.counter + 1] = self.new_sprites.get(self.counter + 1, []);
-		self.new_sprites[self.counter + 1].add(new Sprite(sprite.x, sprite.y, sprite.z, 'teleport|' + sprite.type));
+		this.new_sprites[this.counter + 1] = this.new_sprites.get(this.counter + 1, []);
+		this.new_sprites[this.counter + 1].add(new Sprite(sprite.x, sprite.y, sprite.z, 'teleport|' + sprite.type));
 		
-		self.new_sprites[self.counter + 120] = self.new_sprites.get(self.counter + 120, []);
+		this.new_sprites[this.counter + 120] = this.new_sprites.get(this.counter + 120, []);
 		z = (target[2] + 1) * 8;
 		clone = new Sprite(target[0] * 16 + 8, target[1] * 16 + 8, z, 'receiving|' + sprite.type);
 		clone.standingon = get_tile_store().get_tile('t2');
 		clone.prototype = sprite;
 		
-		self.new_sprites[self.counter + 120].add(clone);
+		this.new_sprites[this.counter + 120].add(clone);
 	}
 	
 	function tag_as_in_use(coords) {
-		sender_index = self.get_sender(coords);
+		sender_index = this.get_sender(coords);
 		if (sender_index != None) {
-			self.in_use[sender_index] = 0;
+			this.in_use[sender_index] = 0;
 		}
 	}
 	
 	function is_in_use(i) {
-		return self.in_use[i] <= 90;
+		return this.in_use[i] <= 90;
 	}
 	
 	function get_sender(coords) {
 		i = 0;
-		while (i < len(self.senders)) {
-			s = self.senders[i];
+		while (i < len(this.senders)) {
+			s = this.senders[i];
 			if (s[0] == coords[0] && s[1] == coords[1] && s[2] == coords[2]) {
 				return i;
 			}
@@ -144,24 +144,24 @@ class TeleporterManager {
 	}
 	
 	function get_new_sprites() {
-		new_sprites = self.new_sprites.get(self.counter, None);
+		new_sprites = this.new_sprites.get(this.counter, None);
 		if (new_sprites == None) {
 			return [];
 		}
-		return self.new_sprites.pop(self.counter);
+		return this.new_sprites.pop(this.counter);
 	}
 	
 	function get_removed_sprites() {
-		output = self.remove_sprites;
-		self.remove_sprites = [];
+		output = this.remove_sprites;
+		this.remove_sprites = [];
 		return output;
 	}
 	
 	function update() {
-		self.counter += 1;
+		this.counter += 1;
 		i = 0;
-		while (i < len(self.in_use)) {
-			self.in_use[i] += 1;
+		while (i < len(this.in_use)) {
+			this.in_use[i] += 1;
 			i += 1;
 		}
 	}

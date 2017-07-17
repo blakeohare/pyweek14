@@ -55,13 +55,13 @@ class LevelManager {
 			['90-0', "Here There Be Ratmen", [1, 9, 3, 'se']],
 			['99-0', "Doctor What?", [8, 4, 1, 'nw']]];
 		if (story_mode) {
-			self.ordering = [['intro', "Your Cubicle", [12, 14, 1, 'nw']]] + self.ordering;
+			this.ordering = [['intro', "Your Cubicle", [12, 14, 1, 'nw']]] + this.ordering;
 		}
 	}
 	
 	function get_current_level_index(current_level_name) {
-		for (i : py_range(len(self.ordering))) {
-			if (self.ordering[i][0] == current_level_name) {
+		for (i : py_range(len(this.ordering))) {
+			if (this.ordering[i][0] == current_level_name) {
 				return i;
 			}
 		}
@@ -69,27 +69,27 @@ class LevelManager {
 	}
 	
 	function get_current_room_name(current_level_name) {
-		return self.ordering[self.get_current_level_index(current_level_name)][1];
+		return this.ordering[this.get_current_level_index(current_level_name)][1];
 	}
 	
 	function get_next_level(current_level_name) {
-		i = self.get_current_level_index(current_level_name);
+		i = this.get_current_level_index(current_level_name);
 		next_i = i + 1;
-		if (next_i < len(self.ordering)) {
-			return self.ordering[next_i][0];
+		if (next_i < len(this.ordering)) {
+			return this.ordering[next_i][0];
 		}
 		return None;
 	}
 	
 	function get_starting_point_for_level(name) {
-		i = self.get_current_level_index(name);
-		if (len(self.ordering[i]) >= 3) {
-			return self.ordering[i][2];
+		i = this.get_current_level_index(name);
+		if (len(this.ordering[i]) >= 3) {
+			return this.ordering[i][2];
 		}
 		return None;
 	}
 	
 	function get_starting_level() {
-		return self.ordering[0];
+		return this.ordering[0];
 	}
 }

@@ -3,12 +3,12 @@ class CoilManager {
 	constructor(level) { }
 	
 	function set_fresh_coils(coils) {
-		self.coils = coils;
+		this.coils = coils;
 	}
 	
 	function find_zapped_sprites(sprites) {
 		coil_map = [];
-		for (coil : self.coils) {
+		for (coil : this.coils) {
 			x = coil[0];
 			while (len(coil_map) <= x) {
 				coil_map.add([]);

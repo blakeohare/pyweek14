@@ -1,11 +1,11 @@
 class GoodbyeScene {
 	constructor() {
-		self.next = self;
+		this.next = this;
 	}
 		
 	function process_input(events, pressed, axes, mouse) {
 		for (event : events) {
-			self.next = None;
+			this.next = None;
 		}
 	}
 	

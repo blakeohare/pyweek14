@@ -1,10 +1,10 @@
 class MovingPlatformManager {
 	
 	constructor(level) {
-		self.level = level;
-		self.ticker = 0;
-		self.pause_tokens = {};
-		self.initialize_pause_tokens(level.name);
+		this.level = level;
+		this.ticker = 0;
+		this.pause_tokens = {};
+		this.initialize_pause_tokens(level.name);
 		
 		directions = get_hacks_for_level(level.name, 'moving_platforms');
 		if (directions == None) {
@@ -14,20 +14,20 @@ class MovingPlatformManager {
 				directions[i] = directions[i].split(' ');
 			}
 		}
-		self.platforms = self.level.get_moving_platforms();
-		self.num_platforms = len(self.platforms);
-		while (len(directions) < self.num_platforms) {
+		this.platforms = this.level.get_moving_platforms();
+		this.num_platforms = len(this.platforms);
+		while (len(directions) < this.num_platforms) {
 			directions.add(['P']);
 		}
-		self.directions = directions;
+		this.directions = directions;
 	}
 	
 	function set_pause_token(i, on) {
-		self.pause_tokens[str(i)] = on;
+		this.pause_tokens[str(i)] = on;
 	}
 	
 	function initialize_pause_tokens(name) {
-		pt = self.pause_tokens;
+		pt = this.pause_tokens;
 		if (name == '16-0') {
 			pt['0'] = True;
 		} else if (name == '18-0') {
@@ -46,22 +46,22 @@ class MovingPlatformManager {
 	}
 	
 	function is_paused_platform(i) {
-		if (self.pause_tokens.get(str(i)) == True) {
+		if (this.pause_tokens.get(str(i)) == True) {
 			return True;
 		}
 		return False;
 	}
 	
 	function update(sprites, render_exceptions) {
-		self.ticker += 1;
-		if (self.ticker % 60 == 0) {
-			level = self.level;
-			for (i = 0; i < self.num_platforms; ++i) {
+		this.ticker += 1;
+		if (this.ticker % 60 == 0) {
+			level = this.level;
+			for (i = 0; i < this.num_platforms; ++i) {
 				
-				if (!self.is_paused_platform(i)) {
+				if (!this.is_paused_platform(i)) {
 				
-					platform = self.platforms[i];
-					directions = self.directions[i];
+					platform = this.platforms[i];
+					directions = this.directions[i];
 					direction = directions[0];
 					if (direction == 'P') {
 						directions.removeAt(0);
@@ -157,7 +157,7 @@ class MovingPlatformManager {
 								level.modify_block(target[0], target[1], target[2], mp);
 								
 								if (first) {
-									self.platforms[i] = target;
+									this.platforms[i] = target;
 								}
 								render_exceptions.add(new RenderException(move_me, direction, mp, True));
 								first = False;

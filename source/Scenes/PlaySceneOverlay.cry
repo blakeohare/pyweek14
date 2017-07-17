@@ -1,7 +1,7 @@
 class PlaySceneOverlay {
 	constructor(playscene, level) {
-		self.playscene = playscene;
-		self.level = level;
+		this.playscene = playscene;
+		this.level = level;
 	}
 	
 	function pad_with_zeroes(num, digits) {
@@ -26,9 +26,9 @@ class PlaySceneOverlay {
 		level_research = get_persisted_level_int('research');
 		r = research_saved + level_research + session_research;
 		
-		goo_count = get_text(self.pad_with_zeroes(get_persisted_level_int('decontaminant'), 3), 16, [100, 255, 100]);
-		rp_count = get_text(self.pad_with_zeroes(r, 3), 16, [255, 255, 255]);
-		loc = get_level_manager().get_current_room_name(self.level.name);
+		goo_count = get_text(this.pad_with_zeroes(get_persisted_level_int('decontaminant'), 3), 16, [100, 255, 100]);
+		rp_count = get_text(this.pad_with_zeroes(r, 3), 16, [255, 255, 255]);
+		loc = get_level_manager().get_current_room_name(this.level.name);
 		if (loc == None) {
 			loc = "Room Needs Name";
 		}

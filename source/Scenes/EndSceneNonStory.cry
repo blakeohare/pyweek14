@@ -7,7 +7,7 @@ class EndSceneNonStory {
 		for (event : events) {
 			if (event.down) {
 				if (event.key == 'start' || event.key == 'spray' || event.key == 'walkie') {
-					self.next = new TransitionScene(self, new MainMenuScene());
+					this.next = new TransitionScene(this, new MainMenuScene());
 				}
 			}
 		}

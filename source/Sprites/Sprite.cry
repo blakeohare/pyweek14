@@ -42,72 +42,72 @@ class Sprite {
 	// these get transposed into pixel coordinates and
 	// are converted into tile coords by simply dividing by 16
 	constructor(x, y, z, type, level = null) {
-		self.garbage_collect = False;
-		self.x = x + 0.0;
-		self.y = y + 0.0;
-		self.z = z;
-		self.dx = 0;
-		self.dy = 0;
-		self.dz = 0;
-		self.level = None; // for intro hack, only
-		self.automation = None;
-		self.falling = False;
-		self.standingon = None;
-		self.type = type;
-		self.immobilized = False;
-		self.spray_counter = -1;
-		self.ismain = type == 'main';
-		self.main_or_hologram = self.ismain || type == 'hologram|main';
-		self.isjanitor = type == 'janitor';
-		self.holding_spray = False;
-		self.clone_creating = False;
-		self.holding_walkie = False;
-		self.intro_hack = False;
-		self.issupervisor = type == 'supervisor';
-		self.isblock = type.startsWith('block|');
-		self.israt = type.startsWith('rat|');
-		self.death_by_rat = 0;
-		self.impeded_last_go_round = False;
-		self.rat_trot_mode = None;
-		self.rat_blocked_counter = -42;
-		if (self.israt) {
+		this.garbage_collect = False;
+		this.x = x + 0.0;
+		this.y = y + 0.0;
+		this.z = z;
+		this.dx = 0;
+		this.dy = 0;
+		this.dz = 0;
+		this.level = None; // for intro hack, only
+		this.automation = None;
+		this.falling = False;
+		this.standingon = None;
+		this.type = type;
+		this.immobilized = False;
+		this.spray_counter = -1;
+		this.ismain = type == 'main';
+		this.main_or_hologram = this.ismain || type == 'hologram|main';
+		this.isjanitor = type == 'janitor';
+		this.holding_spray = False;
+		this.clone_creating = False;
+		this.holding_walkie = False;
+		this.intro_hack = False;
+		this.issupervisor = type == 'supervisor';
+		this.isblock = type.startsWith('block|');
+		this.israt = type.startsWith('rat|');
+		this.death_by_rat = 0;
+		this.impeded_last_go_round = False;
+		this.rat_trot_mode = None;
+		this.rat_blocked_counter = -42;
+		if (this.israt) {
 			if (type.endsWith('nw')) {
-				self.rat_trot_mode = 'nw';
+				this.rat_trot_mode = 'nw';
 			} else if (type.endsWith('ne')) {
-				self.rat_trot_mode = 'ne';
+				this.rat_trot_mode = 'ne';
 			} else if (type.endsWith('sw')) {
-				self.rat_trot_mode = 'sw';
+				this.rat_trot_mode = 'sw';
 			} else {
-				self.rat_trot_mode = 'se';
+				this.rat_trot_mode = 'se';
 			}
-			self.type = 'rat';
+			this.type = 'rat';
 		}
-		self.rat_move_max = 27;
-		self.rat_move_counter = self.rat_move_max;
+		this.rat_move_max = 27;
+		this.rat_move_counter = this.rat_move_max;
 		
-		self.death_counter = -1;
-		self.death_type = None;
-		self.height = 4;
-		if (self.isblock) {
-			self.height = 2;
+		this.death_counter = -1;
+		this.death_type = None;
+		this.height = 4;
+		if (this.isblock) {
+			this.height = 2;
 		}
-		self.tsend = type.startsWith('teleport|');
-		self.trecv = type.startsWith('receiving|');
-		self.staticy = self.tsend || self.trecv;
-		self.ttype = None;
-		if (self.staticy) {
-			self.ttype = type.split('|')[1:].join('|');
+		this.tsend = type.startsWith('teleport|');
+		this.trecv = type.startsWith('receiving|');
+		this.staticy = this.tsend || this.trecv;
+		this.ttype = None;
+		if (this.staticy) {
+			this.ttype = type.split('|')[1:].join('|');
 		}
-		self.ttl = None;
-		if (self.staticy) {
-			self.ttl = 60;
+		this.ttl = None;
+		if (this.staticy) {
+			this.ttl = 60;
 		}
-		self.last_direction_of_movement = 's';
-		self.direction_queue = ['s'];
-		self.is_moving = False;
-		self.pushing = None;
-		if (self.isblock) {
-			self.height = 2;
+		this.last_direction_of_movement = 's';
+		this.direction_queue = ['s'];
+		this.is_moving = False;
+		this.pushing = None;
+		if (this.isblock) {
+			this.height = 2;
 		}
 		
 		if (_block_images_for_sprites == None) {
@@ -119,9 +119,9 @@ class Sprite {
 			}
 		}
 		
-		if (self.isblock) {
-			self.block_id = type.split('|')[-1]; // should be the tile ID
-			self.block_tile = get_tile_store().get_tile(self.block_id);
+		if (this.isblock) {
+			this.block_id = type.split('|')[-1]; // should be the tile ID
+			this.block_tile = get_tile_store().get_tile(this.block_id);
 		}
 	}
 	
@@ -131,12 +131,12 @@ class Sprite {
 	}
 	
 	function render_me(screen, xOffset, yOffset, render_counter) {
-		img = self.get_image(render_counter);
+		img = this.get_image(render_counter);
 		if (img != None) {
-			coords = self.pixel_position(xOffset, yOffset, img);
+			coords = this.pixel_position(xOffset, yOffset, img);
 			
-			if (self.staticy) {
-				things = get_teleporter_image(self.tsend, self.ttl, self.ttype);
+			if (this.staticy) {
+				things = get_teleporter_image(this.tsend, this.ttl, this.ttype);
 				if (things == None) return;
 				ao = things[0];
 				bo = things[1];
@@ -158,8 +158,8 @@ class Sprite {
 	
 	function get_image(render_counter) {
 		img = None;
-		if (self.main_or_hologram) {
-			if (!self.ismain) {
+		if (this.main_or_hologram) {
+			if (!this.ismain) {
 				if (this.clone_creating) {
 					return get_image('scan/character' + str(((render_counter / 2) % 4) + 1) +'.png');
 				}
@@ -167,8 +167,8 @@ class Sprite {
 					return None; // flickering holograms
 				}
 			} else {
-				if (this.level != None && self.level.name == 'intro') {
-					if (!self.intro_hack) {
+				if (this.level != None && this.level.name == 'intro') {
+					if (!this.intro_hack) {
 						return get_image('protagonist/nwsit.png');
 					}
 				}
@@ -176,63 +176,63 @@ class Sprite {
 			
 			if (this.death_counter > 0) {
 				path = 'protagonist/s.png';
-				if (self.death_type == 'goo') {
+				if (this.death_type == 'goo') {
 					path = 'protagonist/goo' + str((Math.floor(render_counter / 3) % 4) + 1) + '.png';
-				} else if (self.death_type == 'bazat') {
+				} else if (this.death_type == 'bazat') {
 					path = 'protagonist/zap' + str((Math.floor(render_counter / 3) % 4) + 1) + '.png';
 				}
-			} else if (self.death_by_rat > 0) {
+			} else if (this.death_by_rat > 0) {
 				path = 'protagonist/rat';
-				path += str((Math.floor(self.death_by_rat / 3) % 4) + 1) + '.png';
-			} else if (self.standingon == None) {
+				path += str((Math.floor(this.death_by_rat / 3) % 4) + 1) + '.png';
+			} else if (this.standingon == None) {
 				path = 'protagonist/fall' + str((Math.floor(render_counter / 3) % 4) + 1) + '.png';
 			} else {
-				dir = self.last_direction_of_movement;
-				if (self.pushing != None) {
-					dir = self.pushing.lower() + 'push';
+				dir = this.last_direction_of_movement;
+				if (this.pushing != None) {
+					dir = this.pushing.lower() + 'push';
 				}
 				path = 'protagonist/' + dir;
-				if (self.spray_counter >= 0) {
+				if (this.spray_counter >= 0) {
 					path += 'spray' + str(((render_counter / 3) % 4) + 1);
-				} else if (self.is_moving) {
+				} else if (this.is_moving) {
 					path += str([1, 2, 3, 4, 3, 2][(render_counter / 6) % 6]);
 				}
 				path += '.png';
 			}
 			img = get_image(path);
-		} else if (self.israt) {
+		} else if (this.israt) {
 			path = 'rat/';
-			if (self.death_type == 'bazat') {
+			if (this.death_type == 'bazat') {
 				path += 'zap' + str(((render_counter / 3) % 4) + 1);
 			} else {
-				path += self.rat_trot_mode;
-				if (self.is_moving) {
+				path += this.rat_trot_mode;
+				if (this.is_moving) {
 					path += str([1, 2, 3, 4, 3, 2][(render_counter / 6) % 6]);
 				}
 			}
 			path += '.png';
 			img = get_image(path);
-		} else if (self.isjanitor) {
-			if (self.holding_spray) {
+		} else if (this.isjanitor) {
+			if (this.holding_spray) {
 				path = 'janitor/spray2.png';
-			} else if (self.holding_walkie) {
+			} else if (this.holding_walkie) {
 				path = 'janitor/walkietalkie2.png';
 			} else {
-				dir = self.last_direction_of_movement;
+				dir = this.last_direction_of_movement;
 				if (dir == 's' || dir == 'n') {
 					dir += 'e';
 				} else if (dir == 'e' || dir == 'w') {
 					dir = 's' + dir;
 				}
 				path = 'janitor/' + dir;
-				if (self.is_moving) {
+				if (this.is_moving) {
 					path += str([1, 2, 3, 4, 3, 2][(render_counter / 6) % 6]);
 				}
 				path += '.png';
 			}
 			img = get_image(path);
 		} else if (this.issupervisor) {
-			dir = self.last_direction_of_movement;
+			dir = this.last_direction_of_movement;
 			// TODO: get n, s, e, w images of supervisor|janitor
 			if (dir == 's' || dir == 'n') {
 				dir += 'e';
@@ -240,23 +240,23 @@ class Sprite {
 				dir = 's' + dir;
 			}
 			path = 'supervisor/' + dir;
-			if (self.is_moving) {
+			if (this.is_moving) {
 				path += str([1, 2, 3, 4, 3, 2][(render_counter / 6) % 6]);
 			}
 			path += '.png';
 			img = get_image(path);
-		} else if (self.staticy) {
+		} else if (this.staticy) {
 			img = get_image('static/character' + str(((render_counter / 6) % 4) + 1) + '.png');
-		} else if (self.isblock) {
-			img = self.block_tile.get_image(render_counter);
+		} else if (this.isblock) {
+			img = this.block_tile.get_image(render_counter);
 		}
 		
 		return img;
 	}
 	
 	function pixel_position(xOffset, yOffset, img) {
-		x = self.x - self.y;
-		y = (self.x + self.y) / 2;
+		x = this.x - this.y;
+		y = (this.x + this.y) / 2;
 		if (img == None) {
 			w = 16;
 			h = 32;
@@ -265,27 +265,27 @@ class Sprite {
 			h = img.height;
 		}
 		x = x - w / 2;
-		y = y - self.z - h + 8;
-		if (self.isblock) {
+		y = y - this.z - h + 8;
+		if (this.isblock) {
 			y += 8;
 		}
 		
-		if (self.main_or_hologram || self.staticy || self.isjanitor || self.issupervisor || self.israt) {
-			if (self.staticy && self.ttype.startsWith('block|')) {
+		if (this.main_or_hologram || this.staticy || this.isjanitor || this.issupervisor || this.israt) {
+			if (this.staticy && this.ttype.startsWith('block|')) {
 				y += 16;
 			}
 			y += 8;
 		}
 		
-		platform = self.standingon;
+		platform = this.standingon;
 		if (platform != None && platform.stairs) {
 			left = platform.topography[3] * 8;
 			right = platform.topography[1] * 8;
 			if (platform.entrance == 'SW' || platform.entrance == 'NE') {
-				ap = self.y % 16 + 0.0;
+				ap = this.y % 16 + 0.0;
 				p = 16.0 - ap;
 			} else {
-				p = self.x % 16 + 0.0;
+				p = this.x % 16 + 0.0;
 				ap = 16.0 - p;
 			}
 			dy = Math.floor((left * ap + p * right) / 16.0);
@@ -299,66 +299,66 @@ class Sprite {
 	
 	function debug_stats() {
 		return [
-			'x:', self.x,
-			'y:', self.y,
-			'z:', self.z,
-			'dx:', self.dx,
-			'dy:', self.dy,
-			'dz:', self.dz].join(' ');
+			'x:', this.x,
+			'y:', this.y,
+			'z:', this.z,
+			'dx:', this.dx,
+			'dy:', this.dy,
+			'dz:', this.dz].join(' ');
 	}
 		
 	function get_replacement_sprite() {
-		if (self.trecv && self.garbage_collect) {
-			self.prototype.garbage_collect = False;
-			return self.prototype;
+		if (this.trecv && this.garbage_collect) {
+			this.prototype.garbage_collect = False;
+			return this.prototype;
 		}
 		return this;
 	}
 	
 	function flip_rat_trot_mode() {
-		rtm = self.rat_trot_mode;
+		rtm = this.rat_trot_mode;
 		if (rtm == 'nw') {
-			self.rat_trot_mode = 'se';
+			this.rat_trot_mode = 'se';
 		} else if (rtm == 'se') {
-			self.rat_trot_mode = 'nw';
+			this.rat_trot_mode = 'nw';
 		} else if (rtm == 'ne') {
-			self.rat_trot_mode = 'sw';
+			this.rat_trot_mode = 'sw';
 		} else {
-			self.rat_trot_mode = 'ne';
+			this.rat_trot_mode = 'ne';
 		}
 	}
 	
 	function move_rat(level) {
-		self.rat_blocked_counter--;
-		rtm = self.rat_trot_mode;
-		if (self.rat_blocked_counter == 0) {
-			self.flip_rat_trot_mode();
+		this.rat_blocked_counter--;
+		rtm = this.rat_trot_mode;
+		if (this.rat_blocked_counter == 0) {
+			this.flip_rat_trot_mode();
 		}
 		
-		if (self.z < -200) {
-			self.garbage_collect = True;
+		if (this.z < -200) {
+			this.garbage_collect = True;
 		}
 		
-		if (self.rat_blocked_counter < 0) {
-			if (self.impeded_last_go_round) {
-				self.rat_blocked_counter = 60;
+		if (this.rat_blocked_counter < 0) {
+			if (this.impeded_last_go_round) {
+				this.rat_blocked_counter = 60;
 			} else {
 				v = 0.8;
 				if (rtm == 'nw') {
-					self.dx = -v;
+					this.dx = -v;
 				} else if (rtm == 'ne') {
-					self.dy = -v;
+					this.dy = -v;
 				} else if (rtm == 'sw') {
-					self.dy = v;
+					this.dy = v;
 				} else {
-					self.dx = v;
+					this.dx = v;
 				}
 				
-				newx = self.x + self.dx;
-				newy = self.y + self.dy;
+				newx = this.x + this.dx;
+				newy = this.y + this.dy;
 				col = Math.floor(newx / 16);
 				row = Math.floor(newy / 16);
-				layer = Math.floor(self.z / 8) - 1;
+				layer = Math.floor(this.z / 8) - 1;
 				if (layer >= 0) {
 					tile = level.get_tile_at(col, row, layer);
 				} else {
@@ -366,98 +366,98 @@ class Sprite {
 				}
 				
 				if (tile == None || !tile.blocking) {
-					self.rat_blocked_counter = 60;
-					self.dx = 0;
-					self.dy = 0;
+					this.rat_blocked_counter = 60;
+					this.dx = 0;
+					this.dy = 0;
 				}
 			}
 		}
 	}
 	
 	function update(level) {
-		self.death_counter -= 1;
-		self.spray_counter -= 1;
+		this.death_counter -= 1;
+		this.spray_counter -= 1;
 		
-		if (self.israt) {
-			self.move_rat(level);
+		if (this.israt) {
+			this.move_rat(level);
 		}
 		
-		if (self.death_counter == 1) {
-			self.garbage_collect = True;
+		if (this.death_counter == 1) {
+			this.garbage_collect = True;
 		}
 		
-		if (self.automation != None) {
-			auto_xy = self.automation.get_next_values();
-			self.dx += auto_xy[0];
-			self.dy += auto_xy[1];
+		if (this.automation != None) {
+			auto_xy = this.automation.get_next_values();
+			this.dx += auto_xy[0];
+			this.dy += auto_xy[1];
 		}
 		
-		self.pushing = null;
-		self.falling = false;
-		if (self.ttl != None) {
-			self.ttl -= 1;
-			if (self.ttl <= 0) {
-				self.garbage_collect = True;
-				if (self.trecv) {
-					self.prototype.x = self.x;
-					self.prototype.y = self.y;
-					self.prototype.z = self.z;
-					self.prototype.is_moving = False;
-					self.prototype.immobilized = False;
+		this.pushing = null;
+		this.falling = false;
+		if (this.ttl != None) {
+			this.ttl -= 1;
+			if (this.ttl <= 0) {
+				this.garbage_collect = True;
+				if (this.trecv) {
+					this.prototype.x = this.x;
+					this.prototype.y = this.y;
+					this.prototype.z = this.z;
+					this.prototype.is_moving = False;
+					this.prototype.immobilized = False;
 				}
 			}
 		}
 		
-		if (self.immobilized) {
+		if (this.immobilized) {
 			return;
 		}
 		
-		if (self.standingon == None) {
-			self.dz = -1;
+		if (this.standingon == None) {
+			this.dz = -1;
 		}
 
-		if (self.dz != 0) {
-			platform_data = level.get_platform_below(Math.floor(self.x) / 16, Math.floor(self.y) / 16, self.z, True);
+		if (this.dz != 0) {
+			platform_data = level.get_platform_below(Math.floor(this.x) / 16, Math.floor(this.y) / 16, this.z, True);
 			if (platform_data != None) {
 				z = platform_data[0];
 				platform = platform_data[1];
-				if (z < self.dz + self.z) {
-					self.z += self.dz;
-					self.falling = True;
+				if (z < this.dz + this.z) {
+					this.z += this.dz;
+					this.falling = True;
 				} else {
-					self.z = z;
-					self.standingon = platform;
+					this.z = z;
+					this.standingon = platform;
 				}
 			} else {
-				self.standingon = null;
-				self.z += self.dz;
+				this.standingon = null;
+				this.z += this.dz;
 			}
 		}
-		layer = self.z / 8;
+		layer = this.z / 8;
 		on_new_coordinates_now = False;
-		new_platform = self.standingon;
+		new_platform = this.standingon;
 		
-		starting_col = Math.floor(self.x) / 16;
-		starting_row = Math.floor(self.y) / 16;
+		starting_col = Math.floor(this.x) / 16;
+		starting_row = Math.floor(this.y) / 16;
 		
 		if (this.standingon != None) {
-			if (this.standingon.teleporter && !self.staticy) {
-				destination = level.teleporters.get_destination(starting_col, starting_row, Math.floor(self.z / 8) - 1);
+			if (this.standingon.teleporter && !this.staticy) {
+				destination = level.teleporters.get_destination(starting_col, starting_row, Math.floor(this.z / 8) - 1);
 				
 				if (destination != None) {
 					if (destination == 'blocked') {
 						// TODO: play blocked sound
 					} else {
-						level.teleporters.teleport_sprite(self, destination);
+						level.teleporters.teleport_sprite(this, destination);
 					}
 				}
 			}
 		}
 		
-		if (self.dz == 0) {
+		if (this.dz == 0) {
 			
-			ending_col = Math.floor(self.x + self.dx) / 16;
-			ending_row = Math.floor(self.y + self.dy) / 16;
+			ending_col = Math.floor(this.x + this.dx) / 16;
+			ending_row = Math.floor(this.y + this.dy) / 16;
 			
 			check_these = [];
 			if (starting_col == ending_col && starting_row == ending_row) {
@@ -521,7 +521,7 @@ class Sprite {
 				row = check[1];
 				if (col < 0 || col >= level.width || row < 0 || row >= level.height) {
 					blocked = True;
-					self.impeded_last_go_round = True;
+					this.impeded_last_go_round = True;
 					break;
 				}
 				lookup = cellLookup[col][row];
@@ -532,12 +532,12 @@ class Sprite {
 						t = tiles[tz];
 						
 						if (t.blocking) {
-							if (self.main_or_hologram) {
-								pt = level.get_push_tracker(self);
+							if (this.main_or_hologram) {
+								pt = level.get_push_tracker(this);
 								prev_push_target = pt.push_target;
 								pt.push_target = None;
 								
-								if (self.ismain && t.isexit) {
+								if (this.ismain && t.isexit) {
 									level.complete = True;
 								}
 								
@@ -562,7 +562,7 @@ class Sprite {
 										throw new Exception("ERROR: bad direction while pushing block.");
 									}
 									
-									self.pushing = direction;
+									this.pushing = direction;
 									
 									if (push_key == prev_push_target) {
 										pt.push_counter -= 1;
@@ -656,8 +656,8 @@ class Sprite {
 							if (blocked == False && t.stairs && t.entrance == opposite && check == check_these[-1]) {
 								if (c == 0) {
 									// not blocked
-									zbefore = self.z;
-									self.z += t.height * 8;
+									zbefore = this.z;
+									this.z += t.height * 8;
 									break;
 								}
 							} else {
@@ -674,44 +674,44 @@ class Sprite {
 			}
 			
 			if (!blocked) {
-				old_col = Math.floor(self.x / 16);
-				old_row = Math.floor(self.y / 16);
-				self.x += self.dx;
-				self.y += self.dy;
-				self.impeded_last_go_round = False;
-				new_col = Math.floor(self.x / 16);
-				new_row = Math.floor(self.y / 16);
+				old_col = Math.floor(this.x / 16);
+				old_row = Math.floor(this.y / 16);
+				this.x += this.dx;
+				this.y += this.dy;
+				this.impeded_last_go_round = False;
+				new_col = Math.floor(this.x / 16);
+				new_row = Math.floor(this.y / 16);
 				if (old_col != new_col || old_row != new_row) {
 					on_new_coordinates_now = True;
 				}
 				
-				new_layer = Math.floor(self.z / 8);
+				new_layer = Math.floor(this.z / 8);
 				
 				occupying = level.get_tile_at(new_col, new_row, new_layer);
-				if (occupying != None && occupying.is_goo && self.main_or_hologram) {
-					self.death_counter = 60;
-					self.death_type = 'goo';
-					self.immobilized = True;
+				if (occupying != None && occupying.is_goo && this.main_or_hologram) {
+					this.death_counter = 60;
+					this.death_type = 'goo';
+					this.immobilized = True;
 					play_sound("irradiated");
 				}
 			}
 			
 			this.impeded_last_go_round = blocked;
 			
-			omg_hax = self.dx != 0 || self.dy != 0;
-			self.is_moving = omg_hax;
-			if (self.automation == None) {
-				omg_hax = self.dx != 0 && self.dy != 0;
+			omg_hax = this.dx != 0 || this.dy != 0;
+			this.is_moving = omg_hax;
+			if (this.automation == None) {
+				omg_hax = this.dx != 0 && this.dy != 0;
 			}
 			
-			if (self.dx == 0 && self.dy == 0) {
-				self.direction_queue = [];
+			if (this.dx == 0 && this.dy == 0) {
+				this.direction_queue = [];
 			}
 			
 			if (omg_hax) {
-				distance = (self.dx * self.dx + self.dy * self.dy) ** .5;
-				ndx = self.dx / distance;
-				ndy = self.dy / distance;
+				distance = (this.dx * this.dx + this.dy * this.dy) ** .5;
+				ndx = this.dx / distance;
+				ndy = this.dy / distance;
 				
 				tolerance = .35;
 				dy_off = ndy > -tolerance && ndy < tolerance;
@@ -745,9 +745,9 @@ class Sprite {
 					}
 				}
 				if (d != None) {
-					self.last_direction_of_movement = d;
-					self.direction_queue = [d] + self.direction_queue[:4];
-					if (len(self.direction_queue) == 5) {
+					this.last_direction_of_movement = d;
+					this.direction_queue = [d] + this.direction_queue[:4];
+					if (len(this.direction_queue) == 5) {
 						a = this.direction_queue[0];
 						b = this.direction_queue[1];
 						c = this.direction_queue[2];
@@ -759,12 +759,12 @@ class Sprite {
 							d.contains(a) &&
 							((b == c && (b == a || b == d)) || (b == a && c == d))) { // BWAHAHAHAHAHA
 							
-							self.last_direction_of_movement = d;
+							this.last_direction_of_movement = d;
 						}
 					} else {
-						for (foo : self.direction_queue) {
+						for (foo : this.direction_queue) {
 							if (len(foo) == 2) {
-								self.last_direction_of_movement = foo;
+								this.last_direction_of_movement = foo;
 								break;
 							}
 						}
@@ -775,51 +775,51 @@ class Sprite {
 		
 		if (new_platform != None && new_platform.stairs && on_new_coordinates_now) {
 			if (direction == new_platform.entrance) {
-				self.z -= new_platform.height * 8;
+				this.z -= new_platform.height * 8;
 			}
 		}
 		
-		if (self.dz == 0) {
-			col = Math.floor(self.x / 16);
-			row = Math.floor(self.y / 16);
-			layer = Math.floor(self.z - 1) / 8;
+		if (this.dz == 0) {
+			col = Math.floor(this.x / 16);
+			row = Math.floor(this.y / 16);
+			layer = Math.floor(this.z - 1) / 8;
 			lookup = level.cellLookup[col][row];
 			if (layer < len(lookup)) {
 				_t = lookup[layer];
 				if (_t == None) {
-					self.standingon = None;
+					this.standingon = None;
 				} else {
 					tile = level.grid[col][row][_t];
 					if (tile.blocking) {
-						self.standingon = tile;
+						this.standingon = tile;
 					} else {
-						self.standingon = None;
+						this.standingon = None;
 					}
 				}
 			} else {
-				self.standingon = None;
+				this.standingon = None;
 			}
 		}
 		
-		if (self.isblock && self.standingon != None) {
+		if (this.isblock && this.standingon != None) {
 			// turn me back into a real block
-			self.garbage_collect = True;
-			level.modify_block(Math.floor(self.x / 16), Math.floor(self.y / 16), Math.floor(self.z / 8), self.block_tile);
+			this.garbage_collect = True;
+			level.modify_block(Math.floor(this.x / 16), Math.floor(this.y / 16), Math.floor(this.z / 8), this.block_tile);
 		}
 		
-		self.dx = 0;
-		self.dy = 0;
-		self.dz = 0;
+		this.dx = 0;
+		this.dy = 0;
+		this.dz = 0;
 		
-		if (self.main_or_hologram) {
-			self.try_pick_up_powerups(level);
+		if (this.main_or_hologram) {
+			this.try_pick_up_powerups(level);
 		}
 	}
 	
 	function try_pick_up_powerups(level) {
-		col = Math.floor(self.x / 16);
-		row = Math.floor(self.y / 16);
-		layer = Math.floor(self.z / 8);
+		col = Math.floor(this.x / 16);
+		row = Math.floor(this.y / 16);
+		layer = Math.floor(this.z / 8);
 		if (layer < 0) return;
 		tile = level.get_tile_at(col, row, layer);
 		if (tile != None && tile.powerup) {

@@ -20,17 +20,17 @@ class TileStore {
 				}
 			}
 		}
-		self.tiles = tiles;
+		this.tiles = tiles;
 	}
 	
 	function get_tile(id) {
-		return self.tiles[id];
+		return this.tiles[id];
 	}
 	
 	function get_all_block_tiles() {
 		output = [];
-		for (k : self.tiles.keys()) {
-			if (self.tiles[k].pushable) {
+		for (k : this.tiles.keys()) {
+			if (this.tiles[k].pushable) {
 				output.add(k);
 			}
 		}

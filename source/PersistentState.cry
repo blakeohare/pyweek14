@@ -49,29 +49,29 @@ function persistence_change_level() {
 
 class PersistentState {
 	constructor() {
-		self.forever = {};
-		self.session = {};
-		self.level = {};
+		this.forever = {};
+		this.session = {};
+		this.level = {};
 	}
 	
 	function purge_all() {
-		self.forever = {};
-		self.session = {};
-		self.level = {};
+		this.forever = {};
+		this.session = {};
+		this.level = {};
 	}
 	
 	function save_game() {
-		UserData.fileWriteText('save.txt', self.serialize());
+		UserData.fileWriteText('save.txt', this.serialize());
 	}
 	
 	function change_level() {
-		self.level = {};
+		this.level = {};
 	}
 	
 	function serialize() {
 		output = [];
-		for (key : self.forever.keys()) {
-			value = self.forever[key];
+		for (key : this.forever.keys()) {
+			value = this.forever[key];
 			if (value[1] == None) {
 				value[1] = '';
 			}
@@ -107,55 +107,55 @@ class PersistentState {
 			}
 		}
 		
-		self.forever = values;
+		this.forever = values;
 	}
 	
 	function set_int_forever(name, value) {
-		self._set_int(name, value, self.forever);
+		this._set_int(name, value, this.forever);
 	}
 	
 	function set_int_session(name, value) {
-		self._set_int(name, value, self.session);
+		this._set_int(name, value, this.session);
 	}
 	
 	function set_int_level(name, value) {
-		self._set_int(name, value, self.level);
+		this._set_int(name, value, this.level);
 	}
 	
 	function get_int_forever(name) {
-		return self._get_int(name, self.forever);
+		return this._get_int(name, this.forever);
 	}
 	
 	function get_int_session(name) {
-		return self._get_int(name, self.session);
+		return this._get_int(name, this.session);
 	}
 	
 	function get_int_level(name) {
-		return self._get_int(name, self.level);
+		return this._get_int(name, this.level);
 	}
 	
 	function set_string_forever(name, value) {
-		self._set_string(name, value, self.forever);
+		this._set_string(name, value, this.forever);
 	}
 	
 	function set_string_session(name, value) {
-		self._set_string(name, value, self.session);
+		this._set_string(name, value, this.session);
 	}
 	
 	function set_string_level(name, value) {
-		self._set_string(name, value, self.level);
+		this._set_string(name, value, this.level);
 	}
 	
 	function get_string_forever(name) {
-		return self._get_string(name, self.forever);
+		return this._get_string(name, this.forever);
 	}
 	
 	function get_string_session(name) {
-		return self._get_string(name, self.session);
+		return this._get_string(name, this.session);
 	}
 	
 	function get_string_level(name) {
-		return self._get_string(name, self.level);
+		return this._get_string(name, this.level);
 	}
 	
 	function _set_int(name, value, lookup) {

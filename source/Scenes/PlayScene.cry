@@ -1,30 +1,30 @@
 class PlayScene {
 	constructor(level_name, story_mode, temp_suppress=False) {
-		self.story_mode = story_mode;
+		this.story_mode = story_mode;
 		persistence_change_level();
 		if (level_name == '1-3') {
 			set_persisted_level_int('decontaminant', 3);
 		}
 		
-		self.research_collected = 0;
-		self.next = self;
-		self.level_name = level_name;
-		self.level = new Level(level_name, self);
-		self.player = new Sprite(17, 177, 32, 'main');
-		self.sprites = [self.player];
-		self.player.level = self.level;
-		for (rat : self.level.rats) {
+		this.research_collected = 0;
+		this.next = this;
+		this.level_name = level_name;
+		this.level = new Level(level_name, self);
+		this.player = new Sprite(17, 177, 32, 'main');
+		this.sprites = [this.player];
+		this.player.level = this.level;
+		for (rat : this.level.rats) {
 			rat.standingon = None;
-			self.sprites.add(rat);
+			this.sprites.add(rat);
 		}
-		self.overlay = new PlaySceneOverlay(self, self.level);
-		self.do_not_override_start = False;
+		this.overlay = new PlaySceneOverlay(this, this.level);
+		this.do_not_override_start = False;
 		level_manager = get_level_manager();
-		self.counter = 0;
+		this.counter = 0;
 		start = level_manager.get_starting_point_for_level(level_name);
-		self.do_stuff = get_hacks_for_level(level_name, 'do_stuff');
+		this.do_stuff = get_hacks_for_level(level_name, 'do_stuff');
 		if (level_name == '99-0') {
-			self.player.set_automation(new Automation('99-0', '99_p'));
+			this.player.set_automation(new Automation('99-0', '99_p'));
 		}
 		
 		if (start != None) {
@@ -35,70 +35,70 @@ class PlayScene {
 			if (len(start) >= 4) {
 				dir = start[3];
 			}
-			self.do_not_override_start = True;
+			this.do_not_override_start = True;
 		
-			self.player.x = x * 16 + 8;
-			self.player.y = y * 16 + 8;
-			self.player.z = z * 8;
-			self.player.last_direction_of_movement = dir;
-			self.player.standingon = self.level.get_tile_at(x, y, z - 1);
+			this.player.x = x * 16 + 8;
+			this.player.y = y * 16 + 8;
+			this.player.z = z * 8;
+			this.player.last_direction_of_movement = dir;
+			this.player.standingon = this.level.get_tile_at(x, y, z - 1);
 		}
 		
-		self.holograms = [];
-		self.x_offset_override = 0;
-		level_pixel_width = self.level.height * 16 + self.level.width * 16;
+		this.holograms = [];
+		this.x_offset_override = 0;
+		level_pixel_width = this.level.height * 16 + this.level.width * 16;
 		level_pixel_height = level_pixel_width / 2 + 12 * 8;
-		self.fixed_x = level_pixel_width < 400;
-		self.fixed_y = level_pixel_height < 300;
-		if (self.level.name == '28-0') {
-			self.fixed_x = True;
-			self.fixed_y = True;
-			self.x_offset_override = 40;
+		this.fixed_x = level_pixel_width < 400;
+		this.fixed_y = level_pixel_height < 300;
+		if (this.level.name == '28-0') {
+			this.fixed_x = True;
+			this.fixed_y = True;
+			this.x_offset_override = 40;
 		}
-		self.target_camera_x = None;
-		self.target_camera_y = None;
-		self.camera_x = None;
-		self.camera_y = None;
-		if (self.do_stuff != None) {
-			self.do_stuff(self, self.level, -1);
+		this.target_camera_x = None;
+		this.target_camera_y = None;
+		this.camera_x = None;
+		this.camera_y = None;
+		if (this.do_stuff != None) {
+			this.do_stuff(this, this.level, -1);
 		}
 		
-		if (self.story_mode && !temp_suppress) {
-			ds = get_startup_dialog(self);
+		if (this.story_mode && !temp_suppress) {
+			ds = get_startup_dialog(this);
 			if (ds != None) {
-				self.next = ds;
+				this.next = ds;
 			}
 		}
 	}
 	
 	function process_input(events, pressed, axes, mouse) {
 		for (event : events) {
-			if (event.key == 'spray' && event.down && self.player.spray_counter < 0) {
+			if (event.key == 'spray' && event.down && this.player.spray_counter < 0) {
 				if (get_persisted_level_int('decontaminant') > 0) {
 					play_sound('spray');
 					increment_persisted_level_int('decontaminant', -1);
-					self.player.spray_counter = 30;
-					if (self.level.spray_from([self.player] + self.holograms)) {
-						if (self.level.name == '1-3' && self.story_mode) {
-							self.next = new DialogScene(self, 'a1b');
+					this.player.spray_counter = 30;
+					if (this.level.spray_from([this.player] + this.holograms)) {
+						if (this.level.name == '1-3' && this.story_mode) {
+							this.next = new DialogScene(this, 'a1b');
 						}
 					}
 				}
 			}
 			
-			if (event.key == 'start' && event.down && self.level.name != 'intro' && self.level.name != '99-0') {
-				self.next = new PauseScene(self);
+			if (event.key == 'start' && event.down && this.level.name != 'intro' && this.level.name != '99-0') {
+				this.next = new PauseScene(this);
 			}
 		}
 		
-		if (!self.player.immobilized && self.player.automation == None) {
+		if (!this.player.immobilized && this.player.automation == None) {
 			dx = axes[0];
 			dy = axes[1];
-			if (self.player.spray_counter < 0) {
-				self.player.dx = dx;
-				self.player.dy = dy;
+			if (this.player.spray_counter < 0) {
+				this.player.dx = dx;
+				this.player.dy = dy;
 				
-				for (h : self.holograms) {
+				for (h : this.holograms) {
 					h.dx = dx;
 					h.dy = dy;
 				}
@@ -107,22 +107,22 @@ class PlayScene {
 	}
 	
 	function update(counter) {
-		level = self.level;
-		player = self.player;
+		level = this.level;
+		player = this.player;
 		
-		if (self.do_stuff != None) {
-			self.do_stuff(self, level, self.counter);
+		if (this.do_stuff != None) {
+			this.do_stuff(this, level, this.counter);
 		}
 		
 		if (player.death_by_rat > 0) {
 			player.death_by_rat += 1;
 			if (player.death_by_rat == 90) {
-				self.restart_level();
+				this.restart_level();
 			}
 		}
 		
 		filtered = [];
-		for (sprite : self.sprites) {
+		for (sprite : this.sprites) {
 			sprite.update(level);
 			sprite = sprite.get_replacement_sprite();
 			if (!sprite.garbage_collect) {
@@ -140,133 +140,133 @@ class PlayScene {
 			}
 		}
 		
-		self.sprites = filtered + level.get_new_sprites();
+		this.sprites = filtered + level.get_new_sprites();
 		
-		if (self.player.death_counter == 1) {
-			self.restart_level();
+		if (this.player.death_counter == 1) {
+			this.restart_level();
 		}
 		
-		if (self.player.z < -140) {
-			self.restart_level();
+		if (this.player.z < -140) {
+			this.restart_level();
 		}
 		
-		self.level.switch_manager.update_enabled(self.sprites, False);
+		this.level.switch_manager.update_enabled(this.sprites, False);
 		
-		self.do_hologram_stuff();
+		this.do_hologram_stuff();
 		
-		self.level.coil_manager.set_fresh_coils(self.level.get_coils());
-		self.level.coil_manager.find_zapped_sprites(self.sprites);
+		this.level.coil_manager.set_fresh_coils(this.level.get_coils());
+		this.level.coil_manager.find_zapped_sprites(this.sprites);
 		
-		if (self.level.complete) {
-			next_level = get_level_manager().get_next_level(self.level.name);
-			if (next_level == None || (self.level.name == '90-0' && self.story_mode == False)) {
-				self.next = new TransitionScene(self, new EndSceneNonStory());
+		if (this.level.complete) {
+			next_level = get_level_manager().get_next_level(this.level.name);
+			if (next_level == None || (this.level.name == '90-0' && this.story_mode == False)) {
+				this.next = new TransitionScene(this, new EndSceneNonStory());
 			} else {
 				increment_persisted_session_int('research', get_persisted_level_int('research'));
 				set_persisted_level_int('research', 0);
-				self.next = new TransitionScene(self, new PlayScene(next_level, self.story_mode));
+				this.next = new TransitionScene(this, new PlayScene(next_level, this.story_mode));
 			}
 		}
 		
 		sprites_to_add = [];
 		sprites_to_remove = [];
 		
-		self.level.update(self.sprites, sprites_to_add, sprites_to_remove);
+		this.level.update(this.sprites, sprites_to_add, sprites_to_remove);
 
 		for (sprite : sprites_to_remove) {
 			sprite.garbage_collect = True;
 		}
 		for (sprite : sprites_to_add) {
-			self.sprites.add(sprite);
+			this.sprites.add(sprite);
 		}
 		
-		get_jukebox().update(self.level.name);
+		get_jukebox().update(this.level.name);
 	}
 	
 	function do_hologram_stuff() {
-		self.level.hologram_manager.update(self, self.level, self.player);
+		this.level.hologram_manager.update(this, this.level, this.player);
 		
-		anim = self.level.hologram_manager.animation_sequence();
+		anim = this.level.hologram_manager.animation_sequence();
 		if (anim != None) {
-			self.player.immobilized = True;
+			this.player.immobilized = True;
 			if (anim == 0) {
-				self.player.immobilized = False;
+				this.player.immobilized = False;
 			}
 		}
 		
-		for (sprite : self.level.hologram_manager.get_new_sprites()) {
-			self.sprites.add(sprite);
-			self.holograms.add(sprite);
+		for (sprite : this.level.hologram_manager.get_new_sprites()) {
+			this.sprites.add(sprite);
+			this.holograms.add(sprite);
 		}
-		self.counter += 1;
+		this.counter += 1;
 	}
 	
-	function restart_level(self) {
-		self.next = new TransitionScene(self, new PlayScene(self.level.name, self.story_mode, True));
+	function restart_level(this) {
+		this.next = new TransitionScene(this, new PlayScene(this.level.name, this.story_mode, True));
 	}
 	
 	function render(screen, counter) {
 		
-		player_position = self.player.pixel_position(0, 0, None);
+		player_position = this.player.pixel_position(0, 0, None);
 		player_x = player_position[0];
 		player_y = player_position[1];
 		
-		if (self.fixed_x) {
-			self.target_camera_x = GAME_WIDTH / 2;
+		if (this.fixed_x) {
+			this.target_camera_x = GAME_WIDTH / 2;
 		} else {
-			self.target_camera_x = GAME_WIDTH / 2 - player_x;
+			this.target_camera_x = GAME_WIDTH / 2 - player_x;
 		}
 		
-		if (self.fixed_y) {
-			self.target_camera_y = 50;
+		if (this.fixed_y) {
+			this.target_camera_y = 50;
 		} else {
-			self.target_camera_y = 120 - player_y;
+			this.target_camera_y = 120 - player_y;
 		}
 		
-		if (self.camera_x == None) {
-			self.camera_x = self.target_camera_x;
+		if (this.camera_x == None) {
+			this.camera_x = this.target_camera_x;
 		}
-		if (self.camera_y == None) {
-			self.camera_y = self.target_camera_y;
+		if (this.camera_y == None) {
+			this.camera_y = this.target_camera_y;
 		}
 		
 		max_pan_speed = 4;
-		if (self.camera_x != self.target_camera_x) {
-			if (Math.abs(self.camera_x - self.target_camera_x) == 1) {
-				self.camera_x = self.target_camera_x;
+		if (this.camera_x != this.target_camera_x) {
+			if (Math.abs(this.camera_x - this.target_camera_x) == 1) {
+				this.camera_x = this.target_camera_x;
 			} else {
-				new_camera_x = (self.camera_x + self.target_camera_x) / 2;
-				if (Math.abs(new_camera_x - self.camera_x) > max_pan_speed) {
-					if (self.camera_x < new_camera_x) {
-						self.camera_x += max_pan_speed;
+				new_camera_x = (this.camera_x + this.target_camera_x) / 2;
+				if (Math.abs(new_camera_x - this.camera_x) > max_pan_speed) {
+					if (this.camera_x < new_camera_x) {
+						this.camera_x += max_pan_speed;
 					} else {
-						self.camera_x -= max_pan_speed;
+						this.camera_x -= max_pan_speed;
 					}
 				} else {
-					self.camera_x = new_camera_x;
+					this.camera_x = new_camera_x;
 				}
 			}
 		}
 		
-		if (self.camera_y != self.target_camera_y) {
-			if (Math.abs(self.camera_y - self.target_camera_y) == 1) {
-				self.camera_y = self.target_camera_y;
+		if (this.camera_y != this.target_camera_y) {
+			if (Math.abs(this.camera_y - this.target_camera_y) == 1) {
+				this.camera_y = this.target_camera_y;
 			} else {
-				new_camera_y = (self.camera_y + self.target_camera_y) / 2;
-				if (Math.abs(new_camera_y - self.camera_y) > max_pan_speed) {
-					if (self.camera_y < new_camera_y) {
-						self.camera_y += max_pan_speed;
+				new_camera_y = (this.camera_y + this.target_camera_y) / 2;
+				if (Math.abs(new_camera_y - this.camera_y) > max_pan_speed) {
+					if (this.camera_y < new_camera_y) {
+						this.camera_y += max_pan_speed;
 					} else {
-						self.camera_y -= max_pan_speed;
+						this.camera_y -= max_pan_speed;
 					}
 				} else {
-					self.camera_y = new_camera_y;
+					this.camera_y = new_camera_y;
 				}
 			}
 		}
 		
-		self.level.render(screen, self.camera_x + self.x_offset_override, self.camera_y, self.sprites, counter);
+		this.level.render(screen, this.camera_x + this.x_offset_override, this.camera_y, this.sprites, counter);
 		
-		self.overlay.render(screen, counter);
+		this.overlay.render(screen, counter);
 	}
 }

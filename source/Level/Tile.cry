@@ -13,97 +13,97 @@ class Tile {
 	}
 	
 	constructor(id, images, height, flags) {
-		self.id = id;
+		this.id = id;
 		images = images.split('|');
-		self.framerate = 4;
-		if (self.is_num(images[0][0])) {
-			self.framerate = Core.parseInt(images[0]) ?? 0;
+		this.framerate = 4;
+		if (this.is_num(images[0][0])) {
+			this.framerate = Core.parseInt(images[0]) ?? 0;
 			images = images[1:];
 		}
-		self.hascharge = False;
+		this.hascharge = False;
 		
 		if (id == '4off') {
 			images = ['teslacoil1.png'];
 		}
 		
-		self.tesla = id == '4off' || id == '4';
-		self.teslaon = id == '4';
+		this.tesla = id == '4off' || id == '4';
+		this.teslaon = id == '4';
 		
-		self.images = [];
+		this.images = [];
 		for (image : images) {
-			self.images.add(get_image('tiles/' + image));
+			this.images.add(get_image('tiles/' + image));
 		}
 
-		self.still = len(self.images) == 1;
-		self.still_image = self.images[0];
-		self.y_offsets = [];
-		for (image : self.images) {
-			self.y_offsets.add(24 - image.height);
+		this.still = len(this.images) == 1;
+		this.still_image = this.images[0];
+		this.y_offsets = [];
+		for (image : this.images) {
+			this.y_offsets.add(24 - image.height);
 		}
 
-		self.still_y_offset = self.y_offsets[0];
-		self.image_count = len(self.images);
-		self.height = height;
-		self.no_blocks = False;
-		self.isholopad = id == 'clone' || id == 'clone2';
-		self.pushable = flags_contains(flags, 's');
-		self.blocking = flags_contains(flags, 'x');
-		self.circuit = flags_contains(flags, 'eh');
-		self.actual_circuit = flags_contains(flags, 'e');
-		self.stairs = flags_contains(flags, '12345678');
-		self.teleporter = id == 't1';
-		self.power_input = id == 'pi';
-		self.power_output = id == 'po';
-		self.isexit = id == '37' || id == '38';
-		self.cant_push_over = flags_contains(flags, 'n');
-		self.research = id == '41';
-		self.goo = id == '42' || id == '43' || id == '44';
-		self.isswitch = id == 'pi' || id == 'b1' || id == 'b2' || id == 'b3' || id == 'b4' || id == 'b5' || id == 'b6' || id == 'b7';
-		self.powerup = self.research || self.goo;
-		self.is_goo = id == '15';
-		self.goo_size = 0;
-		if (self.goo) {
-			self.goo_size = ((Core.parseInt(id) - 41) - 1) * 2 + 1; // 1, 3, 5 OMGHAX
+		this.still_y_offset = this.y_offsets[0];
+		this.image_count = len(this.images);
+		this.height = height;
+		this.no_blocks = False;
+		this.isholopad = id == 'clone' || id == 'clone2';
+		this.pushable = flags_contains(flags, 's');
+		this.blocking = flags_contains(flags, 'x');
+		this.circuit = flags_contains(flags, 'eh');
+		this.actual_circuit = flags_contains(flags, 'e');
+		this.stairs = flags_contains(flags, '12345678');
+		this.teleporter = id == 't1';
+		this.power_input = id == 'pi';
+		this.power_output = id == 'po';
+		this.isexit = id == '37' || id == '38';
+		this.cant_push_over = flags_contains(flags, 'n');
+		this.research = id == '41';
+		this.goo = id == '42' || id == '43' || id == '44';
+		this.isswitch = id == 'pi' || id == 'b1' || id == 'b2' || id == 'b3' || id == 'b4' || id == 'b5' || id == 'b6' || id == 'b7';
+		this.powerup = this.research || this.goo;
+		this.is_goo = id == '15';
+		this.goo_size = 0;
+		if (this.goo) {
+			this.goo_size = ((Core.parseInt(id) - 41) - 1) * 2 + 1; // 1, 3, 5 OMGHAX
 		}
-		self.blocking = self.blocking || self.stairs || self.pushable;
-		if (self.stairs) {
-			self.no_blocks = True;
+		this.blocking = this.blocking || this.stairs || this.pushable;
+		if (this.stairs) {
+			this.no_blocks = True;
 			double = flags_contains(flags, '5678');
 			topo = double ? 2 : 1;
 			if (flags_contains(flags, '15')) {
-				self.topography = [0, -topo, -topo, 0];
-				self.entrance = 'SE';
+				this.topography = [0, -topo, -topo, 0];
+				this.entrance = 'SE';
 			} else if (flags_contains(flags, '26')) {
-				self.topography = [0, 0, -topo, -topo];
-				self.entrance = 'SW';
+				this.topography = [0, 0, -topo, -topo];
+				this.entrance = 'SW';
 			} else if (flags_contains(flags, '37')) {
-				self.topography = [-topo, 0, 0, -topo];
-				self.entrance = 'NW';
+				this.topography = [-topo, 0, 0, -topo];
+				this.entrance = 'NW';
 			} else if (flags_contains(flags, '48')) {
-				self.topography = [-topo, -topo, 0, 0];
-				self.entrance = 'NE';
+				this.topography = [-topo, -topo, 0, 0];
+				this.entrance = 'NE';
 			}
 		}
 	}
 	
 	// Code duplicated below
 	function get_image(render_counter) {
-		if (self.still) {
-			return self.still_image;
+		if (this.still) {
+			return this.still_image;
 		}
-		i = (render_counter / self.framerate) % self.image_count;
-		return self.images[i];
+		i = (render_counter / this.framerate) % this.image_count;
+		return this.images[i];
 	}
 
 	// Code duplicated above
 	function render(screen, x, y, render_counter) {
-		if (self.still) {
-			img = self.still_image;
-			y += self.still_y_offset;
+		if (this.still) {
+			img = this.still_image;
+			y += this.still_y_offset;
 		} else {
-			i = (render_counter / self.framerate) % self.image_count;
-			img = self.images[i];
-			y += self.y_offsets[i];
+			i = (render_counter / this.framerate) % this.image_count;
+			img = this.images[i];
+			y += this.y_offsets[i];
 		}
 		
 		img.draw(x, y);

@@ -1,9 +1,9 @@
 class TransitionScene {
 	constructor(before, after) {
-		self.next = self;
-		self.before = before;
-		self.after = after;
-		self.counter = 0;
+		this.next = this;
+		this.before = before;
+		this.after = after;
+		this.counter = 0;
 	}
 		
 	function process_input(events, pressed, axes, mouse) {
@@ -11,20 +11,20 @@ class TransitionScene {
 	}
 	
 	function update(counter) {
-		self.counter += 1;
-		if (self.counter >= 60) {
-			self.next = self.after;
+		this.counter += 1;
+		if (this.counter >= 60) {
+			this.next = this.after;
 		}
 	}
 	
 	function render(screen, counter) {
 		
-		if (self.counter <= 30) {
-			opacity = self.counter / 30.0;
-			bg = self.before;
+		if (this.counter <= 30) {
+			opacity = this.counter / 30.0;
+			bg = this.before;
 		} else {
-			opacity = (60 - self.counter) / 30.0;
-			bg = self.after;
+			opacity = (60 - this.counter) / 30.0;
+			bg = this.after;
 		}
 		
 		alpha = Math.floor(opacity * 255);
