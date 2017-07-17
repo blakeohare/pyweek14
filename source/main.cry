@@ -11,23 +11,21 @@ const False = false;
 function len(thing) { return thing.length; }
 function str(thing) { return thing + ''; }
 
-_debug_message = None
-def set_user_debug_message(text):
-	global _debug_message
-	_debug_message = text
+class DebugMessageHelper {
+	static field msg = null;
+}
 
-def get_user_debug_message():
-	global _debug_message
-	return _debug_message			
+function set_user_debug_message(text):
+	DebugMessageHelper.msg = text;
+}
 
-def main():
+function get_user_debug_message() {
+	return DebugMessageHelper.msg;
+}
 
-	window = Game.GameWindow("Sudo Science", FPS, GAME_WIDTH, GAME_HEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT)
-	
-	real_screen = window.realScreen
-	fake_screen = window.virtualScreen
-	fps = window.fps
-	window.setIcon('icon.png')
+function main() {
+
+	window = new Game.GameWindow("Sudo Science", FPS, GAME_WIDTH, GAME_HEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT);
 	
 	pressed = {
 		'start': False,
@@ -36,62 +34,70 @@ def main():
 		'down': False,
 		'up': False,
 		'action': False
+	};
+	
+	load_persistent_state();
+	
+	if (UserData.fileExists('start.txt')) {
+		lines = UserData.fileReadText('start.txt').trim().split('\n');
+		
+		if (lines[0] == 'normal') {
+			active_scene = new MainMenuScene();
+		} else {
+			level_name = lines[0];
+			active_scene = new PlayScene(level_name, False);
+			if (!active_scene.do_not_override_start) {
+				coords = lines[1].split(',').map(Core.parseInt);
+				x = coords[0];
+				y = coords[1];
+				z = 8;
+				active_scene.player.x = x * 16 + 8;
+				active_scene.player.y = y * 16 + 8;
+				active_scene.player.z = z * 8;
+			}
+		}
+	} else {
+		active_scene = new MainMenuScene();
 	}
 	
-	load_persistent_state()
+	counter = 0;
 	
-	if UserData.fileExists('start.txt'):
-		lines = UserData.fileReadText('start.txt').strip().split('\n')
-		
-		if lines[0] == 'normal':
-			active_scene = MainMenuScene()
-		else:
-			level_name = lines[0]
-			active_scene = PlayScene(level_name, False)
-			if not active_scene.do_not_override_start:
-				coords = safe_map(int, lines[1].split(','))
-				x = coords[0]
-				y = coords[1]
-				z = 8
-				active_scene.player.x = x * 16 + 8
-				active_scene.player.y = y * 16 + 8
-				active_scene.player.z = z * 8
-			
-	else:
-		active_scene = MainMenuScene()
-	counter = 0
+	input_manager = get_input_manager();
 	
-	input_manager = get_input_manager()
+	// TODO: make an async loader scene
+	ImagesHelper._imageSheet = ImageResources.ImageSheet.loadFromResources('everything')
 	
-	# TODO: make an async loader scene
-	global _imageSheet
-	_imageSheet = ImageResources.ImageSheet.loadFromResources('everything')
+	// TODO: remove this from all the scene classes
+	fake_screen = null;
 	
-	while active_scene != None:
-		counter += 1
-		event_list = []
-		event_list = input_manager.get_events(window)
-		pressed = input_manager.my_pressed
-		try_quit = input_manager.quitAttempt
-		axes = input_manager.axes
-		mouse_events = input_manager.get_mouse_events()
+	while (active_scene != null) {
+		counter++;
+		event_list = [];
+		event_list = input_manager.get_events(window);
+		pressed = input_manager.my_pressed;
+		try_quit = input_manager.quitAttempt;
+		axes = input_manager.axes;
+		mouse_events = input_manager.get_mouse_events();
 		
-		active_scene.process_input(event_list, pressed, axes, mouse_events)
-		active_scene.update(counter)
+		active_scene.process_input(event_list, pressed, axes, mouse_events);
+		active_scene.update(counter);
 		
-		Graphics2D.Draw.fill(0, 0, 0)
+		Graphics2D.Draw.fill(0, 0, 0);
 		
-		active_scene.render(fake_screen, counter)
+		active_scene.render(fake_screen, counter);
 		
-		debug_message = get_user_debug_message()
-		if debug_message != None:
-			txt = get_text(debug_message, 20, (255, 0, 0))
-			txt.draw(10, 10)
+		debug_message = get_user_debug_message();
+		if (debug_message != None) {
+			txt = get_text(debug_message, 20, [255, 0, 0]);
+			txt.draw(10, 10);
+		}
 		
-		active_scene = active_scene.next
+		active_scene = active_scene.next;
 		
-		if try_quit:
-			active_scene = None
+		if (try_quit) {
+			active_scene = null;
+		}
 		
-		window.clockTick()
-
+		window.clockTick();
+	}
+}
