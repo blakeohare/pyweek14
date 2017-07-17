@@ -544,8 +544,8 @@ class Level:
 					if not suppress:
 						self.render_sprite(screen, sprite, xOffset, yOffset, render_counter)
 	
-	# there are no blockages. It's already been verified by the time this function
-	# has been called.
+	// there are no blockages. It's already been verified by the time this function
+	// has been called.
 	def push_block(self, sprite, start_col, start_row, end_col, end_row, layer):
 		play_sound('blockpush')
 		pt = self.get_push_tracker(sprite)
@@ -633,7 +633,7 @@ class Level:
 		while z <= layer_top:
 			newstack.append(None)
 			z += 1
-		# at this point newstack has all None's where the modification will go
+		// at this point newstack has all None's where the modification will go
 		
 		i = 0
 		z = 0
@@ -673,7 +673,7 @@ class Level:
 	
 	def announce_teleporter_blocked(self):
 		pass
-		# TODO: play sound
+		// TODO: play sound
 	
 	def canonicalize_stack(self, col, row):
 		stack = self.grid[col][row]

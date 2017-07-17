@@ -1,223 +1,272 @@
-class PlayScene:
-	def __init__(self, level_name, story_mode, temp_suppress=False):
-		self.story_mode = story_mode
-		persistence_change_level()
-		if level_name == '1-3':
-			set_persisted_level_int('decontaminant', 3)
+class PlayScene {
+	constructor(level_name, story_mode, temp_suppress=False) {
+		self.story_mode = story_mode;
+		persistence_change_level();
+		if (level_name == '1-3') {
+			set_persisted_level_int('decontaminant', 3);
+		}
 		
-		self.research_collected = 0
-		self.next = self
-		self.level_name = level_name
-		self.level = Level(level_name, self)
-		self.player = Sprite(17, 177, 32, 'main')
-		self.sprites = [self.player]
-		self.player.level = self.level
-		for rat in self.level.rats:
-			rat.standingon = None
-			self.sprites.append(rat)
-		self.overlay = PlaySceneOverlay(self, self.level)
-		self.do_not_override_start = False
-		level_manager = get_level_manager()
-		self.counter = 0
-		start = level_manager.get_starting_point_for_level(level_name)
-		self.do_stuff = get_hacks_for_level(level_name, 'do_stuff')
-		if level_name == '99-0':
-			self.player.set_automation(Automation('99-0', '99_p'))
+		self.research_collected = 0;
+		self.next = self;
+		self.level_name = level_name;
+		self.level = new Level(level_name, self);
+		self.player = new Sprite(17, 177, 32, 'main');
+		self.sprites = [self.player];
+		self.player.level = self.level;
+		for (rat : self.level.rats) {
+			rat.standingon = None;
+			self.sprites.add(rat);
+		}
+		self.overlay = new PlaySceneOverlay(self, self.level);
+		self.do_not_override_start = False;
+		level_manager = get_level_manager();
+		self.counter = 0;
+		start = level_manager.get_starting_point_for_level(level_name);
+		self.do_stuff = get_hacks_for_level(level_name, 'do_stuff');
+		if (level_name == '99-0') {
+			self.player.set_automation(new Automation('99-0', '99_p'));
+		}
 		
-		if start != None:
-			x = start[0]
-			y = start[1]
-			z = start[2]
-			dir = 's'
-			if len(start) >= 4:
-				dir = start[3]
-			self.do_not_override_start = True
+		if (start != None) {
+			x = start[0];
+			y = start[1];
+			z = start[2];
+			dir = 's';
+			if (len(start) >= 4) {
+				dir = start[3];
+			}
+			self.do_not_override_start = True;
 		
-			self.player.x = x * 16 + 8
-			self.player.y = y * 16 + 8
-			self.player.z = z * 8
-			self.player.last_direction_of_movement = dir
-			self.player.standingon = self.level.get_tile_at(x, y, z - 1)
+			self.player.x = x * 16 + 8;
+			self.player.y = y * 16 + 8;
+			self.player.z = z * 8;
+			self.player.last_direction_of_movement = dir;
+			self.player.standingon = self.level.get_tile_at(x, y, z - 1);
+		}
 		
-		self.holograms = []
-		self.x_offset_override = 0
-		level_pixel_width = self.level.height * 16 + self.level.width * 16
-		level_pixel_height = level_pixel_width // 2 + 12 * 8
-		self.fixed_x = level_pixel_width < 400
-		self.fixed_y = level_pixel_height < 300
-		if self.level.name == '28-0':
-			self.fixed_x = True
-			self.fixed_y = True
-			self.x_offset_override = 40
-		self.target_camera_x = None
-		self.target_camera_y = None
-		self.camera_x = None
-		self.camera_y = None
-		if self.do_stuff != None:
-			self.do_stuff(self, self.level, -1)
+		self.holograms = [];
+		self.x_offset_override = 0;
+		level_pixel_width = self.level.height * 16 + self.level.width * 16;
+		level_pixel_height = level_pixel_width / 2 + 12 * 8;
+		self.fixed_x = level_pixel_width < 400;
+		self.fixed_y = level_pixel_height < 300;
+		if (self.level.name == '28-0') {
+			self.fixed_x = True;
+			self.fixed_y = True;
+			self.x_offset_override = 40;
+		}
+		self.target_camera_x = None;
+		self.target_camera_y = None;
+		self.camera_x = None;
+		self.camera_y = None;
+		if (self.do_stuff != None) {
+			self.do_stuff(self, self.level, -1);
+		}
 		
-		if self.story_mode and not temp_suppress:
-			ds = get_startup_dialog(self)
-			if ds != None:
-				self.next = ds
+		if (self.story_mode && !temp_suppress) {
+			ds = get_startup_dialog(self);
+			if (ds != None) {
+				self.next = ds;
+			}
+		}
+	}
 	
-	def process_input(self, events, pressed, axes, mouse):
-		for event in events:
-			if event.key == 'spray' and event.down and self.player.spray_counter < 0:
-				if get_persisted_level_int('decontaminant') > 0:
-					play_sound('spray')
-					increment_persisted_level_int('decontaminant', -1)
-					self.player.spray_counter = 30
-					if self.level.spray_from([self.player] + self.holograms):
-						if self.level.name == '1-3' and self.story_mode:
-							self.next = DialogScene(self, 'a1b')
-			if event.key == 'start' and event.down and self.level.name != 'intro' and self.level.name != '99-0':
-				self.next = PauseScene(self)
-		
-		if not self.player.immobilized and self.player.automation == None:
-			dx = axes[0]
-			dy = axes[1]
-			if self.player.spray_counter < 0:
-				self.player.dx = dx
-				self.player.dy = dy
-				
-				for h in self.holograms:
-					h.dx = dx
-					h.dy = dy
-		
-	
-	def update(self, counter):
-		level = self.level
-		player = self.player
-		
-		if self.do_stuff != None:
-			self.do_stuff(self, level, self.counter)
-		
-		if player.death_by_rat > 0:
-			player.death_by_rat += 1
-			if player.death_by_rat == 90:
-				self.restart_level()
-		
-		filtered = []
-		for sprite in self.sprites:
-			sprite.update(level)
-			sprite = sprite.get_replacement_sprite()
-			if not sprite.garbage_collect:
-				filtered.append(sprite)
+	function process_input(events, pressed, axes, mouse) {
+		for (event : events) {
+			if (event.key == 'spray' && event.down && self.player.spray_counter < 0) {
+				if (get_persisted_level_int('decontaminant') > 0) {
+					play_sound('spray');
+					increment_persisted_level_int('decontaminant', -1);
+					self.player.spray_counter = 30;
+					if (self.level.spray_from([self.player] + self.holograms)) {
+						if (self.level.name == '1-3' && self.story_mode) {
+							self.next = new DialogScene(self, 'a1b');
+						}
+					}
+				}
+			}
 			
-			if sprite.israt and not player.death_by_rat:
-				dx = sprite.x - player.x
-				dy = sprite.y - player.y
-				distance = dx * dx + dy * dy
-				if distance < 144:
-					player.death_by_rat = 1
-					player.immobilized = True
+			if (event.key == 'start' && event.down && self.level.name != 'intro' && self.level.name != '99-0') {
+				self.next = new PauseScene(self);
+			}
+		}
 		
+		if (!self.player.immobilized && self.player.automation == None) {
+			dx = axes[0];
+			dy = axes[1];
+			if (self.player.spray_counter < 0) {
+				self.player.dx = dx;
+				self.player.dy = dy;
+				
+				for (h : self.holograms) {
+					h.dx = dx;
+					h.dy = dy;
+				}
+			}
+		}
+	}
+	
+	functioon update(counter) {
+		level = self.level;
+		player = self.player;
 		
+		if (self.do_stuff != None) {
+			self.do_stuff(self, level, self.counter);
+		}
 		
-		self.sprites = filtered + level.get_new_sprites()
+		if (player.death_by_rat > 0) {
+			player.death_by_rat += 1;
+			if (player.death_by_rat == 90) {
+				self.restart_level();
+			}
+		}
 		
-		if self.player.death_counter == 1:
-			self.restart_level()
+		filtered = [];
+		for (sprite : self.sprites) {
+			sprite.update(level);
+			sprite = sprite.get_replacement_sprite();
+			if (!sprite.garbage_collect) {
+				filtered.add(sprite);
+			}
+			
+			if (sprite.israt && !player.death_by_rat) {
+				dx = sprite.x - player.x;
+				dy = sprite.y - player.y;
+				distance = dx * dx + dy * dy;
+				if (distance < 144) {
+					player.death_by_rat = 1;
+					player.immobilized = True;
+				}
+			}
+		}
 		
-		if self.player.z < -140:
-			self.restart_level()
+		self.sprites = filtered + level.get_new_sprites();
 		
-		self.level.switch_manager.update_enabled(self.sprites, False)
+		if (self.player.death_counter == 1) {
+			self.restart_level();
+		}
 		
-		self.do_hologram_stuff()
+		if (self.player.z < -140) {
+			self.restart_level();
+		}
 		
-		self.level.coil_manager.set_fresh_coils(self.level.get_coils())
-		self.level.coil_manager.find_zapped_sprites(self.sprites)
+		self.level.switch_manager.update_enabled(self.sprites, False);
 		
-		if self.level.complete:
-			next_level = get_level_manager().get_next_level(self.level.name)
-			if next_level == None or (self.level.name == '90-0' and self.story_mode == False):
-				self.next = TransitionScene(self, EndSceneNonStory())
-			else:
-				increment_persisted_session_int('research', get_persisted_level_int('research'))
-				set_persisted_level_int('research', 0)
-				self.next = TransitionScene(self, PlayScene(next_level, self.story_mode))
+		self.do_hologram_stuff();
 		
-		sprites_to_add = []
-		sprites_to_remove = []
+		self.level.coil_manager.set_fresh_coils(self.level.get_coils());
+		self.level.coil_manager.find_zapped_sprites(self.sprites);
 		
-		self.level.update(self.sprites, sprites_to_add, sprites_to_remove)
+		if (self.level.complete) {
+			next_level = get_level_manager().get_next_level(self.level.name);
+			if (next_level == None || (self.level.name == '90-0' && self.story_mode == False)) {
+				self.next = new TransitionScene(self, new EndSceneNonStory());
+			} else {
+				increment_persisted_session_int('research', get_persisted_level_int('research'));
+				set_persisted_level_int('research', 0);
+				self.next = new TransitionScene(self, new PlayScene(next_level, self.story_mode));
+			}
+		}
+		
+		sprites_to_add = [];
+		sprites_to_remove = [];
+		
+		self.level.update(self.sprites, sprites_to_add, sprites_to_remove);
 
-		for sprite in sprites_to_remove:
-			sprite.garbage_collect = True
-		for sprite in sprites_to_add:
-			self.sprites.append(sprite)
+		for (sprite : sprites_to_remove) {
+			sprite.garbage_collect = True;
+		}
+		for (sprite : sprites_to_add) {
+			self.sprites.add(sprite);
+		}
 		
-		get_jukebox().update(self.level.name)
-		
-		
-	def do_hologram_stuff(self):
-		self.level.hologram_manager.update(self, self.level, self.player)
-		
-		anim = self.level.hologram_manager.animation_sequence()
-		if anim != None:
-			self.player.immobilized = True
-			if anim == 0:
-				self.player.immobilized = False
-		
-		for sprite in self.level.hologram_manager.get_new_sprites():
-			self.sprites.append(sprite)
-			self.holograms.append(sprite)
-		self.counter += 1
+		get_jukebox().update(self.level.name);
+	}
 	
+	function do_hologram_stuff() {
+		self.level.hologram_manager.update(self, self.level, self.player);
+		
+		anim = self.level.hologram_manager.animation_sequence();
+		if (anim != None) {
+			self.player.immobilized = True;
+			if (anim == 0) {
+				self.player.immobilized = False;
+			}
+		}
+		
+		for (sprite : self.level.hologram_manager.get_new_sprites()) {
+			self.sprites.add(sprite);
+			self.holograms.add(sprite);
+		}
+		self.counter += 1;
+	}
 	
-	def restart_level(self):
-		self.next = TransitionScene(self, PlayScene(self.level.name, self.story_mode, True))
+	function restart_level(self) {
+		self.next = new TransitionScene(self, new PlayScene(self.level.name, self.story_mode, True));
+	}
 	
-	def render(self, screen, counter):
+	function render(screen, counter) {
 		
-		player_position = self.player.pixel_position(0, 0, None)
-		player_x = player_position[0]
-		player_y = player_position[1]
+		player_position = self.player.pixel_position(0, 0, None);
+		player_x = player_position[0];
+		player_y = player_position[1];
 		
-		if self.fixed_x:
-			self.target_camera_x = GAME_WIDTH // 2
-		else:
-			self.target_camera_x = GAME_WIDTH // 2 - player_x
+		if (self.fixed_x) {
+			self.target_camera_x = GAME_WIDTH / 2;
+		} else {
+			self.target_camera_x = GAME_WIDTH / 2 - player_x;
+		}
 		
-		if self.fixed_y:
-			self.target_camera_y = 50
-		else:
-			self.target_camera_y = 120 - player_y
+		if (self.fixed_y) {
+			self.target_camera_y = 50;
+		} else {
+			self.target_camera_y = 120 - player_y;
+		}
 		
-		if self.camera_x == None:
-			self.camera_x = self.target_camera_x
-		if self.camera_y == None:
-			self.camera_y = self.target_camera_y
+		if (self.camera_x == None) {
+			self.camera_x = self.target_camera_x;
+		}
+		if (self.camera_y == None) {
+			self.camera_y = self.target_camera_y;
+		}
 		
-		max_pan_speed = 4
-		if self.camera_x != self.target_camera_x:
-			if Math.abs(self.camera_x - self.target_camera_x) == 1:
-				self.camera_x = self.target_camera_x
-			else:
-				new_camera_x = (self.camera_x + self.target_camera_x) // 2
-				if Math.abs(new_camera_x - self.camera_x) > max_pan_speed:
-					if self.camera_x < new_camera_x:
-						self.camera_x += max_pan_speed
-					else:
-						self.camera_x -= max_pan_speed
-				else:
-					self.camera_x = new_camera_x
+		max_pan_speed = 4;
+		if (self.camera_x != self.target_camera_x) {
+			if (Math.abs(self.camera_x - self.target_camera_x) == 1) {
+				self.camera_x = self.target_camera_x;
+			} else {
+				new_camera_x = (self.camera_x + self.target_camera_x) / 2;
+				if (Math.abs(new_camera_x - self.camera_x) > max_pan_speed) {
+					if (self.camera_x < new_camera_x) {
+						self.camera_x += max_pan_speed;
+					} else {
+						self.camera_x -= max_pan_speed;
+					}
+				} else {
+					self.camera_x = new_camera_x;
+				}
+			}
+		}
 		
-		if self.camera_y != self.target_camera_y:
-			if Math.abs(self.camera_y - self.target_camera_y) == 1:
-				self.camera_y = self.target_camera_y
-			else:
-				new_camera_y = (self.camera_y + self.target_camera_y) // 2
-				if Math.abs(new_camera_y - self.camera_y) > max_pan_speed:
-					if self.camera_y < new_camera_y:
-						self.camera_y += max_pan_speed
-					else:
-						self.camera_y -= max_pan_speed
-				else:
-					self.camera_y = new_camera_y
+		if (self.camera_y != self.target_camera_y) {
+			if (Math.abs(self.camera_y - self.target_camera_y) == 1) {
+				self.camera_y = self.target_camera_y;
+			} else {
+				new_camera_y = (self.camera_y + self.target_camera_y) / 2;
+				if (Math.abs(new_camera_y - self.camera_y) > max_pan_speed) {
+					if (self.camera_y < new_camera_y) {
+						self.camera_y += max_pan_speed;
+					} else {
+						self.camera_y -= max_pan_speed;
+					}
+				} else {
+					self.camera_y = new_camera_y;
+				}
+			}
+		}
 		
-		self.level.render(screen, self.camera_x + self.x_offset_override, self.camera_y, self.sprites, counter)
+		self.level.render(screen, self.camera_x + self.x_offset_override, self.camera_y, self.sprites, counter);
 		
-		self.overlay.render(screen, counter)
+		self.overlay.render(screen, counter);
+	}
+}

@@ -1,19 +1,20 @@
-class SetInputScene:
-	def __init__(self, action, is_keyboard, prev_scene):
-		self.next = self
-		self.prev = prev_scene
-		self.is_keyboard = is_keyboard
-		self.action = action
-		font_size = 20
-		self.tryanother = get_text("Key in use, try another", 12, (255, 0, 0))
-		self.show_tryanother = False
-		font_color = (255, 255, 255)
-		self.counter = 0
-		if self.is_keyboard:
-			self.top_img = get_text("Press the key on the keyboard", font_size, font_color)
-		else:
-			self.top_img = get_text("Press the button on the gamepad", font_size, font_color)
-		self.bottom_img = get_text('that will be used to ' +{
+class SetInputScene {
+	constructor(action, is_keyboard, prev_scene) {
+		self.next = self;
+		self.prev = prev_scene;
+		self.is_keyboard = is_keyboard;
+		self.action = action;
+		font_size = 20;
+		self.tryanother = get_text("Key in use, try another", 12, [255, 0, 0]);
+		self.show_tryanother = False;
+		font_color = [255, 255, 255];
+		self.counter = 0;
+		if (self.is_keyboard) {
+			self.top_img = get_text("Press the key on the keyboard", font_size, font_color);
+		} else {
+			self.top_img = get_text("Press the button on the gamepad", font_size, font_color);
+		}
+		self.bottom_img = get_text('that will be used to ' + {
 			'left': "move left",
 			'right': 'move right',
 			'up': 'move up',
@@ -21,79 +22,89 @@ class SetInputScene:
 			'start': 'pause or confirm menus',
 			'spray': 'spray decontaminant',
 			'walkie': 'use your walkie talkie (save)'
-		}[action], font_size, font_color)
+		}[action], font_size, font_color);
+	}
+	
+	function key_in_use(code, action) {
+		km = get_input_manager()._key_mapping;
+		for (k : km.keys()) {
+			if (k == code) {
+				if (km[k] != action) {
+					self.show_tryanother = True;
+					return True;
+				} else {
+					return False;
+				}
+			}
+		}
+		return False;
+	}
+	
+	function leave() {
+		self.next = self.prev;
+		self.prev.next = self.prev;
+	}
+	
+	function process_input(events, pressed, axes, mouse) {
+		im = get_input_manager();
 		
+		if (self.is_keyboard) {
+			for (ku : im.raw_keyups) {
+				if (!self.key_in_use(ku, self.action)) {
+					im.set_key_config(self.action, ku);
+					self.leave();
+					break;
+				}
+			}
+		} else {
+			// TODO: disable button to get here if self.active_actual_joystick is -1
+			js = im.actual_joysticks[im.active_actual_joystick];
+			js_config = im.joysticks[im.active_joystick];
+			num_buttons = js.getButtonCount();
+			for (i = 0; i < num_buttons; ++i) {
+				if (js.getButtonState(i)) {
+					js_config[self.action] = ['button', i];
+					self.leave();
+					return;
+				}
+			}
+			num_axes = js.getAxisCount();
+			for (i = 0; i < num_axes; ++i) {
+				value = js.getAxisState(i);
+				if (Math.abs(value) > .3) {
+					sign = value > 0 ? '+' : '-';
+					js_config[self.action] = ['axis', i, 'x' + sign];
+					self.leave();
+					return;
+				}
+			}
+		}
+	}
 	
-	def key_in_use(self, code, action):
-		km = get_input_manager()._key_mapping
-		for k in km.keys():
-			if k == code:
-				if km[k] != action:
-					self.show_tryanother = True
-					return True
-				else:
-					return False
-		return False
+	function update(counter) {
+		self.counter++;
+	}
 	
-	def leave(self):
-		self.next = self.prev
-		self.prev.next = self.prev
-		
-	def process_input(self, events, pressed, axes, mouse):
-		im = get_input_manager()
-		
-		if self.is_keyboard:
-			for ku in im.raw_keyups:
-				if not self.key_in_use(ku, self.action):
-					im.set_key_config(self.action, ku)
-					self.leave()
-					break
-		else:
-			# TODO: disable button to get here if self.active_actual_joystick is -1
-			js = im.actual_joysticks[im.active_actual_joystick]
-			js_config = im.joysticks[im.active_joystick]
-			for i in range(js.get_numbuttons()):
-				if js.get_button(i):
-					js_config[self.action] = ('button', i)
-					self.leave()
-					return
-			for i in range(js.get_numaxes()):
-				value = js.get_axis(i)
-				if Math.abs(value) > .3:
-					sign = '+' if (value > 0) else '-'
-					js_config[self.action] = ('axis', i, 'x' + sign)
-					self.leave()
-					return
-			
-			for i in range(js.get_numhats()):
-				value = js.get_hat(i)
-				if value[0] != 0 or value[1] != 0:
-					axis = 'x' if (value[1] == 0) else 'y'
-					value = value[0] if (axis == 'x') else value[1]
-					sign = '+' if (value > 0) else '-'
-					js_config[self.action] = ('hat', i, axis + sign)
-					self.leave()
-					return
-	
-	def update(self, counter):
-		self.counter
-	
-	def render(self, screen, counter):
-		self.prev.render(screen, counter)
-		Graphics2D.Draw.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, 0, 0, 0, 170)
-		if self.is_keyboard:
-			label = "Press the key on the keyboard"
-		else:
-			label = "Press the button on the gamepad"
-		h = self.top_img.height
-		y = 150 - h - 3
-		left = 25
-		top = y - 20
-		width = 350
-		height = h * 2 + 6 + 40
-		Graphics2D.Draw.rectangle(left, top, width, height, 128, 128, 128)
-		Graphics2D.Draw.rectangle(left + 1, top + 1, width - 2, height - 2, 0, 0, 0)
-		self.top_img.draw(200 - self.top_img.width // 2, y)
-		self.bottom_img.draw(200 - self.bottom_img.width // 2, 150 + 3)
-		if self.show_tryanother:
-			self.tryanother.draw(200 - self.tryanother.width // 2, top + height - 15)
+	function render(screen, counter) {
+		self.prev.render(screen, counter);
+		Graphics2D.Draw.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, 0, 0, 0, 170);
+		if (self.is_keyboard) {
+			label = "Press the key on the keyboard";
+		} else {
+			label = "Press the button on the gamepad";
+		}
+		h = self.top_img.height;
+		y = 150 - h - 3;
+		left = 25;
+		top = y - 20;
+		width = 350;
+		height = h * 2 + 6 + 40;
+		Graphics2D.Draw.rectangle(left, top, width, height, 128, 128, 128);
+		Graphics2D.Draw.rectangle(left + 1, top + 1, width - 2, height - 2, 0, 0, 0);
+		self.top_img.draw(200 - self.top_img.width / 2, y);
+		self.bottom_img.draw(200 - self.bottom_img.width / 2, 150 + 3);
+		if (self.show_tryanother) {
+			self.tryanother.draw(200 - self.tryanother.width / 2, top + height - 15);
+		}
+	}
+}
