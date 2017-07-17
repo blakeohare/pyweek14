@@ -42,6 +42,14 @@ function safe_sorted_helper(list, compare) {
 	return left + right;
 }
 
+function py_range(num) {
+	output = [];
+	for (i = 0; i < num; ++i) {
+		output.add(i);
+	}
+	return output;
+}
+
 // TODO: inline this
 function assertion(message) {
 	throw new Core.Exception(message);
