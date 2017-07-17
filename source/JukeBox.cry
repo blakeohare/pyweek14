@@ -1,5 +1,6 @@
 import Audio;
 import Game;
+import Math;
 
 const _MUSIC_ENABLED = true;
 

@@ -54,7 +54,7 @@ class MainMenuScene {
 					if (this.index >= 0) {
 						play_sound('menumove');
 					} else {
-						this.index == 0;
+						this.index = 0;
 					}
 				} else if (event.key == 'start') {
 					go = true;

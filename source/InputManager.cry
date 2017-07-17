@@ -1,4 +1,7 @@
 import Game;
+import Gamepad;
+import Math;
+import UserData;
 
 class MyEvent {
 	field key;
@@ -145,7 +148,7 @@ class InputManager {
 		for (k : this._key_mapping.keys()) {
 			if (this._key_mapping[k] == key) {
 				// TODO: oh no
-				output = pygame.key.name(k);
+				output = 'KEY-' + k; // pygame.key.name(k);
 				return output[0].upper() + output[1:];
 			}
 		}

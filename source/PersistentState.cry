@@ -1,3 +1,5 @@
+import UserData;
+
 // persistent state cannot save strings with newlines across "forever" sessions
 
 function get_persistent_state() {
