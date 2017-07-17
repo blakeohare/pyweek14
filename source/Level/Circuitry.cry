@@ -9,7 +9,7 @@ function make_ckey(c) {
 class Circuits {
 	constructor(level) {
 		this.level = level;
-		this.refresh_groups(True);
+		this.refresh_groups(true);
 	}
 	
 	function LAMBDA_1(x) {
@@ -17,7 +17,7 @@ class Circuits {
 	}
 	
 	function refresh_charges() {
-		goo_was_fried = False;
+		goo_was_fried = false;
 		on_circuits = get_hacks_for_level(this.level.name, 'on_circuits');
 		if (on_circuits == null) {
 			on_circuits = [];
@@ -58,7 +58,7 @@ class Circuits {
 						goo_check = this.level.get_tile_at(coord[0], coord[1], coord[2] + 1);
 						if (goo_check != null && goo_check.is_goo) {
 							this.level.modify_block(coord[0], coord[1], coord[2] + 1, null);
-							goo_was_fried = True;
+							goo_was_fried = true;
 						}
 					}
 				}
@@ -71,7 +71,7 @@ class Circuits {
 		}
 	}
 	
-	function refresh_groups(first_time=False) {
+	function refresh_groups(first_time = false) {
 		this.groups = [];
 		permanently_on = [];
 		grid = this.level.grid;

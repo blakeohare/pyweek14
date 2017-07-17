@@ -33,7 +33,7 @@ class CoilManager {
 							if (dx * dx + dy * dy < 24 * 24) {
 								sprite.death_counter = 90;
 								sprite.death_type = 'bazat';
-								sprite.immobilized = True;
+								sprite.immobilized = true;
 							}
 						}
 					}

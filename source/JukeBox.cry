@@ -134,7 +134,7 @@ class JukeBox {
 				music = Audio.Music.loadFromResource(songPath);
 				this.musics[songPath] = music;
 			}
-			music.play(True);
+			music.play(true);
 		}
 	}
 	

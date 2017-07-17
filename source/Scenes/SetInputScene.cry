@@ -6,7 +6,7 @@ class SetInputScene {
 		this.action = action;
 		font_size = 20;
 		this.tryanother = get_text("Key in use, try another", 12, [255, 0, 0]);
-		this.show_tryanother = False;
+		this.show_tryanother = false;
 		font_color = [255, 255, 255];
 		this.counter = 0;
 		if (this.is_keyboard) {
@@ -30,14 +30,14 @@ class SetInputScene {
 		for (k : km.keys()) {
 			if (k == code) {
 				if (km[k] != action) {
-					this.show_tryanother = True;
-					return True;
+					this.show_tryanother = true;
+					return true;
 				} else {
-					return False;
+					return false;
 				}
 			}
 		}
-		return False;
+		return false;
 	}
 	
 	function leave() {

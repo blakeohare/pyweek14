@@ -17,7 +17,7 @@ class RenderException {
 		this.is_sprite = !is_block;
 		this.z = start[2];
 		this.counter = 0;
-		this.expired = False;
+		this.expired = false;
 		if (direction == 'NE' || direction == 'NW') {
 			this.do_show = start;
 			if (direction == 'NE') {
@@ -67,7 +67,7 @@ class RenderException {
 	function update() {
 		this.counter += 1;
 		if (this.counter > 6) {
-			this.expired = True;
+			this.expired = true;
 		}
 	}
 	

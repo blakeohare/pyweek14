@@ -6,12 +6,12 @@ function override_switch_behavior(manager, level, index, is_blue) {
 	if (name == '5-0') {
 		if (index > 0) {
 			if (enabled[1] && enabled[2]) {
-				level.activate_switch('door', True);
+				level.activate_switch('door', true);
 			} else {
-				level.activate_switch('door', False);
+				level.activate_switch('door', false);
 			}
 			
-			return True;
+			return true;
 		}
 	} else if (name == '16-0') {
 		if (index == 0) {
@@ -20,7 +20,7 @@ function override_switch_behavior(manager, level, index, is_blue) {
 			// The pause token is 0 which is the moving platform ID
 			// They're the same here because that's a coincidence
 			level.moving_platforms.set_pause_token('0', !enabled[index]);
-			return True;
+			return true;
 		}
 	} else if (name == '18-0') {
 		mapping = [
@@ -37,28 +37,28 @@ function override_switch_behavior(manager, level, index, is_blue) {
 		for (platform : mapping[index]) {
 			level.moving_platforms.set_pause_token(str(platform), !enabled[index]);
 		}
-		return True;
+		return true;
 	} else if (name == 'flipmaze') {
 		level.activate_switch('blue', is_blue);
-		return True;
+		return true;
 	} else if (name == '24-0') {
 		if (index == 4) {
 			level.moving_platforms.set_pause_token('2', !enabled[index]);
-			return True;
+			return true;
 		}
 	} else if (name == '25-0') {
 		level.moving_platforms.set_pause_token(str(index - 1), !enabled[index]);
 		if (index != 0) {
 		
-			return True;
+			return true;
 		}
 	} else if (name == '90-0') {
 		if (index == 0) {
 			level.moving_platforms.set_pause_token('0', !enabled[index]);
-			return True;
+			return true;
 		}
 	}
-	return False;
+	return false;
 }
 
 class SwitchManager {
@@ -179,7 +179,7 @@ class SwitchManager {
 		this.level = level;
 		this.flipmaze_hack = playscene.story_mode && level.name == 'flipmaze';
 		this.switches = this.level.get_switches();
-		this.enabled = [False] * len(this.switches);
+		this.enabled = [false] * len(this.switches);
 		this.statuses = [null] * len(this.switches);
 		this.locations = {};
 		for (_switch : this.switches) {
@@ -283,23 +283,23 @@ class SwitchManager {
 				if (status[0] == 'sprite') {
 					if (_switch[3] == this.colors['gray'][0] || this.level.name == 'flipmaze') {
 						if (this.flipmaze_hack) {
-							this.flipmaze_hack = False;
+							this.flipmaze_hack = false;
 							this.playscene.next = new DialogScene(this.playscene, 'h1');
 						}
-						this.enabled[i] = True;
+						this.enabled[i] = true;
 					}
 				} else if (status[0] == 'block') {
 					type = _switch[3];
 					if (type == this.colors['gray'] || (status[1] == this.rubiks && type.id != 'pi')) {
-						this.enabled[i] = True;
+						this.enabled[i] = true;
 					} else if (this.activator_lookup[type.id] == status[1]) {
-						this.enabled[i] = True;
+						this.enabled[i] = true;
 					} else {
-						this.enabled[i] = False;
+						this.enabled[i] = false;
 					}
 				}
 			} else {
-				this.enabled[i] = False;
+				this.enabled[i] = false;
 			}
 			
 			if (!suppress_triggers) {

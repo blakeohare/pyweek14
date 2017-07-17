@@ -5,7 +5,7 @@ class ClickyButton {
 		this.on_color = on_color;
 		this.off_color = off_color;
 		this.pressed_color = pressed_color;
-		this.pressed = False;
+		this.pressed = false;
 		this.on_color = on_color;
 		this.off_color = off_color;
 		this.pressed_color = pressed_color;
@@ -13,7 +13,7 @@ class ClickyButton {
 		this.top = y;
 		size = 14;
 		this.size = size;
-		this.enabled = True;
+		this.enabled = true;
 		if (text != null) {
 			this.on_img = get_text(text, size, on_color);
 			this.off_img = get_text(text, size, off_color);
@@ -35,9 +35,9 @@ class ClickyButton {
 		x = xy[0];
 		y = xy[1];
 		if (this.left > x || this.right < x || this.top > y || this.bottom < y) {
-			return False;
+			return false;
 		}
-		return True;
+		return true;
 	}
 	
 	function is_pressing() {
@@ -48,9 +48,9 @@ class ClickyButton {
 		if (this.get_label != null) {
 			label = this.get_label(this.id);
 			if (label == '---') { // horrible hack
-				this.enabled = False;
+				this.enabled = false;
 			} else {
-				this.enabled = True;
+				this.enabled = true;
 			}
 			if (label != this.last_text) {
 				this.pressed_img = get_text(label, this.size, this.pressed_color);
@@ -189,10 +189,10 @@ class ConfigureInputScene {
 				im.set_active_actual_joystick((Core.parseInt(parts[1]) ?? 0) - 1);
 			} else if (parts[0] == 'keyconfig') {
 				action = parts[1];
-				this.next = new SetInputScene(action, True, this);
+				this.next = new SetInputScene(action, true, this);
 			} else if (parts[0] == 'jsconfig') {
 				action = parts[1];
-				this.next = new SetInputScene(action, False, this);
+				this.next = new SetInputScene(action, false, this);
 			} else {
 				this.next = new TransitionScene(new MainMenuScene(), this);
 			}
@@ -201,7 +201,7 @@ class ConfigureInputScene {
 	
 	function process_input(events, pressed, axes, mouse) {
 		for (mouse_event : mouse) {
-			if (mouse_event[2] == False && mouse_event[3] == False) {
+			if (mouse_event[2] == false && mouse_event[3] == false) {
 				for (button : this.buttons) {
 					if (button.is_mouse_over()) {
 						button.on_click();

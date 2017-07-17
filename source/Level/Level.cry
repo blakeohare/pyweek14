@@ -20,7 +20,7 @@ class Level {
 		this.circuitry = new Circuits(this);
 		this.counter = 0;
 		this.render_exceptions = [];
-		this.complete = False;
+		this.complete = false;
 		this.spritify_counters = [];
 		this.moving_platforms = new MovingPlatformManager(this);
 		this.teleporters = new TeleporterManager(this);
@@ -48,7 +48,7 @@ class Level {
 	}
 	
 	function spray_from(sprites) {
-		success = False;
+		success = false;
 		
 		for (sprite : sprites) {
 			col = Math.floor(sprite.x / 16);
@@ -98,7 +98,7 @@ class Level {
 			maybe_goo = this.get_tile_at(col, row, layer);
 			if (maybe_goo != null && maybe_goo.is_goo) {
 				this.modify_block(col, row, layer, null);
-				success = True;
+				success = true;
 			}
 		}
 		
@@ -354,7 +354,7 @@ class Level {
 	function render(screen, xOffset, yOffset, sprites, render_counter) {
 		this.counter += 1;
 		this.allsprites = sprites;
-		this.any_res = False;
+		this.any_res = false;
 		this.re_blits = {};
 		
 		width = this.width;
@@ -417,7 +417,7 @@ class Level {
 		}
 	}
 		
-	function render_sprite(screen, sprite, xOffset, yOffset, render_counter, re_render=False) {
+	function render_sprite(screen, sprite, xOffset, yOffset, render_counter, re_render = false) {
 		
 		q = sprite.render_me(screen, xOffset, yOffset, render_counter);
 		if (!re_render) {
@@ -462,7 +462,7 @@ class Level {
 			re_sprite_on = [];
 			for (re : re_on) {
 				if (re.is_block) {
-					this.any_res = True;
+					this.any_res = true;
 					re_block_on.add(re);
 				} else {
 					re_sprite_on.add(re);
@@ -475,7 +475,7 @@ class Level {
 			re_sprite_off = [];
 			for (re : re_off) {
 				if (re.is_block) {
-					this.any_res = True;
+					this.any_res = true;
 					re_block_off.add(re);
 				} else {
 					re_sprite_off.add(re);
@@ -652,14 +652,14 @@ class Level {
 					this.render_sprite(screen, re.tile, _x, _y, render_counter);
 
 				} else {
-					suppress = False;
+					suppress = false;
 					if (re_sprite_off != null) {
 						rei = 0;
 						while (rei < len(re_sprite_off)) {
 							re = re_sprite_off[rei];
 							if (sprite == re.tile) {
 								re_sprite_off.removeAt(rei);
-								suppress = True;
+								suppress = true;
 							} else {
 								rei += 1;
 							}
@@ -697,7 +697,7 @@ class Level {
 			dir = 'NE';
 		}
 		
-		this.render_exceptions.add(new RenderException([start_col, start_row, layer], dir, block, True));
+		this.render_exceptions.add(new RenderException([start_col, start_row, layer], dir, block, true));
 		
 		below_layer = layer - 1;
 		
@@ -705,15 +705,15 @@ class Level {
 		
 		target_lookup = this.cellLookup[end_col][end_row];
 		stack = this.grid[end_col][end_row];
-		should_spritify = False;
+		should_spritify = false;
 		if (below_layer < len(target_lookup)) {
 			standingon = target_lookup[below_layer];
 			if (standingon == null) {
-				should_spritify = True;
+				should_spritify = true;
 			} else {
 				standingon = stack[standingon];
 				if (!standingon.blocking) {
-					should_spritify = True;
+					should_spritify = true;
 				} else {
 					if (standingon.id == 'po' && block.id == '46' && this.circuitry.is_charged(end_col, end_row, below_layer)) {
 						play_sound('battery_charge');
@@ -734,7 +734,7 @@ class Level {
 				}
 			}
 		} else {
-			should_spritify = True;
+			should_spritify = true;
 		}
 		
 		if (should_spritify) {
@@ -800,7 +800,7 @@ class Level {
 			i += 1;
 		}
 		
-		teleported = False;
+		teleported = false;
 		if (type != null && type.pushable) {
 			// check to see if we just placed a pushable block onto a teleporter platform
 			t = this.get_tile_at(col, row, layer - 1);
@@ -811,7 +811,7 @@ class Level {
 				} else if (d == null) {
 					// pass
 				} else {
-					teleported = True;
+					teleported = true;
 					source = [col, row, layer];
 					this.teleporters.teleport_block(type, source, d);
 				}

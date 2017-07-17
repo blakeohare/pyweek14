@@ -1,5 +1,5 @@
 class PlayScene {
-	constructor(level_name, story_mode, temp_suppress=False) {
+	constructor(level_name, story_mode, temp_suppress = false) {
 		this.story_mode = story_mode;
 		persistence_change_level();
 		if (level_name == '1-3') {
@@ -18,7 +18,7 @@ class PlayScene {
 			this.sprites.add(rat);
 		}
 		this.overlay = new PlaySceneOverlay(this, this.level);
-		this.do_not_override_start = False;
+		this.do_not_override_start = false;
 		level_manager = get_level_manager();
 		this.counter = 0;
 		start = level_manager.get_starting_point_for_level(level_name);
@@ -35,7 +35,7 @@ class PlayScene {
 			if (len(start) >= 4) {
 				dir = start[3];
 			}
-			this.do_not_override_start = True;
+			this.do_not_override_start = true;
 		
 			this.player.x = x * 16 + 8;
 			this.player.y = y * 16 + 8;
@@ -51,8 +51,8 @@ class PlayScene {
 		this.fixed_x = level_pixel_width < 400;
 		this.fixed_y = level_pixel_height < 300;
 		if (this.level.name == '28-0') {
-			this.fixed_x = True;
-			this.fixed_y = True;
+			this.fixed_x = true;
+			this.fixed_y = true;
 			this.x_offset_override = 40;
 		}
 		this.target_camera_x = null;
@@ -135,7 +135,7 @@ class PlayScene {
 				distance = dx * dx + dy * dy;
 				if (distance < 144) {
 					player.death_by_rat = 1;
-					player.immobilized = True;
+					player.immobilized = true;
 				}
 			}
 		}
@@ -150,7 +150,7 @@ class PlayScene {
 			this.restart_level();
 		}
 		
-		this.level.switch_manager.update_enabled(this.sprites, False);
+		this.level.switch_manager.update_enabled(this.sprites, false);
 		
 		this.do_hologram_stuff();
 		
@@ -159,7 +159,7 @@ class PlayScene {
 		
 		if (this.level.complete) {
 			next_level = get_level_manager().get_next_level(this.level.name);
-			if (next_level == null || (this.level.name == '90-0' && this.story_mode == False)) {
+			if (next_level == null || (this.level.name == '90-0' && this.story_mode == false)) {
 				this.next = new TransitionScene(this, new EndSceneNonStory());
 			} else {
 				increment_persisted_session_int('research', get_persisted_level_int('research'));
@@ -174,7 +174,7 @@ class PlayScene {
 		this.level.update(this.sprites, sprites_to_add, sprites_to_remove);
 
 		for (sprite : sprites_to_remove) {
-			sprite.garbage_collect = True;
+			sprite.garbage_collect = true;
 		}
 		for (sprite : sprites_to_add) {
 			this.sprites.add(sprite);
@@ -188,9 +188,9 @@ class PlayScene {
 		
 		anim = this.level.hologram_manager.animation_sequence();
 		if (anim != null) {
-			this.player.immobilized = True;
+			this.player.immobilized = true;
 			if (anim == 0) {
-				this.player.immobilized = False;
+				this.player.immobilized = false;
 			}
 		}
 		
@@ -202,7 +202,7 @@ class PlayScene {
 	}
 	
 	function restart_level(this) {
-		this.next = new TransitionScene(this, new PlayScene(this.level.name, this.story_mode, True));
+		this.next = new TransitionScene(this, new PlayScene(this.level.name, this.story_mode, true));
 	}
 	
 	function render(screen, counter) {

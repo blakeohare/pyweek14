@@ -78,7 +78,7 @@ class LevelPickerScene {
 					if (this.x == len(this.regions)) {
 						this.next = new TransitionScene(this, new MainMenuScene());
 					} else {
-						this.next = new TransitionScene(this, new PlayScene(this.regions[this.x][1][this.y], False));
+						this.next = new TransitionScene(this, new PlayScene(this.regions[this.x][1][this.y], false));
 					}
 				}
 			}

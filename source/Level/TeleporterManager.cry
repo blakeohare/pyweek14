@@ -56,11 +56,11 @@ class TeleporterManager {
 	}
 	
 	function enable_teleporter(col, row, layer) {
-		this.set_teleporter_status(col, row, layer, True);
+		this.set_teleporter_status(col, row, layer, true);
 	}
 	
 	function disable_teleporter(col, row, layer) {
-		this.set_teleporter_status(col, row, layer, False);
+		this.set_teleporter_status(col, row, layer, false);
 	}
 	
 	function update_tiles(index) {
@@ -105,7 +105,7 @@ class TeleporterManager {
 	
 	function teleport_sprite(sprite, target) {
 		play_sound('teleport');
-		sprite.immobilized = True;
+		sprite.immobilized = true;
 		this.remove_sprites.add(sprite);
 		
 		this.new_sprites[this.counter + 1] = this.new_sprites.get(this.counter + 1, []);

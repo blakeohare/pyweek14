@@ -47,7 +47,7 @@ class PauseScene {
 			this.next = this.playscene;
 			this.next.next = this.next;
 		} else if (i == 1) {
-			this.next = new TransitionScene(this, new PlayScene(this.playscene.level.name, this.playscene.story_mode, True));
+			this.next = new TransitionScene(this, new PlayScene(this.playscene.level.name, this.playscene.story_mode, true));
 		} else if (i == 2) {
 			this.save_game();
 			this.next = new DialogScene(this.playscene, 'save');

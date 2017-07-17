@@ -29,27 +29,24 @@ class MovingPlatformManager {
 	function initialize_pause_tokens(name) {
 		pt = this.pause_tokens;
 		if (name == '16-0') {
-			pt['0'] = True;
+			pt['0'] = true;
 		} else if (name == '18-0') {
 			for (i : py_range(11)) {
-				pt[str(i)] = True;
+				pt[str(i)] = true;
 			}
 		} else if (name == '24-0') {
-			pt['2'] = True;
+			pt['2'] = true;
 		} else if (name == '25-0') {
 			for (i : py_range(9)) {
-				pt[str(i)] = True;
+				pt[str(i)] = true;
 			}
 		} else if (name == '90-0') {
-			pt['0'] = True;
+			pt['0'] = true;
 		}
 	}
 	
 	function is_paused_platform(i) {
-		if (this.pause_tokens.get(str(i)) == True) {
-			return True;
-		}
-		return False;
+		return this.pause_tokens.get(str(i), false);
 	}
 	
 	function update(sprites, render_exceptions) {
@@ -101,7 +98,7 @@ class MovingPlatformManager {
 											
 											neighbor_lookup = level.cellLookup[col + offset[0]][row + offset[1]];
 											neighbor_stack = level.grid[col + offset[0]][row + offset[1]];
-											blocked = False;
+											blocked = false;
 											if (len(spritification) == 0) {
 												for (z_offset : [z + 0, z + 1]) {
 													if (len(neighbor_lookup) <= z_offset) {
@@ -117,14 +114,14 @@ class MovingPlatformManager {
 														if (ntile != null) {
 															ntile = neighbor_stack[ntile];
 															if (ntile != null && ntile.blocking) {
-																blocked = True;
+																blocked = true;
 																break;
 															}
 														}
 													}
 												}
 											} else {
-												blocked = True;
+												blocked = true;
 											}
 											loc = [col, row, z];
 											if (blocked) {
@@ -150,7 +147,7 @@ class MovingPlatformManager {
 								level.spritify_block(block[0], block[1], block[2]);
 							}
 							
-							first = True;
+							first = true;
 							for (move_me : move_us) {
 								mp = level.modify_block(move_me[0], move_me[1], move_me[2], null);
 								target = [move_me[0] + offset[0], move_me[1] + offset[1], move_me[2]];
@@ -159,8 +156,8 @@ class MovingPlatformManager {
 								if (first) {
 									this.platforms[i] = target;
 								}
-								render_exceptions.add(new RenderException(move_me, direction, mp, True));
-								first = False;
+								render_exceptions.add(new RenderException(move_me, direction, mp, true));
+								first = false;
 							}
 							directions.add(directions.removeAt(0));
 							
@@ -179,16 +176,16 @@ class MovingPlatformManager {
 											target = [coords[0] + offset[0], coords[1] + offset[1], coords[2]];
 											lookup = level.cellLookup[target[0]][target[1]];
 											stack = level.grid[target[0]][target[1]];
-											blocked = False;
+											blocked = false;
 											for (_i : py_range(sprite.height)) {
 												check = [target[0], target[1], target[2] + _i];
 												t = level.get_tile_at(check);
 												if (t != null && t.blocking) {
-													blocked = True;
+													blocked = true;
 												}
 											}
 											if (!blocked) {
-												render_exceptions.add(new RenderException(coords, direction, sprite, False));
+												render_exceptions.add(new RenderException(coords, direction, sprite, false));
 												sprite.x += offset[0] * 16;
 												sprite.y += offset[1] * 16;
 											} else {

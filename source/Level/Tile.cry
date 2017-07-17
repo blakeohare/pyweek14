@@ -1,10 +1,10 @@
 function flags_contains(flags, items) {
 	for (c : items) {
 		if (flags.contains(c)) {
-			return True;
+			return true;
 		}
 	}
-	return False;
+	return false;
 }
 
 class Tile {
@@ -20,7 +20,7 @@ class Tile {
 			this.framerate = Core.parseInt(images[0]) ?? 0;
 			images = images[1:];
 		}
-		this.hascharge = False;
+		this.hascharge = false;
 		
 		if (id == '4off') {
 			images = ['teslacoil1.png'];
@@ -44,7 +44,7 @@ class Tile {
 		this.still_y_offset = this.y_offsets[0];
 		this.image_count = len(this.images);
 		this.height = height;
-		this.no_blocks = False;
+		this.no_blocks = false;
 		this.isholopad = id == 'clone' || id == 'clone2';
 		this.pushable = flags_contains(flags, 's');
 		this.blocking = flags_contains(flags, 'x');
@@ -67,7 +67,7 @@ class Tile {
 		}
 		this.blocking = this.blocking || this.stairs || this.pushable;
 		if (this.stairs) {
-			this.no_blocks = True;
+			this.no_blocks = true;
 			double = flags_contains(flags, '5678');
 			topo = double ? 2 : 1;
 			if (flags_contains(flags, '15')) {

@@ -49,7 +49,7 @@ function _hack_do_stuff_intro(playscene, level, counter) {
 	}
 	
 	if (counter == 1000) {
-		playscene.next = new TransitionScene(playscene, new PlayScene(get_level_manager().get_next_level('intro'), True));
+		playscene.next = new TransitionScene(playscene, new PlayScene(get_level_manager().get_next_level('intro'), true));
 	}
 }
 

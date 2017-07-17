@@ -34,7 +34,7 @@ class CreditsScene {
 			}
 			if (right != null) {
 				right = get_image('us/' + right + '.png');
-				right = right.flip(True, False);
+				right = right.flip(true, false);
 			}
 			this.things[i][0] = left;
 			this.things[i][2] = right;

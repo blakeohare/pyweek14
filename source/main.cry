@@ -4,9 +4,6 @@ const GAME_HEIGHT = 300;
 const SCREEN_WIDTH = 800;
 const SCREEN_HEIGHT = 600;
 
-const True = true;
-const False = false;
-
 function len(thing) { return thing.length; }
 function str(thing) { return thing + ''; }
 
@@ -27,12 +24,12 @@ function main() {
 	window = new Game.GameWindow("Sudo Science", FPS, GAME_WIDTH, GAME_HEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT);
 	
 	pressed = {
-		'start': False,
-		'left': False,
-		'right': False,
-		'down': False,
-		'up': False,
-		'action': False
+		'start': false,
+		'left': false,
+		'right': false,
+		'down': false,
+		'up': false,
+		'action': false
 	};
 	
 	load_persistent_state();
@@ -44,7 +41,7 @@ function main() {
 			active_scene = new MainMenuScene();
 		} else {
 			level_name = lines[0];
-			active_scene = new PlayScene(level_name, False);
+			active_scene = new PlayScene(level_name, false);
 			if (!active_scene.do_not_override_start) {
 				coords = lines[1].split(',').map(Core.parseInt);
 				x = coords[0];

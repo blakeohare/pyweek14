@@ -11,21 +11,21 @@ class MainMenuScene {
 	constructor() {
 		this.next = this;
 		this.index = 0;
-		this.first = True;
+		this.first = true;
 		has_save_data = get_persisted_forever_string('save_level') != '';
 		this.options = [
-			['Start New Story Mode', True, MMS_startNewStoryMode],
+			['Start New Story Mode', true, MMS_startNewStoryMode],
 			['Resume Saved Game', has_save_data, MMS_resumeSaved],
-			['Level Picker', True, MMS_levelPicker],
-			['Configure Input', True, MMS_configureInput],
-			['Sound Settings', True, MMS_soundSettings],
-			['Credits', True, MMS_credits],
-			['Exit', True, MMS_exit]
+			['Level Picker', true, MMS_levelPicker],
+			['Configure Input', true, MMS_configureInput],
+			['Sound Settings', true, MMS_soundSettings],
+			['Credits', true, MMS_credits],
+			['Exit', true, MMS_exit]
 		];
 	}
 
 	function process_input(events, pressed, axes, mouse) {
-		go = False;
+		go = false;
 		for (event : events) {
 			if (event.down) {
 				if (event.key == 'down') {
@@ -50,7 +50,7 @@ class MainMenuScene {
 						this.index == 0;
 					}
 				} else if (event.key == 'start') {
-					go = True;
+					go = true;
 				}
 			}
 		}
@@ -68,7 +68,7 @@ class MainMenuScene {
 	function update(counter) {
 		get_jukebox().ensure_current_song('title');
 		if (this.first) {
-			this.first = False;
+			this.first = false;
 			get_persistent_state().session = {};
 		}
 	}

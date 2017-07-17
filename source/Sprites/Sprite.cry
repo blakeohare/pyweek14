@@ -42,7 +42,7 @@ class Sprite {
 	// these get transposed into pixel coordinates and
 	// are converted into tile coords by simply dividing by 16
 	constructor(x, y, z, type, level = null) {
-		this.garbage_collect = False;
+		this.garbage_collect = false;
 		this.x = x + 0.0;
 		this.y = y + 0.0;
 		this.z = z;
@@ -51,23 +51,23 @@ class Sprite {
 		this.dz = 0;
 		this.level = null; // for intro hack, only
 		this.automation = null;
-		this.falling = False;
+		this.falling = false;
 		this.standingon = null;
 		this.type = type;
-		this.immobilized = False;
+		this.immobilized = false;
 		this.spray_counter = -1;
 		this.ismain = type == 'main';
 		this.main_or_hologram = this.ismain || type == 'hologram|main';
 		this.isjanitor = type == 'janitor';
-		this.holding_spray = False;
-		this.clone_creating = False;
-		this.holding_walkie = False;
-		this.intro_hack = False;
+		this.holding_spray = false;
+		this.clone_creating = false;
+		this.holding_walkie = false;
+		this.intro_hack = false;
 		this.issupervisor = type == 'supervisor';
 		this.isblock = type.startsWith('block|');
 		this.israt = type.startsWith('rat|');
 		this.death_by_rat = 0;
-		this.impeded_last_go_round = False;
+		this.impeded_last_go_round = false;
 		this.rat_trot_mode = null;
 		this.rat_blocked_counter = -42;
 		if (this.israt) {
@@ -104,7 +104,7 @@ class Sprite {
 		}
 		this.last_direction_of_movement = 's';
 		this.direction_queue = ['s'];
-		this.is_moving = False;
+		this.is_moving = false;
 		this.pushing = null;
 		if (this.isblock) {
 			this.height = 2;
@@ -309,7 +309,7 @@ class Sprite {
 		
 	function get_replacement_sprite() {
 		if (this.trecv && this.garbage_collect) {
-			this.prototype.garbage_collect = False;
+			this.prototype.garbage_collect = false;
 			return this.prototype;
 		}
 		return this;
@@ -336,7 +336,7 @@ class Sprite {
 		}
 		
 		if (this.z < -200) {
-			this.garbage_collect = True;
+			this.garbage_collect = true;
 		}
 		
 		if (this.rat_blocked_counter < 0) {
@@ -383,7 +383,7 @@ class Sprite {
 		}
 		
 		if (this.death_counter == 1) {
-			this.garbage_collect = True;
+			this.garbage_collect = true;
 		}
 		
 		if (this.automation != null) {
@@ -397,13 +397,13 @@ class Sprite {
 		if (this.ttl != null) {
 			this.ttl -= 1;
 			if (this.ttl <= 0) {
-				this.garbage_collect = True;
+				this.garbage_collect = true;
 				if (this.trecv) {
 					this.prototype.x = this.x;
 					this.prototype.y = this.y;
 					this.prototype.z = this.z;
-					this.prototype.is_moving = False;
-					this.prototype.immobilized = False;
+					this.prototype.is_moving = false;
+					this.prototype.immobilized = false;
 				}
 			}
 		}
@@ -417,13 +417,13 @@ class Sprite {
 		}
 
 		if (this.dz != 0) {
-			platform_data = level.get_platform_below(Math.floor(this.x) / 16, Math.floor(this.y) / 16, this.z, True);
+			platform_data = level.get_platform_below(Math.floor(this.x) / 16, Math.floor(this.y) / 16, this.z, true);
 			if (platform_data != null) {
 				z = platform_data[0];
 				platform = platform_data[1];
 				if (z < this.dz + this.z) {
 					this.z += this.dz;
-					this.falling = True;
+					this.falling = true;
 				} else {
 					this.z = z;
 					this.standingon = platform;
@@ -434,7 +434,7 @@ class Sprite {
 			}
 		}
 		layer = this.z / 8;
-		on_new_coordinates_now = False;
+		on_new_coordinates_now = false;
 		new_platform = this.standingon;
 		
 		starting_col = Math.floor(this.x) / 16;
@@ -520,8 +520,8 @@ class Sprite {
 				col = check[0];
 				row = check[1];
 				if (col < 0 || col >= level.width || row < 0 || row >= level.height) {
-					blocked = True;
-					this.impeded_last_go_round = True;
+					blocked = true;
+					this.impeded_last_go_round = true;
 					break;
 				}
 				lookup = cellLookup[col][row];
@@ -538,11 +538,11 @@ class Sprite {
 								pt.push_target = null;
 								
 								if (this.ismain && t.isexit) {
-									level.complete = True;
+									level.complete = true;
 								}
 								
 								if (t.pushable && direction != null && len(direction) == 2) {
-									blocked = True;
+									blocked = true;
 									push_key = col + '^' + row + '^' + tz;
 									pt.push_target = push_key;
 
@@ -575,8 +575,8 @@ class Sprite {
 										if (tcol >= 0 && tcol < level.width && trow >= 0 && trow < level.height) {
 											tlookup = level.cellLookup[tcol][trow];
 											tstack = level.grid[tcol][trow];
-											bottom_free = True;
-											top_free = True;
+											bottom_free = true;
+											top_free = true;
 											bottom_index = c + layer - 1;
 											top_index = c + layer;
 											
@@ -584,7 +584,7 @@ class Sprite {
 												bottom_index = tlookup[bottom_index];
 												if (bottom_index != null) {
 													if (tstack[bottom_index].blocking || tstack[bottom_index].cant_push_over) {
-														bottom_free = False;
+														bottom_free = false;
 													}
 												}
 											}
@@ -593,7 +593,7 @@ class Sprite {
 												top_index = tlookup[top_index];
 												if (top_index != null) {
 													if (tstack[top_index].blocking || tstack[top_index].cant_push_over) {
-														top_free = False;
+														top_free = false;
 													}
 												}
 											}
@@ -616,17 +616,17 @@ class Sprite {
 													_t = -1;
 												}
 												
-												valid = True;
+												valid = true;
 												while (_t >= 0) {
 													landing_tile = tstack[_t];
 													
 													if (landing_tile != null) {
 														if (landing_tile.stairs) {
-															valid = False;
+															valid = false;
 														} else if (landing_tile.no_blocks) {
-															valid = False;
+															valid = false;
 														} else {
-															valid = True;
+															valid = true;
 														}
 														break;
 													}
@@ -653,7 +653,7 @@ class Sprite {
 							}
 							
 							// The target tile will always be last in check_these
-							if (blocked == False && t.stairs && t.entrance == opposite && check == check_these[-1]) {
+							if (blocked == false && t.stairs && t.entrance == opposite && check == check_these[-1]) {
 								if (c == 0) {
 									// not blocked
 									zbefore = this.z;
@@ -661,7 +661,7 @@ class Sprite {
 									break;
 								}
 							} else {
-								blocked = True;
+								blocked = true;
 								break;
 							}
 						}
@@ -678,11 +678,11 @@ class Sprite {
 				old_row = Math.floor(this.y / 16);
 				this.x += this.dx;
 				this.y += this.dy;
-				this.impeded_last_go_round = False;
+				this.impeded_last_go_round = false;
 				new_col = Math.floor(this.x / 16);
 				new_row = Math.floor(this.y / 16);
 				if (old_col != new_col || old_row != new_row) {
-					on_new_coordinates_now = True;
+					on_new_coordinates_now = true;
 				}
 				
 				new_layer = Math.floor(this.z / 8);
@@ -691,7 +691,7 @@ class Sprite {
 				if (occupying != null && occupying.is_goo && this.main_or_hologram) {
 					this.death_counter = 60;
 					this.death_type = 'goo';
-					this.immobilized = True;
+					this.immobilized = true;
 					play_sound("irradiated");
 				}
 			}
@@ -803,7 +803,7 @@ class Sprite {
 		
 		if (this.isblock && this.standingon != null) {
 			// turn me back into a real block
-			this.garbage_collect = True;
+			this.garbage_collect = true;
 			level.modify_block(Math.floor(this.x / 16), Math.floor(this.y / 16), Math.floor(this.z / 8), this.block_tile);
 		}
 		

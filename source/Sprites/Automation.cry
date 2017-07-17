@@ -51,23 +51,23 @@ class Automation {
 	}
 	
 	function hold_spray(sprite) {
-		sprite.holding_spray = True;
+		sprite.holding_spray = true;
 	}
 	
 	function unhold_spray(sprite) {
-		sprite.holding_spray= False;
+		sprite.holding_spray= false;
 	}
 	
 	function hold_walkie(sprite) {
-		sprite.holding_walkie = True;
+		sprite.holding_walkie = true;
 	}
 	
 	function unhold_walkie(sprite) {
-		sprite.holding_walkie = False;
+		sprite.holding_walkie = false;
 	}
 	
 	function kill_me(sprite) {
-		sprite.garbage_collect = True;
+		sprite.garbage_collect = true;
 	}
 	
 	function do_intro_janitor(level, counter, sprite) {
@@ -149,7 +149,7 @@ class Automation {
 			} else if (counter < t + 16 + 48) {
 				return [0, 1];
 			} else if (counter == 450) {
-				sprite.garbage_collect = True;
+				sprite.garbage_collect = true;
 			}
 		}
 	}
@@ -157,7 +157,7 @@ class Automation {
 	function do_intro_protagonist(level, counter, sprite) {
 		s = 180;
 		if (counter == s + 132) {
-			sprite.intro_hack = True;
+			sprite.intro_hack = true;
 			level.modify_block(Math.floor(sprite.x / 16), Math.floor(sprite.y / 16), Math.floor(sprite.z / 8), get_tile_store().get_tile('54'));
 		}
 		if (counter < s + 132) {

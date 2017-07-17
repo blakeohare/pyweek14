@@ -92,15 +92,15 @@ class DialogScene {
 		this.playscene = playscene;
 		this.initialize_script(id);
 		this.text_printer = null;
-		this.prompt_for_continue = False;
+		this.prompt_for_continue = false;
 		this.pauser = null;
 		this.i = 0;
 		this.phase = 'init';
 		this.phase_counter = 0;
 		this.active_portrait = null;
 		this.buffer = [];
-		this.clear_on_continue = False;
-		this.fast_speed = False;
+		this.clear_on_continue = false;
+		this.fast_speed = false;
 		this.colors = {
 			'w': [255, 255, 255],
 			's': [220, 180, 140],
@@ -129,25 +129,25 @@ class DialogScene {
 	}
 	
 	function process_input(events, pressed, axes, mouse) {
-		pushed = False;
-		this.fast_speed = False;
+		pushed = false;
+		this.fast_speed = false;
 		for (event : events) {
 			if (event.down && ['start', 'spray', 'walkie'].contains(event.key)) {
-				pushed = True;
+				pushed = true;
 				//this.fast_speed = true;
 			}
 		}
 		
 		for (j : ['start', 'spray', 'walkie']) {
 			if (pressed[j]) {
-				this.fast_speed = True;
+				this.fast_speed = true;
 			}
 		}
 		
 		if (pushed && this.prompt_for_continue) {
 			// TODO: this can be improved so it isn't quite as jumpy
 			// should also flush all text_printer queues
-			this.prompt_for_continue = False;
+			this.prompt_for_continue = false;
 			if (this.clear_on_continue) {
 				this.buffer = [];
 			}
@@ -172,40 +172,40 @@ class DialogScene {
 			this.playscene.update(counter);
 		}
 		
-		keep_going = True;
+		keep_going = true;
 		while (keep_going) {
 			if (this.phase == 'init') {
 				if (this.phase_counter == this.phase_duration) {
 					this.phase = 'dialog';
 				}
-				keep_going = False;
+				keep_going = false;
 			} else if (this.phase == 'end') {
 				if (this.phase_counter == this.phase_duration) {
 					this.next = this.playscene;
 					this.next.next = this.next;
 				}
-				keep_going = False;
+				keep_going = false;
 			} else if (this.prompt_for_continue) {
-				keep_going = False;
+				keep_going = false;
 			} else if (this.text_printer != null) {
 				n = this.text_printer.get_next_char(this.fast_speed);
 				if (n == null) {
 					this.text_printer = null;
 				} else {
 					this.buffer[-1][0] += n;
-					keep_going = False;
+					keep_going = false;
 				}
 			} else if (this.buffer_clear_counter > 0) {
 				this.buffer_clear_counter -= 1;
 				if (this.buffer_clear_counter == 0) {
 					this.buffer = this.buffer[1:];
 				}
-				keep_going = False;
+				keep_going = false;
 			} else if (this.pauser != null) {
 				if (!this.pauser.keep_pausing()) {
 					this.pauser = null;
 				}
-				keep_going = False;
+				keep_going = false;
 			} else {
 				if (this.i < len(this.lines)) {
 					line = this.lines[this.i].trim();
@@ -221,7 +221,7 @@ class DialogScene {
 						} else if (command == 's') {
 							if (len(this.buffer) == 3) {
 								this.buffer_clear_counter = 10;
-								keep_going = False;
+								keep_going = false;
 								this.i -= 1;
 							} else {
 								color = this.colors[parts[1]];
@@ -230,8 +230,8 @@ class DialogScene {
 								this.text_printer = new TextPrinter(text, parts[1]);
 							}
 						} else if (command == 'credits') {
-							this.next = new TransitionScene(this, new CreditsScene(False));
-							keep_going = False;
+							this.next = new TransitionScene(this, new CreditsScene(false));
+							keep_going = false;
 						} else if (command == 'music') {
 							get_jukebox().ensure_current_song(parts[1]);
 						} else if (command == 'snd') {
@@ -239,12 +239,12 @@ class DialogScene {
 								play_sound(parts[1]);
 							}
 						} else if (command == 'c') {
-							this.prompt_for_continue = True;
-							this.clear_on_continue = False;
-							keep_going = False;
+							this.prompt_for_continue = true;
+							this.clear_on_continue = false;
+							keep_going = false;
 						} else if (command == 'cc') {
-							this.prompt_for_continue = True;
-							this.clear_on_continue = True;
+							this.prompt_for_continue = true;
+							this.clear_on_continue = true;
 						} else if (command == 'h') {
 							hack_function = get_hacks_for_level(this.playscene.level.name, 'dialog_hack')[parts[1]];
 							hack_function(this.playscene, this.playscene.level);
@@ -268,7 +268,7 @@ class DialogScene {
 				} else {
 					this.phase = 'end';
 					this.phase_counter = 0;
-					keep_going = False;
+					keep_going = false;
 				}
 			}
 		}

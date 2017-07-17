@@ -13,7 +13,7 @@ class HologramManager {
 		}
 		
 		this.copy_mode_counter = -1;
-		this.used = False;
+		this.used = false;
 		this.new_sprites = [];
 		this.sprites_created = [];
 	}
@@ -53,7 +53,7 @@ class HologramManager {
 		if (cp[0] == col && cp[1] == row && cp[2] == layer) {
 			this.copy_mode_counter = 180;
 			// TODO: add new sprites
-			this.used = True;
+			this.used = true;
 			player.x = col * 16 + 8;
 			player.y = row * 16 + 8;
 			for (p : this.output_pads) {

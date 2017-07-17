@@ -20,7 +20,7 @@ class InputManager {
 
 	constructor() {
 		this.cursor = [0, 0];
-		this.mouse_pressed = False;
+		this.mouse_pressed = false;
 		this.mouse_events = [];
 		this.joysticks = [];
 		this.active_joystick = -1;
@@ -29,16 +29,16 @@ class InputManager {
 		this.active_actual_joystick = -1;
 		this.activate_joysticks();
 		this.events = [];
-		this.quitAttempt = False;
+		this.quitAttempt = false;
 		this.init_default_key_config();
 		this.my_pressed = {
-			'start': False,
-			'left': False,
-			'right': False,
-			'up': False,
-			'down': False,
-			'spray': False,
-			'walkie': False
+			'start': false,
+			'left': false,
+			'right': false,
+			'up': false,
+			'down': false,
+			'spray': false,
+			'walkie': false
 		};
 		
 		this.axes = [0.0, 0.0];
@@ -108,11 +108,11 @@ class InputManager {
 		} else if (len(this.actual_joysticks) > id) {
 			this.active_actual_joystick = id;
 			name = this.actual_joysticks[this.active_actual_joystick].getName().trim();
-			found = False;
+			found = false;
 			i = 0;
 			for (js : this.joysticks) {
 				if (js.get('name', '').lower() == name.lower()) {
-					found = True;
+					found = true;
 					this.active_joystick = i;
 				}
 				i++;
@@ -181,18 +181,18 @@ class InputManager {
 	function get_events(window) {
 		events = [];
 		this.raw_keyups = [];
-		keyboard_only = True;
+		keyboard_only = true;
 		this.axes = [0.0, 0.0];
 		for (event : window.pumpEvents()) {
 			if (event.type == Game.EventType.QUIT) {
-				this.quitAttempt = True;
+				this.quitAttempt = true;
 				return [];
 			} else if (event.type == Game.EventType.MOUSE_LEFT_DOWN || event.type == Game.EventType.MOUSE_LEFT_UP) {
-				this.mouse_events.add([event.x, event.y, False, event.down]);
+				this.mouse_events.add([event.x, event.y, false, event.down]);
 				this.cursor = [event.x, event.y];
 				this.mouse_pressed = event.down;
 			} else if (event.type == Game.EventType.MOUSE_MOVE) {
-				this.mouse_events.add([event.x, event.y, True, False]);
+				this.mouse_events.add([event.x, event.y, true, false]);
 				this.cursor = [event.x, event.y];
 			} else if (event.type == Game.EventType.KEY_DOWN || event.type == Game.EventType.KEY_UP) {
 				if (!event.down) {
@@ -213,7 +213,7 @@ class InputManager {
 
 		joystick = null;
 		config = null;
-		any_axes_found = False;
+		any_axes_found = false;
 		if (this.active_joystick != -1) {
 			config = this.joysticks[this.active_joystick];
 			name = config.get('name', '');
@@ -229,13 +229,13 @@ class InputManager {
 		if (joystick != null && config != null) {
 			cached_poll = {};
 			for (action : ['right', 'left', 'up', 'down', 'start', 'spray', 'walkie']) {
-				direction = False;
+				direction = false;
 				c = config.get(action, null);
-				x = False;
+				x = false;
 				if (c != null) {
 					n = c[1];
 					if (c[0] == 'axis') {
-						direction = True;
+						direction = true;
 						x = cached_poll.get('a' + str(n));
 						if (x == null) {
 							x = joystick.getAxisState(n);
@@ -258,14 +258,14 @@ class InputManager {
 						x = Math.abs(x);
 						
 						if (x > 0.01) {
-							keyboard_only = False;
+							keyboard_only = false;
 							if (!any_axes_found) {
-								any_axes_found = True;
+								any_axes_found = true;
 								this.axes = [0.0, 0.0];
 							}
 						}
 					} else if (c[0] == 'hat') {
-						direction = True;
+						direction = true;
 						x = cached_poll.get('h' + str(n));
 						if (x == null) {
 							x = joystick.get_hat(n);
@@ -309,7 +309,7 @@ class InputManager {
 						}
 					} else if (action == 'left' || action == 'right' || action == 'down' || action == 'up') {
 						
-						toggled = False;
+						toggled = false;
 						if (direction) {
 							pushed = x + 0.0;
 						} else {
