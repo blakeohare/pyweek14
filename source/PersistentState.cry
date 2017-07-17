@@ -72,7 +72,7 @@ class PersistentState {
 		output = [];
 		for (key : this.forever.keys()) {
 			value = this.forever[key];
-			if (value[1] == None) {
+			if (value[1] == null) {
 				value[1] = '';
 			}
 			output.add(value[0] + key + ':' + str(value[1]));
@@ -81,12 +81,12 @@ class PersistentState {
 	}
 	
 	function load_game() {
-		t = None;
+		t = null;
 		if (UserData.fileExists('save.txt')) {
 			t = UserData.fileReadText('save.txt');
 		}
 		values = {};
-		if (t != None) {
+		if (t != null) {
 			lines = t.split('\n');
 			for (line : lines) {
 				parts = line.split(':');
@@ -168,7 +168,7 @@ class PersistentState {
 	
 	function _get_int(name, lookup) {
 		value = lookup.get(name);
-		if (value != None && value[0] == 'i') {
+		if (value != null && value[0] == 'i') {
 			return value[1];
 		}
 		return 0;
@@ -176,7 +176,7 @@ class PersistentState {
 	
 	function _get_string(name, lookup) {
 		value = lookup.get(name);
-		if (value != None && value[0] == 's') {
+		if (value != null && value[0] == 's') {
 			return value[1];
 		}
 		return '';

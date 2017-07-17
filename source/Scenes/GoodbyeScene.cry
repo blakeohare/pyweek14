@@ -5,7 +5,7 @@ class GoodbyeScene {
 		
 	function process_input(events, pressed, axes, mouse) {
 		for (event : events) {
-			this.next = None;
+			this.next = null;
 		}
 	}
 	

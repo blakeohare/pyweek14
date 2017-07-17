@@ -5,22 +5,22 @@ class CreditsScene {
 		this.speed = .7;
 		this.counter = 0;
 		this.things = [
-			[None, [' ', "Credits"], None],
-			[None, ["Programming", "Blake O'Hare"], 'blake'],
-			['spears', ["Level Art", "Angel McLaughlin"], None],
-			[None, ["Music and Sound", "Adrian Cline"], 'ikanreed'],
-			['satyrane', ["Story and Dialog", "Laura Freer"], None],
-			[None, ["Portrait and Large Art", "\"Fixception\""], 'fixception'],
+			[null, [' ', "Credits"], null],
+			[null, ["Programming", "Blake O'Hare"], 'blake'],
+			['spears', ["Level Art", "Angel McLaughlin"], null],
+			[null, ["Music and Sound", "Adrian Cline"], 'ikanreed'],
+			['satyrane', ["Story and Dialog", "Laura Freer"], null],
+			[null, ["Portrait and Large Art", "\"Fixception\""], 'fixception'],
 			['brendan', ["Puzzle Design", "Brendan & Steve"], 'stiva'],
 			['duke', ["Level Implementation", "Will Duke & Ted Burton"], 'eofpi'],
-			[None, [" ", "Thank you for playing."], None]
+			[null, [" ", "Thank you for playing."], null]
 		];
 		
 		if (!this.canSkip) {
 			r = get_persisted_forever_int('research');
 			r += get_persisted_session_int('research');
 			this.things.add(
-				[None, [" ", "Research papers collected: " + str(r) + " out of 36"], None]
+				[null, [" ", "Research papers collected: " + str(r) + " out of 36"], null]
 			);
 		}
 		
@@ -29,10 +29,10 @@ class CreditsScene {
 			thing = this.things[i];
 			left = thing[0];
 			right = thing[2];
-			if (left != None) {
+			if (left != null) {
 				left = get_image('us/' + left + '.png');
 			}
-			if (right != None) {
+			if (right != null) {
 				right = get_image('us/' + right + '.png');
 				right = right.flip(True, False);
 			}
@@ -77,10 +77,10 @@ class CreditsScene {
 			y2 = y + top.height + 5;
 			bottom.draw(x2, y2);
 			r = 400 - x;
-			if (left != None) {
+			if (left != null) {
 				left.draw(x - left.width - 14, y - 5);
 			}
-			if (right != None) {
+			if (right != null) {
 				right.draw(r + 14, y - 5);
 			}
 			y = y2 + bottom.height + 140;

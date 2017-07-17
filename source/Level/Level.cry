@@ -2,7 +2,7 @@ class PushTracker {
 	constructor(sprite) {
 		this.push_counter = -1;
 		this.max_push_counter = 25;
-		this.push_target = None;
+		this.push_target = null;
 		this.owner = sprite;
 	}
 }
@@ -96,8 +96,8 @@ class Level {
 			}
 			
 			maybe_goo = this.get_tile_at(col, row, layer);
-			if (maybe_goo != None && maybe_goo.is_goo) {
-				this.modify_block(col, row, layer, None);
+			if (maybe_goo != null && maybe_goo.is_goo) {
+				this.modify_block(col, row, layer, null);
 				success = True;
 			}
 		}
@@ -179,7 +179,7 @@ class Level {
 	}
 	
 	function get_coils() {
-		if (this.coils == None) {
+		if (this.coils == null) {
 			this.coils = [];
 			stacks = this.grid;
 			lookups = this.cellLookup;
@@ -194,12 +194,12 @@ class Level {
 					stacklen = len(stack);
 					while (z < stacklen) {
 						cell = stack[z];
-						if (cell != None && cell.teslaon) {
+						if (cell != null && cell.teslaon) {
 							lookup = lookups[x][y];
 							z = 0;
 							while (z < len(lookup)) {
 								t = lookup[z];
-								if (t != None && stack[t].teslaon) {
+								if (t != null && stack[t].teslaon) {
 									this.coils.add([x, y, z]);
 								}
 								z += 1;
@@ -219,8 +219,8 @@ class Level {
 	function initialize_tiles(tiles) {
 		width = this.width;
 		height = this.height;
-		grid = make_grid(this.width, this.height, None);
-		references = make_grid(this.width, this.height, None);
+		grid = make_grid(this.width, this.height, null);
+		references = make_grid(this.width, this.height, null);
 		moving_platforms = [];
 		this.switches = [];
 		this.coils = [];
@@ -243,8 +243,8 @@ class Level {
 				for (cell : cells) {
 					
 					if (cell == '0') {
-						referenceStack.add(None);
-						tileStack.add(None);
+						referenceStack.add(null);
+						tileStack.add(null);
 					} else {
 						t = tilestore.get_tile(cell);
 						tid = t.id;
@@ -282,8 +282,8 @@ class Level {
 							this.rats.add(sprite);
 							sprite.standingon = tileStack[-1]; // This will explode if a rat is placed on the bottom row of the map
 							
-							referenceStack.add(None);
-							tileStack.add(None);
+							referenceStack.add(null);
+							tileStack.add(null);
 						} else {
 							
 							// TODO: for loop
@@ -306,20 +306,20 @@ class Level {
 		this.moving_platforms = moving_platforms;
 	}
 		
-	function get_tile_at(x, y=None, z = None) {
-		if (y == None) {
+	function get_tile_at(x, y = null, z = null) {
+		if (y == null) {
 			y = x[1];
 			z = x[2];
 			x = x[0];
 		}
-		if (z < 0) return None;
+		if (z < 0) return null;
 		lookup = this.cellLookup[x][y];
 		if (len(lookup) <= z) {
-			return None;
+			return null;
 		}
 		index = lookup[z];
-		if (index == None) {
-			return None;
+		if (index == null) {
+			return null;
 		}
 		return this.grid[x][y][index];
 	}
@@ -339,7 +339,7 @@ class Level {
 		
 		while (i >= 0) {
 			t = refStack[i];
-			if (t == None) {
+			if (t == null) {
 				// pass
 			} else {
 				tile = this.grid[col][row][t];
@@ -365,7 +365,7 @@ class Level {
 			y = Math.floor(sprite.y / 16);
 			key = x + '_' + y;
 			list = sprite_lookup.get(key);
-			if (list == None) {
+			if (list == null) {
 				list = [];
 				sprite_lookup[key] = list;
 			}
@@ -401,10 +401,10 @@ class Level {
 					re_on = re_on_keys.get(k);
 					re_off = re_off_keys.get(k);
 					
-					if (re_on != None) {
+					if (re_on != null) {
 						re_on = re_on.clone();
 					}
-					if (re_off != None) {
+					if (re_off != null) {
 						re_off = re_off.clone();
 					}
 					
@@ -428,7 +428,7 @@ class Level {
 					layer = Math.floor(sprite.z / 8);
 					k = col + '^' + row;
 					r = [layer + sprite.height, q];
-					if (this.re_blits.get(k) == None) {
+					if (this.re_blits.get(k) == null) {
 						this.re_blits[k] = [r];
 					} else {
 						if (this.re_blits[k][-1][0] < r[0]) {
@@ -450,14 +450,14 @@ class Level {
 	}
 	
 	function render_tile_stack(screen, col, row, xOffset, yOffset, render_counter, sprites, re_on, re_off) {
-		re_sprite_on = None;
-		re_sprite_off = None;
-		re_block_on = None;
-		re_block_off = None;
+		re_sprite_on = null;
+		re_sprite_off = null;
+		re_block_on = null;
+		re_block_off = null;
 		
 		re_blits = this.re_blits.get((col + 1) + '^' + (row - 1));
 		
-		if (re_on != None) {
+		if (re_on != null) {
 			re_block_on = [];
 			re_sprite_on = [];
 			for (re : re_on) {
@@ -470,7 +470,7 @@ class Level {
 			}
 		}
 		
-		if (re_off != None) {
+		if (re_off != null) {
 			re_block_off = [];
 			re_sprite_off = [];
 			for (re : re_off) {
@@ -495,8 +495,8 @@ class Level {
 			
 			// re blit stuff from the right
 			
-			if (re_blits != None) {
-				while (re_blits != None && len(re_blits) > 0 && re_blits[0][0] <= z) {
+			if (re_blits != null) {
+				while (re_blits != null && len(re_blits) > 0 && re_blits[0][0] <= z) {
 					q = re_blits[0][1];
 					sprite = q[0];
 					sprite.render_me(screen, q[1], q[2], q[3]);
@@ -505,15 +505,15 @@ class Level {
 			}
 			
 			tile = stack[i];
-			if (sprites != None) {
+			if (sprites != null) {
 				new_sprites = [];
 				for (sprite : sprites) {
 					if (sprite.z <= z * 8) {
-						if (re_sprite_off != None && len(re_sprite_off) > 0 && re_sprite_off[0].z == z && re_sprite_off[0].tile == sprite) {
+						if (re_sprite_off != null && len(re_sprite_off) > 0 && re_sprite_off[0].z == z && re_sprite_off[0].tile == sprite) {
 							re = re_sprite_off.removeAt(0);
 						} else {
 							re_offset = [0, 0];
-							if (re_sprite_on != None) {
+							if (re_sprite_on != null) {
 								rei = 0;
 								while (rei < len(re_sprite_on)) {
 									re = re_sprite_on[rei];
@@ -535,7 +535,7 @@ class Level {
 				sprites = new_sprites;
 			}
 			
-			while (re_sprite_on != None && len(re_sprite_on) > 0 && re_sprite_on[0].z < z) {
+			while (re_sprite_on != null && len(re_sprite_on) > 0 && re_sprite_on[0].z < z) {
 				re = re_sprite_on.removeAt(0);
 				offset = re.get_offset();
 				_x = xOffset + offset[0];
@@ -547,8 +547,8 @@ class Level {
 				this.render_sprite(screen, re.tile, _x + xdiff_pixel, _y + ydiff_pixel, render_counter);
 			}
 			
-			if (tile == None) {
-				if (re_block_on != None && len(re_block_on) > 0 && re_block_on[0].z == z) {
+			if (tile == null) {
+				if (re_block_on != null && len(re_block_on) > 0 && re_block_on[0].z == z) {
 					re = re_block_on.removeAt(0);
 					offset = re.get_offset();
 					re.tile.render(screen, x + offset[0], y - z * 8 + offset[1], render_counter);
@@ -556,9 +556,9 @@ class Level {
 				}
 				z += 1;
 			} else {
-				if (re_block_off != None && len(re_block_off) > 0 && re_block_off[0].z == z) {
+				if (re_block_off != null && len(re_block_off) > 0 && re_block_off[0].z == z) {
 					re = re_block_off.removeAt(0);
-				} else if (re_block_on != None && len(re_block_on) > 0 && re_block_on[0].z == z) {
+				} else if (re_block_on != null && len(re_block_on) > 0 && re_block_on[0].z == z) {
 					re = re_block_on.removeAt(0);
 					offset = re.get_offset();
 					tile.render(screen, x + offset[0], y - z * 8 + offset[1], render_counter);
@@ -570,9 +570,9 @@ class Level {
 			i += 1;
 		}
 		
-		if (re_blits != None) {
+		if (re_blits != null) {
 			
-			while (re_blits != None && len(re_blits) > 0 && re_blits[0][0] <= z) {
+			while (re_blits != null && len(re_blits) > 0 && re_blits[0][0] <= z) {
 				q = re_blits[0][1];
 				sprite = q[0];
 				sprite.render_me(screen, q[1], q[2], q[3]);
@@ -580,7 +580,7 @@ class Level {
 			}
 		}
 		
-		if ((sprites != None && len(sprites) > 0) || (re_sprite_on != None && len(re_sprite_on) > 0)) {
+		if ((sprites != null && len(sprites) > 0) || (re_sprite_on != null && len(re_sprite_on) > 0)) {
 			
 			if (sprites == null) {
 				sprites = [];
@@ -590,7 +590,7 @@ class Level {
 			
 			sprite_i = 0;
 			re_i = 0;
-			if (re_sprite_on == None) {
+			if (re_sprite_on == null) {
 				re_sprite_on = [];
 			}
 			
@@ -616,8 +616,8 @@ class Level {
 			}
 			
 			while (sprite_i < len(sprites) || re_i < len(re_sprite_on)) {
-				sprite = None;
-				re = None;
+				sprite = null;
+				re = null;
 				if (sprite_i == len(sprites)) {
 					re = re_sprite_on[re_i];
 					re_i += 1;
@@ -628,15 +628,15 @@ class Level {
 					re = re_sprite_on[re_i];
 					sprite = sprites[sprite_i];
 					if (re.z < Math.floor(sprite.z / 8)) {
-						sprite = None;
+						sprite = null;
 						re_i += 1;
 					} else {
-						re = None;
+						re = null;
 						sprite_i += 1;
 					}
 				}
 				
-				if (re != None) {
+				if (re != null) {
 					offset = re.get_offset();
 					_x = xOffset + offset[0];
 					_y = yOffset + offset[1];
@@ -653,7 +653,7 @@ class Level {
 
 				} else {
 					suppress = False;
-					if (re_sprite_off != None) {
+					if (re_sprite_off != null) {
 						rei = 0;
 						while (rei < len(re_sprite_off)) {
 							re = re_sprite_off[rei];
@@ -680,9 +680,9 @@ class Level {
 		play_sound('blockpush');
 		pt = this.get_push_tracker(sprite);
 		pt.push_counter = -1;
-		pt.push_target = None;
+		pt.push_target = null;
 		
-		block = this.modify_block(start_col, start_row, layer, None);
+		block = this.modify_block(start_col, start_row, layer, null);
 		this.modify_block(end_col, end_row, layer, block);
 		
 		if (start_row == end_row) {
@@ -708,7 +708,7 @@ class Level {
 		should_spritify = False;
 		if (below_layer < len(target_lookup)) {
 			standingon = target_lookup[below_layer];
-			if (standingon == None) {
+			if (standingon == null) {
 				should_spritify = True;
 			} else {
 				standingon = stack[standingon];
@@ -726,7 +726,7 @@ class Level {
 						}
 					}
 					
-					if (was_standing_on != None && was_standing_on.id == 'pi' && block.id == '45') {
+					if (was_standing_on != null && was_standing_on.id == 'pi' && block.id == '45') {
 						play_sound('battery_deplete');
 						this.modify_block(end_col, end_row, layer, get_tile_store().get_tile('46'));
 						this.circuitry.refresh_charges();
@@ -743,32 +743,32 @@ class Level {
 	}
 	
 	function spritify_block(col, row, layer) {
-		block = this.modify_block(col, row, layer, None);
+		block = this.modify_block(col, row, layer, null);
 		this.newsprites.add(new Sprite(col * 16 + 8, row * 16 + 8, layer * 8, 'block|' + block.id));
 	}
 	
 	function modify_block(col, row, layer, type) {
-		this.coils = None;
-		output = None;
+		this.coils = null;
+		output = null;
 		z = 0;
 		stack = this.grid[col][row];
 		newstack = [];
 		layer_bottom = layer;
 		layer_top = layer;
-		if (type != None) {
+		if (type != null) {
 			layer_top += type.height - 1;
 		}
 		
 		for (item : stack) {
-			if (item == None) {
-				newstack.add(None);
+			if (item == null) {
+				newstack.add(null);
 				z += 1;
 			} else {
 				if (z >= layer_bottom && z <= layer_top) {
 					if (z == layer_bottom) {
 						output = item;
 					}
-					newstack += [None] * item.height;
+					newstack += [null] * item.height;
 				} else {
 					newstack.add(item);
 				}
@@ -776,7 +776,7 @@ class Level {
 			}
 		}
 		while (z <= layer_top) {
-			newstack.add(None);
+			newstack.add(null);
 			z += 1;
 		}
 		// at this point newstack has all None's where the modification will go
@@ -792,7 +792,7 @@ class Level {
 				}
 				break;
 			}
-			if (item == None) {
+			if (item == null) {
 				z += 1;
 			} else {
 				z += item.height;
@@ -801,14 +801,14 @@ class Level {
 		}
 		
 		teleported = False;
-		if (type != None && type.pushable) {
+		if (type != null && type.pushable) {
 			// check to see if we just placed a pushable block onto a teleporter platform
 			t = this.get_tile_at(col, row, layer - 1);
-			if (t != None && t.teleporter) {
+			if (t != null && t.teleporter) {
 				d = this.teleporters.get_destination(col, row, layer - 1);
 				if (d == 'blocked') {
 					this.announce_teleporter_blocked();
-				} else if (d == None) {
+				} else if (d == null) {
 					// pass
 				} else {
 					teleported = True;
@@ -835,8 +835,8 @@ class Level {
 		lookup = [];
 		i = 0;
 		for (item : stack) {
-			if (item == None) {
-				lookup.add(None);
+			if (item == null) {
+				lookup.add(null);
 			} else {
 				lookup += [i] * item.height;
 			}
@@ -846,12 +846,12 @@ class Level {
 	}
 	
 	function update(sprites, sprite_additions, sprite_removals) {
-		created = None;
-		if (this.sprite_introducer != None) {
+		created = null;
+		if (this.sprite_introducer != null) {
 			created = this.sprite_introducer(this, this.counter);
 		}
 		
-		if (created != None) {
+		if (created != null) {
 			for (c : created) {
 				col = Math.floor(c.x / 16);
 				row = Math.floor(c.y / 16);

@@ -1,7 +1,7 @@
 const _MUSIC_ENABLED = true;
 
 function get_jukebox() {
-	if (JukeBox.INSTANCE == None) {
+	if (JukeBox.INSTANCE == null) {
 		_jukebox = new JukeBox();
 	}
 	return _jukebox;
@@ -24,7 +24,7 @@ class JukeBox {
 		this.current = null;
 		
 		ps = get_persistent_state();
-		if (ps.forever.get('sfx') != None) {
+		if (ps.forever.get('sfx') != null) {
 			this.set_music_volume(ps.get_int_forever('music'));
 			this.set_sfx_volume(ps.get_int_forever('sfx'));
 		} else {
@@ -61,7 +61,7 @@ class JukeBox {
 	}
 	
 	function update_volume(song) {
-		if (song != None) {
+		if (song != null) {
 			volume = this.music_volume * this.get_song_normalization(song);
 			// pygame.mixer.music.set_volume(volume / 100.0)
 		}
@@ -92,7 +92,7 @@ class JukeBox {
 		if (snd == null) {
 			fpath = 'sound/sfx/' + path + '.ogg';
 			snd = this.sounds.get(fpath);
-			if (snd == None) {
+			if (snd == null) {
 				snd = Audio.SoundResource.loadFromResource(fpath);
 				volume = this.sfx_volume / 100.0;
 				if (path.startsWith('talk')) {
@@ -120,7 +120,7 @@ class JukeBox {
 			return;
 		}
 
-		if (songId == None) {
+		if (songId == null) {
 			Audio.Music.stop();
 			return;
 		}
@@ -130,7 +130,7 @@ class JukeBox {
 			this.current = songId;
 			this.update_volume(songId);
 			music = this.musics.get(songPath);
-			if (music == None) {
+			if (music == null) {
 				music = Audio.Music.loadFromResource(songPath);
 				this.musics[songPath] = music;
 			}

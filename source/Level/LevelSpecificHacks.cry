@@ -151,8 +151,8 @@ class HackHelper {
 
 function get_hacks_for_level(name, category) {
 	dict = HackHelper._level_specific_hacks.get(name);
-	if (dict != None) {
+	if (dict != null) {
 		return dict.get(category);
 	}
-	return None;
+	return null;
 }

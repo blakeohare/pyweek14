@@ -9,12 +9,12 @@ class PlayScene {
 		this.research_collected = 0;
 		this.next = this;
 		this.level_name = level_name;
-		this.level = new Level(level_name, self);
+		this.level = new Level(level_name, this);
 		this.player = new Sprite(17, 177, 32, 'main');
 		this.sprites = [this.player];
 		this.player.level = this.level;
 		for (rat : this.level.rats) {
-			rat.standingon = None;
+			rat.standingon = null;
 			this.sprites.add(rat);
 		}
 		this.overlay = new PlaySceneOverlay(this, this.level);
@@ -27,7 +27,7 @@ class PlayScene {
 			this.player.set_automation(new Automation('99-0', '99_p'));
 		}
 		
-		if (start != None) {
+		if (start != null) {
 			x = start[0];
 			y = start[1];
 			z = start[2];
@@ -55,17 +55,17 @@ class PlayScene {
 			this.fixed_y = True;
 			this.x_offset_override = 40;
 		}
-		this.target_camera_x = None;
-		this.target_camera_y = None;
-		this.camera_x = None;
-		this.camera_y = None;
-		if (this.do_stuff != None) {
+		this.target_camera_x = null;
+		this.target_camera_y = null;
+		this.camera_x = null;
+		this.camera_y = null;
+		if (this.do_stuff != null) {
 			this.do_stuff(this, this.level, -1);
 		}
 		
 		if (this.story_mode && !temp_suppress) {
 			ds = get_startup_dialog(this);
-			if (ds != None) {
+			if (ds != null) {
 				this.next = ds;
 			}
 		}
@@ -91,7 +91,7 @@ class PlayScene {
 			}
 		}
 		
-		if (!this.player.immobilized && this.player.automation == None) {
+		if (!this.player.immobilized && this.player.automation == null) {
 			dx = axes[0];
 			dy = axes[1];
 			if (this.player.spray_counter < 0) {
@@ -110,7 +110,7 @@ class PlayScene {
 		level = this.level;
 		player = this.player;
 		
-		if (this.do_stuff != None) {
+		if (this.do_stuff != null) {
 			this.do_stuff(this, level, this.counter);
 		}
 		
@@ -159,7 +159,7 @@ class PlayScene {
 		
 		if (this.level.complete) {
 			next_level = get_level_manager().get_next_level(this.level.name);
-			if (next_level == None || (this.level.name == '90-0' && this.story_mode == False)) {
+			if (next_level == null || (this.level.name == '90-0' && this.story_mode == False)) {
 				this.next = new TransitionScene(this, new EndSceneNonStory());
 			} else {
 				increment_persisted_session_int('research', get_persisted_level_int('research'));
@@ -187,7 +187,7 @@ class PlayScene {
 		this.level.hologram_manager.update(this, this.level, this.player);
 		
 		anim = this.level.hologram_manager.animation_sequence();
-		if (anim != None) {
+		if (anim != null) {
 			this.player.immobilized = True;
 			if (anim == 0) {
 				this.player.immobilized = False;
@@ -207,7 +207,7 @@ class PlayScene {
 	
 	function render(screen, counter) {
 		
-		player_position = this.player.pixel_position(0, 0, None);
+		player_position = this.player.pixel_position(0, 0, null);
 		player_x = player_position[0];
 		player_y = player_position[1];
 		
@@ -223,10 +223,10 @@ class PlayScene {
 			this.target_camera_y = 120 - player_y;
 		}
 		
-		if (this.camera_x == None) {
+		if (this.camera_x == null) {
 			this.camera_x = this.target_camera_x;
 		}
-		if (this.camera_y == None) {
+		if (this.camera_y == null) {
 			this.camera_y = this.target_camera_y;
 		}
 		

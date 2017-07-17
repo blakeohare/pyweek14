@@ -39,7 +39,7 @@ class TileStore {
 }
 
 function get_tile_store() {
-	if (TileStore.INSTANCE == None) {
+	if (TileStore.INSTANCE == null) {
 		TileStore.INSTANCE = new TileStore();
 	}
 	return TileStore.INSTANCE;

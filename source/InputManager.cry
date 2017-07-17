@@ -54,13 +54,13 @@ class InputManager {
 			Game.KeyboardKey.SPACE: 'spray',
 			Game.KeyboardKey.W: 'walkie'
 		};
-		t = None;
+		t = null;
 		if (UserData.fileExists('key_config.txt')) {
 			t = UserData.fileReadText('key_config.txt');
 		}
 		
 		things = 'start left right up down spray walkie'.split(' ');
-		if (t != None) {
+		if (t != null) {
 			for (line : t.split('\n')) {
 				parts = line.split(':');
 				if (len(parts) == 2) {
@@ -138,8 +138,8 @@ class InputManager {
 	function get_config_label_for_key_for_active(key) {
 		if (this.active_joystick != -1) {
 			js = this.joysticks[this.active_joystick];
-			value = js.get(key, None);
-			if (value == None) {
+			value = js.get(key, null);
+			if (value == null) {
 				return "Not configured!";
 			}
 			if (value[0] == 'axis') {
@@ -200,7 +200,7 @@ class InputManager {
 				}
 				action = this._key_mapping.get(event.key);
 				
-				if (action != None) {
+				if (action != null) {
 					this.my_pressed[action] = event.down;
 					events.add(new MyEvent(action, event.down));
 				}
@@ -211,8 +211,8 @@ class InputManager {
 		this.axes[1] = this.my_pressed['down'] ? 2.0 : 0.0;
 		this.axes[1] = this.my_pressed['up'] ? -2.0 : this.axes[1];
 
-		joystick = None;
-		config = None;
+		joystick = null;
+		config = null;
 		any_axes_found = False;
 		if (this.active_joystick != -1) {
 			config = this.joysticks[this.active_joystick];
@@ -226,18 +226,18 @@ class InputManager {
 			}
 		}
 		
-		if (joystick != None && config != None) {
+		if (joystick != null && config != null) {
 			cached_poll = {};
 			for (action : ['right', 'left', 'up', 'down', 'start', 'spray', 'walkie']) {
 				direction = False;
-				c = config.get(action, None);
+				c = config.get(action, null);
 				x = False;
-				if (c != None) {
+				if (c != null) {
 					n = c[1];
 					if (c[0] == 'axis') {
 						direction = True;
 						x = cached_poll.get('a' + str(n));
-						if (x == None) {
+						if (x == null) {
 							x = joystick.getAxisState(n);
 							if (Math.abs(x) < 0.01) {
 								x = 0;
@@ -267,7 +267,7 @@ class InputManager {
 					} else if (c[0] == 'hat') {
 						direction = True;
 						x = cached_poll.get('h' + str(n));
-						if (x == None) {
+						if (x == null) {
 							x = joystick.get_hat(n);
 							cached_poll['h' + str(n)] = x;
 						}
@@ -291,7 +291,7 @@ class InputManager {
 						x = Math.abs(x);
 					} else if (c[0] == 'button') {
 						x = cached_poll.get('b' + str(n));
-						if (x == None) {
+						if (x == null) {
 							x = joystick.getButtonState(n);
 							cached_poll['b' + str(n)] = x;
 						}
@@ -378,7 +378,7 @@ class InputManager {
 			
 	function activate_joysticks() {
 		this.actual_joysticks = [];
-		active_joystick_name = None;
+		active_joystick_name = null;
 		if (this.active_joystick != -1) {
 			active_joystick_name = this.joysticks[this.active_joystick].get('name', '').trim().lower();
 		}
@@ -436,7 +436,7 @@ class InputManager {
 	}
 	
 	function read_config_save() {
-		prev = None;
+		prev = null;
 		if (UserData.fileExists('input_config.txt')) {
 			prev = UserData.fileReadText('input_config.txt');
 		}
@@ -445,7 +445,7 @@ class InputManager {
 			if (len(data) > 0) {
 				active = data[0].trim();
 				parts = active.split(':');
-				active_joystick_name = None;
+				active_joystick_name = null;
 				if (len(parts) >= 2 && parts[0].trim() == '#active') {
 					active_joystick_name = parts[1:].join(':').trim();
 				}
@@ -484,9 +484,9 @@ class InputManager {
 							}
 						}
 					}
-					name = data.get('name', None);
-					if (name != None && len(name) > 0) {
-						if (active_joystick_name != None && active_joystick_name.lower() == name.lower()) {
+					name = data.get('name', null);
+					if (name != null && len(name) > 0) {
+						if (active_joystick_name != null && active_joystick_name.lower() == name.lower()) {
 							this.active_joystick = len(this.joysticks);
 						}
 						this.joysticks.add(data);

@@ -4,7 +4,6 @@ const GAME_HEIGHT = 300;
 const SCREEN_WIDTH = 800;
 const SCREEN_HEIGHT = 600;
 
-const None = null;
 const True = true;
 const False = false;
 
@@ -87,7 +86,7 @@ function main() {
 		active_scene.render(fake_screen, counter);
 		
 		debug_message = get_user_debug_message();
-		if (debug_message != None) {
+		if (debug_message != null) {
 			txt = get_text(debug_message, 20, [255, 0, 0]);
 			txt.draw(10, 10);
 		}

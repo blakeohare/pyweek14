@@ -7,7 +7,7 @@ function is_story_mode() {
 function get_level_manager() {
 	story_mode = is_story_mode();
 	i = story_mode ? 1 : 0;
-	if (_level_manager[i] == None) {
+	if (_level_manager[i] == null) {
 		_level_manager[i] = new LevelManager(story_mode);
 	}
 	return _level_manager[i];
@@ -15,7 +15,7 @@ function get_level_manager() {
 
 class LevelManager {
 
-	static field _level_manager = [None, None];
+	static field _level_manager = [null, null];
 
 	constructor(story_mode) {
 		this.ordering = [
@@ -78,7 +78,7 @@ class LevelManager {
 		if (next_i < len(this.ordering)) {
 			return this.ordering[next_i][0];
 		}
-		return None;
+		return null;
 	}
 	
 	function get_starting_point_for_level(name) {
@@ -86,7 +86,7 @@ class LevelManager {
 		if (len(this.ordering[i]) >= 3) {
 			return this.ordering[i][2];
 		}
-		return None;
+		return null;
 	}
 	
 	function get_starting_level() {

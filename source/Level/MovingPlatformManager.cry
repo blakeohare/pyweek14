@@ -7,7 +7,7 @@ class MovingPlatformManager {
 		this.initialize_pause_tokens(level.name);
 		
 		directions = get_hacks_for_level(level.name, 'moving_platforms');
-		if (directions == None) {
+		if (directions == null) {
 			directions = [];
 		} else {
 			for (i = 0; i < directions.length; ++i) {
@@ -84,7 +84,7 @@ class MovingPlatformManager {
 						}
 						t_lower = level.get_tile_at(target[0], target[1], target[2]);
 						t_upper = level.get_tile_at(target[0], target[1], target[2] + 1);
-						if (t_lower == None && t_upper == None) {
+						if (t_lower == null && t_upper == null) {
 							move_us = [platform];
 							
 							z = move_us[-1][2] + 2;
@@ -94,9 +94,9 @@ class MovingPlatformManager {
 							stack = level.grid[col][row];
 							spritification = [];
 							while (z < len(lookupStack)) {
-								if (lookupStack[z] != None) {
+								if (lookupStack[z] != null) {
 									tile = stack[lookupStack[z]];
-									if (tile != None) {
+									if (tile != null) {
 										if (tile.pushable) {
 											
 											neighbor_lookup = level.cellLookup[col + offset[0]][row + offset[1]];
@@ -109,14 +109,14 @@ class MovingPlatformManager {
 													} else {
 														
 														if (z_offset < 0) {
-															ntile = None;
+															ntile = null;
 														} else {
 															ntile = neighbor_lookup[z_offset];
 														}
 														
-														if (ntile != None) {
+														if (ntile != null) {
 															ntile = neighbor_stack[ntile];
-															if (ntile != None && ntile.blocking) {
+															if (ntile != null && ntile.blocking) {
 																blocked = True;
 																break;
 															}
@@ -152,7 +152,7 @@ class MovingPlatformManager {
 							
 							first = True;
 							for (move_me : move_us) {
-								mp = level.modify_block(move_me[0], move_me[1], move_me[2], None);
+								mp = level.modify_block(move_me[0], move_me[1], move_me[2], null);
 								target = [move_me[0] + offset[0], move_me[1] + offset[1], move_me[2]];
 								level.modify_block(target[0], target[1], target[2], mp);
 								
@@ -165,7 +165,7 @@ class MovingPlatformManager {
 							directions.add(directions.removeAt(0));
 							
 							for (sprite : sprites) {
-								if (sprite.standingon != None && 
+								if (sprite.standingon != null && 
 									Math.floor(sprite.x / 16) == move_us[-1][0] &&
 									Math.floor(sprite.y / 16) == move_us[-1][1] && 
 									Math.floor(sprite.z / 8) == move_us[-1][2] + 2) {
@@ -183,7 +183,7 @@ class MovingPlatformManager {
 											for (_i : py_range(sprite.height)) {
 												check = [target[0], target[1], target[2] + _i];
 												t = level.get_tile_at(check);
-												if (t != None && t.blocking) {
+												if (t != null && t.blocking) {
 													blocked = True;
 												}
 											}
@@ -192,7 +192,7 @@ class MovingPlatformManager {
 												sprite.x += offset[0] * 16;
 												sprite.y += offset[1] * 16;
 											} else {
-												sprite.standingon = None;
+												sprite.standingon = null;
 											}
 										}
 									}

@@ -54,7 +54,7 @@ class PauseScene {
 		} else if (i == 3) {
 			this.next = new TransitionScene(this, new MainMenuScene());
 		} else if (i == 4) {
-			this.next = None;
+			this.next = null;
 		}
 	}
 	

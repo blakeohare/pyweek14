@@ -14,7 +14,7 @@ class ClickyButton {
 		size = 14;
 		this.size = size;
 		this.enabled = True;
-		if (text != None) {
+		if (text != null) {
 			this.on_img = get_text(text, size, on_color);
 			this.off_img = get_text(text, size, off_color);
 			this.pressed_img = get_text(text, size, pressed_color);
@@ -27,7 +27,7 @@ class ClickyButton {
 		this.im = get_input_manager();
 		this.action = action;
 		this.get_label = get_label;
-		this.last_text = None;
+		this.last_text = null;
 	}
 	
 	function is_mouse_over() {
@@ -45,7 +45,7 @@ class ClickyButton {
 	}
 		
 	function render(screen) {
-		if (this.get_label != None) {
+		if (this.get_label != null) {
 			label = this.get_label(this.id);
 			if (label == '---') { // horrible hack
 				this.enabled = False;
@@ -106,15 +106,15 @@ class ConfigureInputScene {
 		x = 20;
 		js_option_y_coords.add(y);
 		
-		this.buttons = [new ClickyButton('no joystick', x, y, "None", a, b, c, hb, None)];
-		this.buttons.add(new ClickyButton('exit', 300, 5, "Return to Main Menu", a, b, c, hb, None));
+		this.buttons = [new ClickyButton('no joystick', x, y, "None", a, b, c, hb, null)];
+		this.buttons.add(new ClickyButton('exit', 300, 5, "Return to Main Menu", a, b, c, hb, null));
 		im = get_input_manager();
 		i = 1;
 		this.im = im;
 		for (js : im.actual_joysticks) {
 			y += 20;
 			js_option_y_coords.add(y);
-			this.buttons.add(new ClickyButton('joystick ' + str(i), x, y, js.get_name(), a, b, c, hb, None));
+			this.buttons.add(new ClickyButton('joystick ' + str(i), x, y, js.get_name(), a, b, c, hb, null));
 			i += 1;
 		}
 		
@@ -138,21 +138,21 @@ class ConfigureInputScene {
 			['start', "Pause/Confirm", "Enter"],
 			['spray', "Decontaminant", "Space"],
 			['walkie', "Walkie Talkie", "W"],
-			[None, "Quit", 'Esc / Alt+F4']];
+			[null, "Quit", 'Esc / Alt+F4']];
 		for (command : this.keys) {
 			
 			start_y = y;
 			this.js_config_y.add(y);
-			if (command == None) {
+			if (command == null) {
 				this.labels.add([[col2, y], get_text("Key", 14, heading)]);
 				this.labels.add([[col3, y], get_text("Joystick", 14, heading)]);
 			} else {
 				this.labels.add([[col1, y], get_text(command[1], 14, command_color)]);
-				if (command[0] == None) {
+				if (command[0] == null) {
 					this.labels.add([[col2, y], get_text(command[2], 14, key_command_color)]);
 				} else {
-					this.buttons.add(new ClickyButton('keyconfig ' + command[0], col2, y, None, a, b, c, hb, gl));
-					this.buttons.add(new ClickyButton('jsconfig ' + command[0], col3, y, None, a, b, c, hb, gl));
+					this.buttons.add(new ClickyButton('keyconfig ' + command[0], col2, y, null, a, b, c, hb, gl));
+					this.buttons.add(new ClickyButton('jsconfig ' + command[0], col3, y, null, a, b, c, hb, gl));
 				}
 			}
 			y += 16;

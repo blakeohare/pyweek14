@@ -2,7 +2,7 @@ class HologramManager {
 	constructor(level) {
 		this.level = level;
 		pads = level.get_hologram_pads();
-		this.copy_pad = None;
+		this.copy_pad = null;
 		this.output_pads = [];
 		for (pad : pads) {
 			if (pad[3]) {
@@ -26,7 +26,7 @@ class HologramManager {
 	
 	function animation_sequence() {
 		if (this.copy_mode_counter < 0) {
-			return None;
+			return null;
 		} else {
 			copy_process = this.copy_mode_counter > 0;
 			for (sprite : this.sprites_created) {
@@ -37,7 +37,7 @@ class HologramManager {
 	}
 	
 	function update(playscene, level, player) {
-		if (this.copy_pad == None) return;
+		if (this.copy_pad == null) return;
 		
 		this.copy_mode_counter -= 1;
 		if (this.used) {

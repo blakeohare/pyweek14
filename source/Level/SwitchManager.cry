@@ -70,8 +70,8 @@ class SwitchManager {
 		
 		'5-0': [
 			'bridge',
-			None,
-			None
+			null,
+			null
 		],
 		
 		'8-0': [
@@ -98,7 +98,7 @@ class SwitchManager {
 		],
 		
 		'16-0': [
-			None,
+			null,
 			'green'
 		],
 		
@@ -107,7 +107,7 @@ class SwitchManager {
 			'blue'
 		],
 		
-		'18-0': [None] * 9,
+		'18-0': [null] * 9,
 		
 		'19-0': [
 			'power'
@@ -140,7 +140,7 @@ class SwitchManager {
 			'power',
 			'purple',
 			'grey',
-			None,
+			null,
 			'yellow'
 		],
 		
@@ -165,7 +165,7 @@ class SwitchManager {
 		],
 		
 		'90-0': [
-			None,
+			null,
 			'green',
 			'blue',
 			'power',
@@ -180,7 +180,7 @@ class SwitchManager {
 		this.flipmaze_hack = playscene.story_mode && level.name == 'flipmaze';
 		this.switches = this.level.get_switches();
 		this.enabled = [False] * len(this.switches);
-		this.statuses = [None] * len(this.switches);
+		this.statuses = [null] * len(this.switches);
 		this.locations = {};
 		for (_switch : this.switches) {
 			k = _switch[0] + '^' + _switch[1];
@@ -214,7 +214,7 @@ class SwitchManager {
 		layer = Math.floor(sprite.z / 8) - 1;
 		
 		floor = level.get_tile_at(col, row, layer);
-		if (floor != None && floor.isswitch) {
+		if (floor != null && floor.isswitch) {
 			i = 0;
 			while (i < len(this.switches)) {
 				sw = this.switches[i];
@@ -233,7 +233,7 @@ class SwitchManager {
 		row = _switch[1];
 		layer = _switch[2] + 1;
 		above = level.get_tile_at(col, row, layer);
-		if (above != None && above.pushable) {
+		if (above != null && above.pushable) {
 			this.statuses[i] = ['block', above];
 		}
 	}
@@ -245,7 +245,7 @@ class SwitchManager {
 		
 		i = 0;
 		while (i < len(this.switches)) {
-			this.statuses[i] = None;
+			this.statuses[i] = null;
 			i += 1;
 		}
 		
@@ -279,7 +279,7 @@ class SwitchManager {
 		while (i < len(this.switches)) {
 			_switch = this.switches[i];
 			status = this.statuses[i];
-			if (status != None) {
+			if (status != null) {
 				if (status[0] == 'sprite') {
 					if (_switch[3] == this.colors['gray'][0] || this.level.name == 'flipmaze') {
 						if (this.flipmaze_hack) {
@@ -321,7 +321,7 @@ class SwitchManager {
 		}
 		
 		mapping = SwitchManager._switch_mapping.get(name);
-		if (mapping != None) {
+		if (mapping != null) {
 			action_name = mapping[switch_index];
 			level.activate_switch(action_name, positive);
 		}

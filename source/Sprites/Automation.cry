@@ -11,7 +11,7 @@ class Automation {
 		c = this.counter;
 		sprite = this.sprite;
 		this.counter += 1;
-		o = None;
+		o = null;
 		if (this.level == '99-0') {
 			o = this.do_99_player(this.level, c, sprite);
 		} else {
@@ -23,7 +23,7 @@ class Automation {
 				o = this.do_intro_protagonist(this.level, c, sprite);
 			}
 			
-			if (o == None) {
+			if (o == null) {
 				return [0, 0];
 			}
 		}
@@ -161,7 +161,7 @@ class Automation {
 			level.modify_block(Math.floor(sprite.x / 16), Math.floor(sprite.y / 16), Math.floor(sprite.z / 8), get_tile_store().get_tile('54'));
 		}
 		if (counter < s + 132) {
-			return None;
+			return null;
 		}
 		
 		if (counter < s + 148) {

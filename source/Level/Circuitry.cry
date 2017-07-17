@@ -19,7 +19,7 @@ class Circuits {
 	function refresh_charges() {
 		goo_was_fried = False;
 		on_circuits = get_hacks_for_level(this.level.name, 'on_circuits');
-		if (on_circuits == None) {
+		if (on_circuits == null) {
 			on_circuits = [];
 		}
 		active_input_panels = [];
@@ -30,9 +30,9 @@ class Circuits {
 			lookup = this.level.cellLookup[x][y];
 			if (z + 1 < len(lookup)) {
 				ti = lookup[z + 1];
-				if (ti != None) {
+				if (ti != null) {
 					t = this.level.grid[x][y][ti];
-					if (t != None && t.id == '45') {
+					if (t != null && t.id == '45') {
 						active_input_panels.add(input_panel);
 					}
 				}
@@ -56,8 +56,8 @@ class Circuits {
 					this.level.modify_block(coord[0], coord[1], coord[2], tile);
 					if (is_group_on) {
 						goo_check = this.level.get_tile_at(coord[0], coord[1], coord[2] + 1);
-						if (goo_check != None && goo_check.is_goo) {
-							this.level.modify_block(coord[0], coord[1], coord[2] + 1, None);
+						if (goo_check != null && goo_check.is_goo) {
+							this.level.modify_block(coord[0], coord[1], coord[2] + 1, null);
 							goo_was_fried = True;
 						}
 					}
@@ -87,7 +87,7 @@ class Circuits {
 				stack = grid[x][y];
 				z = 0;
 				for (item : stack) {
-					if (item == None) {
+					if (item == null) {
 						z += 1;
 					} else {
 						if (item.circuit) {
@@ -120,7 +120,7 @@ class Circuits {
 				circuits_by_loc.get(make_key(x + 1, y, z)),
 				circuits_by_loc.get(make_key(x - 1, y, z))];
 			for (neighbor : neighbors) {
-				if (neighbor != None) {
+				if (neighbor != null) {
 					neighbor.add(circuit);
 				}
 			}
@@ -130,23 +130,23 @@ class Circuits {
 		while (len(circuits) > 0) {
 			group_id += 1;
 			circuit = circuits.pop();
-			while (tags.get(make_ckey(circuit)) != None) {
+			while (tags.get(make_ckey(circuit)) != null) {
 				if (len(circuits) > 0) {
 					circuit = circuits.pop();
 				} else {
-					circuit = None;
+					circuit = null;
 					break;
 				}
 			}
 			
-			if (circuit != None) {
+			if (circuit != null) {
 				queue = [circuit];
 				while (len(queue) > 0) {
 					item = queue.pop();
 					k = make_ckey(item);
 					tags[k] = group_id;
 					for (neighbor : circuits_by_loc[k]) {
-						if (tags.get(make_ckey(neighbor)) == None) {
+						if (tags.get(make_ckey(neighbor)) == null) {
 							tags[make_ckey(neighbor)] = group_id;
 							queue.add(neighbor);
 						}

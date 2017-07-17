@@ -23,7 +23,7 @@ class LevelPickerScene {
 
 	function get_level_image(name) {
 		img = LevelPickerScene._level_image.get(name);
-		if (img == None) {
+		if (img == null) {
 			img = get_image('levelshots/' + name + '.png');
 			w = img.width;
 			h = img.height;
@@ -102,13 +102,13 @@ class LevelPickerScene {
 		sector.draw(x, y);
 		
 		x += sector.width + 10;
-		for (region : this.regions + [None]) {
+		for (region : this.regions + [null]) {
 			
 			color = [130, 130, 130];
 			if (i == this.x) {
 				color = [255, 255, 255];
 			}
-			if (region == None) {
+			if (region == null) {
 				label = get_text("Main Menu", 16, color);
 			} else {
 				label = get_text(this.regions[i][0].split(' ')[1], 16, color);

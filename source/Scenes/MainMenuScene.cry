@@ -60,7 +60,7 @@ class MainMenuScene {
 		
 		if (go) {
 			lamb = this.options[this.index][2];
-			next_scene = lamb(None);
+			next_scene = lamb(null);
 			this.next = new TransitionScene(this, next_scene);
 		}
 	}
