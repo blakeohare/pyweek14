@@ -547,7 +547,7 @@ class Level {
 				for (sprite : sprites) {
 					if (sprite.z <= z * 8) {
 						if (re_sprite_off != null && re_sprite_off.length > 0 && re_sprite_off[0].z == z && re_sprite_off[0].tile == sprite) {
-							re = re_sprite_off.removeAt(0);
+							re = re_sprite_off.remove(0);
 						} else {
 							re_offset = [0, 0];
 							if (re_sprite_on != null) {
@@ -555,7 +555,7 @@ class Level {
 								while (rei < re_sprite_on.length) {
 									re = re_sprite_on[rei];
 									if (re.tile == sprite) {
-										re_sprite_on.removeAt(rei);
+										re_sprite_on.remove(rei);
 										re_offset = re.get_offset();
 									} else {
 										rei += 1;
@@ -573,7 +573,7 @@ class Level {
 			}
 			
 			while (re_sprite_on != null && re_sprite_on.length > 0 && re_sprite_on[0].z < z) {
-				re = re_sprite_on.removeAt(0);
+				re = re_sprite_on.remove(0);
 				offset = re.get_offset();
 				_x = xOffset + offset[0];
 				_y = yOffset + offset[1];
@@ -586,7 +586,7 @@ class Level {
 			
 			if (tile == null) {
 				if (re_block_on != null && re_block_on.length > 0 && re_block_on[0].z == z) {
-					re = re_block_on.removeAt(0);
+					re = re_block_on.remove(0);
 					offset = re.get_offset();
 					re.tile.render(screen, x + offset[0], y - z * 8 + offset[1], render_counter);
 					//z += re.tile.height - 1;
@@ -594,9 +594,9 @@ class Level {
 				z += 1;
 			} else {
 				if (re_block_off != null && re_block_off.length > 0 && re_block_off[0].z == z) {
-					re = re_block_off.removeAt(0);
+					re = re_block_off.remove(0);
 				} else if (re_block_on != null && re_block_on.length > 0 && re_block_on[0].z == z) {
-					re = re_block_on.removeAt(0);
+					re = re_block_on.remove(0);
 					offset = re.get_offset();
 					tile.render(screen, x + offset[0], y - z * 8 + offset[1], render_counter);
 				} else {
@@ -695,7 +695,7 @@ class Level {
 						while (rei < re_sprite_off.length) {
 							re = re_sprite_off[rei];
 							if (sprite == re.tile) {
-								re_sprite_off.removeAt(rei);
+								re_sprite_off.remove(rei);
 								suppress = true;
 							} else {
 								rei += 1;
@@ -825,7 +825,7 @@ class Level {
 			if (z == layer_bottom) {
 				newstack[i] = type;
 				for (q : py_range(layer_top - layer_bottom)) {
-					newstack.removeAt(i + 1);
+					newstack.remove(i + 1);
 				}
 				break;
 			}

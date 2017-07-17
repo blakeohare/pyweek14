@@ -4,7 +4,7 @@
 	<projectname>SudoScience</projectname>
 	
 	<imagesheets>
-		<sheet id="all">
+		<sheet id="everything">
 			<prefix>images/</prefix>
 		</sheet>
 	</imagesheets>

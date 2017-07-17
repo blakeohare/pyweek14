@@ -67,7 +67,7 @@ class MainMenuScene {
 		
 		if (go) {
 			lamb = this.options[this.index][2];
-			next_scene = lamb(null);
+			next_scene = lamb();
 			this.next = new TransitionScene(this, next_scene);
 		}
 	}

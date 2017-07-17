@@ -70,7 +70,7 @@ class MovingPlatformManager {
 					directions = this.directions[i];
 					direction = directions[0];
 					if (direction == 'P') {
-						directions.removeAt(0);
+						directions.remove(0);
 						directions.add('P');
 					} else {
 						target = [platform[0], platform[1], platform[2]];
@@ -168,7 +168,7 @@ class MovingPlatformManager {
 								render_exceptions.add(new RenderException(move_me, direction, mp, true));
 								first = false;
 							}
-							directions.add(directions.removeAt(0));
+							directions.add(directions.remove(0));
 							
 							for (sprite : sprites) {
 								if (sprite.standingon != null && 

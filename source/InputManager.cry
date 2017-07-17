@@ -402,6 +402,7 @@ class InputManager {
 		if (this.active_joystick != -1) {
 			active_joystick_name = this.joysticks[this.active_joystick].get('name', '').trim().lower();
 		}
+		Gamepad.GamepadManager.refreshDevices();
 		deviceCount = Gamepad.GamepadManager.getDeviceCount();
 		for (i = 0; i < deviceCount; ++i) {
 			js = Gamepad.GamepadManager.getDeviceByIndex(i);

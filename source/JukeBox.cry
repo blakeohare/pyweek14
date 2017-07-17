@@ -6,9 +6,9 @@ const _MUSIC_ENABLED = true;
 
 function get_jukebox() {
 	if (JukeBox.INSTANCE == null) {
-		_jukebox = new JukeBox();
+		JukeBox.INSTANCE = new JukeBox();
 	}
-	return _jukebox;
+	return JukeBox.INSTANCE;
 }
 
 function play_sound(path) {
