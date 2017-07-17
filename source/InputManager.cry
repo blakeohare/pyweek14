@@ -79,7 +79,7 @@ class InputManager {
 		if (t != null) {
 			for (line : t.split('\n')) {
 				parts = line.split(':');
-				if (len(parts) == 2) {
+				if (parts.length == 2) {
 					action = parts[0];
 					value = Core.parseInt(parts[1]);
 					
@@ -121,7 +121,7 @@ class InputManager {
 		if (id == -1) {
 			this.active_actual_joystick = -1;
 			this.active_joystick = -1;
-		} else if (len(this.actual_joysticks) > id) {
+		} else if (this.actual_joysticks.length > id) {
 			this.active_actual_joystick = id;
 			name = this.actual_joysticks[this.active_actual_joystick].getName().trim();
 			found = false;
@@ -134,7 +134,7 @@ class InputManager {
 				i++;
 			}
 			if (!found) {
-				this.active_joystick = len(this.joysticks);
+				this.active_joystick = this.joysticks.length;
 				this.joysticks.add({'name': name});
 			}
 		}
@@ -414,7 +414,7 @@ class InputManager {
 	}
 	
 	function verify_axis_value(x) {
-		return len(x) == 2 && 
+		return x.length == 2 && 
 			(x[0] == 'x' || x[0] == 'y') && 
 			(x[1] == '-' || x[1] == '+');
 	}
@@ -422,7 +422,7 @@ class InputManager {
 	// TODO: remove all this in favor of the built in Gamepad stuff.
 	function save_config() {
 		output = [];
-		if (this.active_joystick != -1 && this.active_joystick < len(this.joysticks)) {
+		if (this.active_joystick != -1 && this.active_joystick < this.joysticks.length) {
 			output.add('#active: ' + this.joysticks[this.active_joystick].get('name', ''));
 		} else {
 			output.add('#active: ');
@@ -458,11 +458,11 @@ class InputManager {
 		}
 		if (prev != null) {
 			data = prev.trim().split('$');
-			if (len(data) > 0) {
+			if (data.length > 0) {
 				active = data[0].trim();
 				parts = active.split(':');
 				active_joystick_name = null;
-				if (len(parts) >= 2 && parts[0].trim() == '#active') {
+				if (parts.length >= 2 && parts[0].trim() == '#active') {
 					active_joystick_name = parts[1:].join(':').trim();
 				}
 				for (config : data[1:]) {
@@ -470,25 +470,25 @@ class InputManager {
 					data = {};
 					for (line : lines) {
 						line = line.trim();
-						if (len(line) > 0 && line[0] == '#') {
+						if (line.length > 0 && line[0] == '#') {
 							parts = line[1:].split(':');
-							if (len(parts) == 2) {
+							if (parts.length == 2) {
 								key = parts[0].trim();
 								value = parts[1].trim().split(' ');
 								if (value[0] == 'axis') {
-									if (len(value) == 3) {
+									if (value.length == 3) {
 										n = Core.parseInt(value[1]);
 										if (this.verify_axis_value(value[2])) {
 											data[key] = ['axis', n, value[2]];
 										}
 									}
 								} else if (value[0] == 'button') {
-									if (len(value) == 2) {
+									if (value.length == 2) {
 										n = Core.parseInt(value[1]);
 										data[key] = ['button', n];
 									}
 								} else if (value[0] == 'hat') {
-									if (len(value) == 3) {
+									if (value.length == 3) {
 										n = Core.parseInt(value[1]);
 										if (this.verify_axis_value(value[2])) {
 											data[key] = ['hat', n, value[2]];
@@ -501,9 +501,9 @@ class InputManager {
 						}
 					}
 					name = data.get('name', null);
-					if (name != null && len(name) > 0) {
+					if (name != null && name.length > 0) {
 						if (active_joystick_name != null && active_joystick_name.lower() == name.lower()) {
-							this.active_joystick = len(this.joysticks);
+							this.active_joystick = this.joysticks.length;
 						}
 						this.joysticks.add(data);
 					}

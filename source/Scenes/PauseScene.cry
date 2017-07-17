@@ -29,7 +29,7 @@ class PauseScene {
 					}
 				} else if (event.key == 'down') {
 					this.i += 1;
-					if (this.i < len(this.options)) {
+					if (this.i < this.options.length) {
 						play_sound('menumove');
 					}
 				} else if (event.key == 'spray' || event.key == 'start') {
@@ -40,13 +40,13 @@ class PauseScene {
 		if (this.i < 0) {
 			this.i = 0;
 		}
-		if (this.i >= len(this.options)) {
-			this.i = len(this.options) - 1;
+		if (this.i >= this.options.length) {
+			this.i = this.options.length - 1;
 		}
 	}
 	
 	function do_it() {
-		i = max(0, min(len(this.options) - 1, this.i));
+		i = max(0, min(this.options.length - 1, this.i));
 		if (i == 0) {
 			// Continue
 			this.next = this.playscene;

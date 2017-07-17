@@ -12,7 +12,7 @@ class CoilManager {
 		coil_map = [];
 		for (coil : this.coils) {
 			x = coil[0];
-			while (len(coil_map) <= x) {
+			while (coil_map.length <= x) {
 				coil_map.add([]);
 			}
 			coil_map[x].add(coil);
@@ -21,7 +21,7 @@ class CoilManager {
 		for (sprite : sprites) {
 			if (sprite.death_counter < 0 && (sprite.main_or_hologram || sprite.israt)) {
 				col = Math.floor(sprite.x / 16);
-				while (col + 2 >= len(coil_map)) {
+				while (col + 2 >= coil_map.length) {
 					coil_map.add([]);
 				}
 				

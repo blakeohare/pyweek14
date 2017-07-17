@@ -68,7 +68,7 @@ class Tile {
 			this.images.add(get_image('tiles/' + image));
 		}
 
-		this.still = len(this.images) == 1;
+		this.still = this.images.length == 1;
 		this.still_image = this.images[0];
 		this.y_offsets = [];
 		for (image : this.images) {
@@ -76,7 +76,7 @@ class Tile {
 		}
 
 		this.still_y_offset = this.y_offsets[0];
-		this.image_count = len(this.images);
+		this.image_count = this.images.length;
 		this.height = height;
 		this.no_blocks = false;
 		this.isholopad = id == 'clone' || id == 'clone2';

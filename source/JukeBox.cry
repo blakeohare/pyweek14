@@ -1,3 +1,6 @@
+import Audio;
+import Game;
+
 const _MUSIC_ENABLED = true;
 
 function get_jukebox() {

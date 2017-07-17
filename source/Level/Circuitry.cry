@@ -37,7 +37,7 @@ class Circuits {
 			y = input_panel[1];
 			z = input_panel[2];
 			lookup = this.level.cellLookup[x][y];
-			if (z + 1 < len(lookup)) {
+			if (z + 1 < lookup.length) {
 				ti = lookup[z + 1];
 				if (ti != null) {
 					t = this.level.grid[x][y][ti];
@@ -50,7 +50,7 @@ class Circuits {
 		
 		on_groups = (on_circuits + active_input_panels + this.permanently_on).map(this.LAMBDA_1);
 		group_id = 1;
-		max_group_id = len(this.coords_by_group) - 1;
+		max_group_id = this.coords_by_group.length - 1;
 		while (group_id <= max_group_id) {
 			is_group_on = on_groups.contains(group_id);
 			for (coord : this.coords_by_group[group_id]) {
@@ -136,11 +136,11 @@ class Circuits {
 		}
 		
 		group_id = 0;
-		while (len(circuits) > 0) {
+		while (circuits.length > 0) {
 			group_id += 1;
 			circuit = circuits.pop();
 			while (tags.get(make_ckey(circuit)) != null) {
-				if (len(circuits) > 0) {
+				if (circuits.length > 0) {
 					circuit = circuits.pop();
 				} else {
 					circuit = null;
@@ -150,7 +150,7 @@ class Circuits {
 			
 			if (circuit != null) {
 				queue = [circuit];
-				while (len(queue) > 0) {
+				while (queue.length > 0) {
 					item = queue.pop();
 					k = make_ckey(item);
 					tags[k] = group_id;
@@ -167,7 +167,7 @@ class Circuits {
 		groups_to_coords = [[]];
 		for (k : tags.keys()) {
 			group_id = tags[k];
-			while (len(groups_to_coords) <= group_id) {
+			while (groups_to_coords.length <= group_id) {
 				groups_to_coords.add([]);
 			}
 			coords = k.split('|').map(Core.parseInt);

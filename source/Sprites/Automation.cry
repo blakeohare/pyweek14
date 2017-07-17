@@ -105,7 +105,7 @@ class Automation {
 		for (r : ranges) {
 			cumulative += r[0];
 			if (counter < cumulative) {
-				if (len(r) == 3) {
+				if (r.length == 3) {
 					r[2](sprite);
 				}
 				return r[1];
@@ -129,7 +129,7 @@ class Automation {
 		for (r : ranges) {
 			cumulative += r[0];
 			if (counter < cumulative) {
-				if (len(r) == 3) {
+				if (r.length == 3) {
 					r[2](sprite);
 				}
 				

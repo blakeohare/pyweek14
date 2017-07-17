@@ -190,8 +190,8 @@ class SwitchManager {
 		this.level = level;
 		this.flipmaze_hack = playscene.story_mode && level.name == 'flipmaze';
 		this.switches = this.level.get_switches();
-		this.enabled = [false] * len(this.switches);
-		this.statuses = [null] * len(this.switches);
+		this.enabled = [false] * this.switches.length;
+		this.statuses = [null] * this.switches.length;
 		this.locations = {};
 		for (_switch : this.switches) {
 			k = _switch[0] + '^' + _switch[1];
@@ -226,8 +226,9 @@ class SwitchManager {
 		
 		floor = level.get_tile_at(col, row, layer);
 		if (floor != null && floor.isswitch) {
+			// TODO: for loop
 			i = 0;
-			while (i < len(this.switches)) {
+			while (i < this.switches.length) {
 				sw = this.switches[i];
 				
 				if (sw[0] == col && sw[1] == row && sw[2] == layer) {
@@ -250,12 +251,12 @@ class SwitchManager {
 	}
 		
 	function update_statuses(sprites) {
-		if (len(this.switches) == 0) {
+		if (this.switches.length == 0) {
 			return;
 		}
 		
 		i = 0;
-		while (i < len(this.switches)) {
+		while (i < this.switches.length) {
 			this.statuses[i] = null;
 			i += 1;
 		}
@@ -275,7 +276,7 @@ class SwitchManager {
 		}
 		
 		i = 0;
-		while (i < len(this.switches)) {
+		while (i < this.switches.length) {
 			this.check_switch_for_block_and_update(i, this.switches[i], level);
 			i += 1;
 		}
@@ -287,7 +288,7 @@ class SwitchManager {
 		before = this.enabled.clone();
 		
 		i = 0;
-		while (i < len(this.switches)) {
+		while (i < this.switches.length) {
 			_switch = this.switches[i];
 			status = this.statuses[i];
 			if (status != null) {

@@ -35,13 +35,13 @@ class MainMenuScene {
 			if (event.down) {
 				if (event.key == 'down') {
 					this.index += 1;
-					if (this.index < len(this.options) && !this.options[this.index][1]) {
+					if (this.index < this.options.length && !this.options[this.index][1]) {
 						this.index += 1;
 					}
-					if (this.index < len(this.options)) {
+					if (this.index < this.options.length) {
 						play_sound('menumove');
 					} else {
-						this.index = len(this.options) - 1;
+						this.index = this.options.length - 1;
 					}
 				} else if (event.key == 'up') {
 					this.index -= 1;
@@ -61,7 +61,7 @@ class MainMenuScene {
 		}
 		
 		this.index = max(this.index, 0);
-		this.index = min(this.index, len(this.options) - 1);
+		this.index = min(this.index, this.options.length - 1);
 		
 		if (go) {
 			lamb = this.options[this.index][2];

@@ -31,7 +31,7 @@ class CreditsScene {
 		}
 		
 		i = 0;
-		while (i < len(this.things)) {
+		while (i < this.things.length) {
 			thing = this.things[i];
 			left = thing[0];
 			right = thing[2];

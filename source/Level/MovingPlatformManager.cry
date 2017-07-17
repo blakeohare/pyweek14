@@ -22,8 +22,8 @@ class MovingPlatformManager {
 			}
 		}
 		this.platforms = this.level.get_moving_platforms();
-		this.num_platforms = len(this.platforms);
-		while (len(directions) < this.num_platforms) {
+		this.num_platforms = this.platforms.length;
+		while (directions.length < this.num_platforms) {
 			directions.add(['P']);
 		}
 		this.directions = directions;
@@ -97,7 +97,7 @@ class MovingPlatformManager {
 							lookupStack = level.cellLookup[col][row];
 							stack = level.grid[col][row];
 							spritification = [];
-							while (z < len(lookupStack)) {
+							while (z < lookupStack.length) {
 								if (lookupStack[z] != null) {
 									tile = stack[lookupStack[z]];
 									if (tile != null) {
@@ -106,9 +106,9 @@ class MovingPlatformManager {
 											neighbor_lookup = level.cellLookup[col + offset[0]][row + offset[1]];
 											neighbor_stack = level.grid[col + offset[0]][row + offset[1]];
 											blocked = false;
-											if (len(spritification) == 0) {
+											if (spritification.length == 0) {
 												for (z_offset : [z + 0, z + 1]) {
-													if (len(neighbor_lookup) <= z_offset) {
+													if (neighbor_lookup.length <= z_offset) {
 														// pass
 													} else {
 														

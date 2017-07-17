@@ -59,15 +59,15 @@ class LevelPickerScene {
 					}
 				} else if (event.key == 'right') {
 					this.x += 1;
-					if (this.x > len(this.regions)) {
-						this.x = len(this.regions) - 1;
+					if (this.x > this.regions.length) {
+						this.x = this.regions.length - 1;
 					} else {
 						play_sound('menumove');
 						this.y = 0;
 					}
 				} else if (event.key == 'down') {
 					this.y += 1;
-					if (this.y >= len(this.regions[this.x][1])) {
+					if (this.y >= this.regions[this.x][1].length) {
 						this.y -= 1;
 					} else {
 						play_sound('menumove');
@@ -80,7 +80,7 @@ class LevelPickerScene {
 						play_sound('menumove');
 					}
 				} else if (event.key == 'start') {
-					if (this.x == len(this.regions)) {
+					if (this.x == this.regions.length) {
 						this.next = new TransitionScene(this, new MainMenuScene());
 					} else {
 						this.next = new TransitionScene(this, new PlayScene(this.regions[this.x][1][this.y], false));
@@ -125,7 +125,7 @@ class LevelPickerScene {
 		
 		y += sector.height + 10;
 		
-		if (this.x < len(this.regions)) {
+		if (this.x < this.regions.length) {
 			lm = get_level_manager();
 			i = 0;
 			maps = this.regions[this.x][1];

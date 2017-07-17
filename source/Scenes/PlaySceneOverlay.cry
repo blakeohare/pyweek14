@@ -10,7 +10,7 @@ class PlaySceneOverlay {
 	
 	function pad_with_zeroes(num, digits) {
 		s = str(num);
-		while (len(s) < digits) {
+		while (s.length < digits) {
 			s = '0' + s;
 		}
 		return s;

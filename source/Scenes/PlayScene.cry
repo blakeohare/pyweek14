@@ -51,7 +51,7 @@ class PlayScene {
 			y = start[1];
 			z = start[2];
 			dir = 's';
-			if (len(start) >= 4) {
+			if (start.length >= 4) {
 				dir = start[3];
 			}
 			this.do_not_override_start = true;

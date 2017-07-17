@@ -13,9 +13,9 @@ function safe_sorted(list, compare) {
 }
 	
 function safe_sorted_helper(list, compare) {
-	if (len(list) <= 1) return list;
+	if (list.length <= 1) return list;
 		
-	if (len(list) == 2) {
+	if (list.length == 2) {
 		if (compare(list[0], list[1])) {
 			return list;
 		} else {
@@ -23,7 +23,7 @@ function safe_sorted_helper(list, compare) {
 		}
 	}
 	
-	pivot_i = len(list) / 2;
+	pivot_i = list.length / 2;
 	pivot = list[pivot_i];
 	list = list[:pivot_i] + list[pivot_i + 1:];
 	left = [];

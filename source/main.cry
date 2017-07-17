@@ -4,7 +4,6 @@ const GAME_HEIGHT = 300;
 const SCREEN_WIDTH = 800;
 const SCREEN_HEIGHT = 600;
 
-function len(thing) { return thing.length; }
 function str(thing) { return thing + ''; }
 
 class DebugMessageHelper {

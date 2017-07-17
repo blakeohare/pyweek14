@@ -19,7 +19,7 @@ function get_teleporter_image(going_out, counter, type) {
 			get_image('static/character' + str((Math.floor(counter / 2) % 4) + 1) + '.png')
 		];
 	} else {
-		block_id = type[len('block|'):];
+		block_id = type['block|'.length:];
 		if (going_out && counter < 6) {
 			return null;
 		}
@@ -559,7 +559,7 @@ class Sprite {
 				lookup = cellLookup[col][row];
 				tiles = tilestack[col][row];
 				for (c : clearance) {
-					if (len(lookup) > c + layer && lookup[c + layer] != null) {
+					if (lookup.length > c + layer && lookup[c + layer] != null) {
 						tz = lookup[c + layer];
 						t = tiles[tz];
 						
@@ -573,7 +573,7 @@ class Sprite {
 									level.complete = true;
 								}
 								
-								if (t.pushable && direction != null && len(direction) == 2) {
+								if (t.pushable && direction != null && direction.length == 2) {
 									blocked = true;
 									push_key = col + '^' + row + '^' + tz;
 									pt.push_target = push_key;
@@ -612,7 +612,7 @@ class Sprite {
 											bottom_index = c + layer - 1;
 											top_index = c + layer;
 											
-											if (len(tlookup) > bottom_index) {
+											if (tlookup.length > bottom_index) {
 												bottom_index = tlookup[bottom_index];
 												if (bottom_index != null) {
 													if (tstack[bottom_index].blocking || tstack[bottom_index].cant_push_over) {
@@ -621,7 +621,7 @@ class Sprite {
 												}
 											}
 											
-											if (len(tlookup) > top_index) {
+											if (tlookup.length > top_index) {
 												top_index = tlookup[top_index];
 												if (top_index != null) {
 													if (tstack[top_index].blocking || tstack[top_index].cant_push_over) {
@@ -633,7 +633,7 @@ class Sprite {
 											if (bottom_free && top_free) {
 												// TODO: make sure you're not pushing onto a ramp
 												target_level = c + layer - 1;
-												while (len(tlookup) <= target_level) {
+												while (tlookup.length <= target_level) {
 													tstack.add(null);
 													tlookup.add(null);
 												}
@@ -779,15 +779,15 @@ class Sprite {
 				if (d != null) {
 					this.last_direction_of_movement = d;
 					this.direction_queue = [d] + this.direction_queue[:4];
-					if (len(this.direction_queue) == 5) {
+					if (this.direction_queue.length == 5) {
 						a = this.direction_queue[0];
 						b = this.direction_queue[1];
 						c = this.direction_queue[2];
 						d = this.direction_queue[3];
 						e = this.direction_queue[4];
-						if (len(a) == 1 && 
+						if (a.length == 1 && 
 							d == e && 
-							len(d) == len(e) && 
+							d.length == e.length && 
 							d.contains(a) &&
 							((b == c && (b == a || b == d)) || (b == a && c == d))) { // BWAHAHAHAHAHA
 							
@@ -795,7 +795,7 @@ class Sprite {
 						}
 					} else {
 						for (foo : this.direction_queue) {
-							if (len(foo) == 2) {
+							if (foo.length == 2) {
 								this.last_direction_of_movement = foo;
 								break;
 							}
@@ -816,7 +816,7 @@ class Sprite {
 			row = Math.floor(this.y / 16);
 			layer = Math.floor(this.z - 1) / 8;
 			lookup = level.cellLookup[col][row];
-			if (layer < len(lookup)) {
+			if (layer < lookup.length) {
 				_t = lookup[layer];
 				if (_t == null) {
 					this.standingon = null;

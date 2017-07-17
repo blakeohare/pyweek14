@@ -52,7 +52,7 @@ class TextPrinter {
 	function get_next_char(pressed) {
 		this.counter += 1;
 		t = '';
-		if (len(this.text) == 0) {
+		if (this.text.length == 0) {
 			return null;
 		}
 		amt = (pressed && this.counter > 6) ? 20 : 1;
@@ -147,10 +147,11 @@ class DialogScene {
 		file = Resources.readText('data/dialog/' + id + '.txt');
 		this.lines = file.split('\n');
 		this.labels = {};
+		// TODO: for loop
 		i = 0;
-		while (i < len(this.lines)) {
+		while (i < this.lines.length) {
 			parts = this.lines[i].split('|');
-			if (parts[0] == 'label' && len(parts) == 2) {
+			if (parts[0] == 'label' && parts.length == 2) {
 				this.labels[parts[1]] = i;
 			}
 			i += 1;
@@ -236,9 +237,9 @@ class DialogScene {
 				}
 				keep_going = false;
 			} else {
-				if (this.i < len(this.lines)) {
+				if (this.i < this.lines.length) {
 					line = this.lines[this.i].trim();
-					if (len(line) > 0) {
+					if (line.length > 0) {
 						parts = line.split('|');
 						command = parts[0];
 						if (command == 'i') {
@@ -248,7 +249,7 @@ class DialogScene {
 						} else if (command == 'p') {
 							this.pauser = new DialogPause(Core.parseInt(parts[1]) ?? 0);
 						} else if (command == 's') {
-							if (len(this.buffer) == 3) {
+							if (this.buffer.length == 3) {
 								this.buffer_clear_counter = 10;
 								keep_going = false;
 								this.i -= 1;

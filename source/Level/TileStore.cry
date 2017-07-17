@@ -12,7 +12,7 @@ class TileStore {
 			for (line : manifest_data) {
 				if (line != '' && line[0] != '#') {
 					cols = line.split('\t');
-					if (len(cols) >= 4) {
+					if (cols.length >= 4) {
 						id = cols[0];
 						images = cols[1];
 						height = Core.parseInt(cols[2]) ?? 0;

@@ -49,6 +49,8 @@ function persistence_change_level() {
 
 class PersistentState {
 	
+	static field INSTANCE = null;
+
 	field forever = {};
 	field session = {};
 	field level = {};
@@ -91,10 +93,10 @@ class PersistentState {
 			lines = t.split('\n');
 			for (line : lines) {
 				parts = line.split(':');
-				if (len(parts) >= 2) {
+				if (parts.length >= 2) {
 					key = parts[0];
 					value = parts[1:].join(':');
-					if (len(key) >= 2) {
+					if (key.length >= 2) {
 						type = key[0];
 						name = key[1:];
 						if (type == 'i') {
