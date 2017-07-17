@@ -7,10 +7,10 @@ function is_story_mode() {
 function get_level_manager() {
 	story_mode = is_story_mode();
 	i = story_mode ? 1 : 0;
-	if (_level_manager[i] == null) {
-		_level_manager[i] = new LevelManager(story_mode);
+	if (LevelManager._level_manager[i] == null) {
+		LevelManager._level_manager[i] = new LevelManager(story_mode);
 	}
-	return _level_manager[i];
+	return LevelManager._level_manager[i];
 }
 
 class LevelManager {

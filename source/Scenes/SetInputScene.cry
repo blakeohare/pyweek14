@@ -1,3 +1,6 @@
+import Graphics2D;
+import Math;
+
 class SetInputScene {
 
 	field next;
@@ -82,8 +85,8 @@ class SetInputScene {
 			for (i = 0; i < num_axes; ++i) {
 				value = js.getAxisState(i);
 				if (Math.abs(value) > .3) {
-					sign = value > 0 ? '+' : '-';
-					js_config[this.action] = ['axis', i, 'x' + sign];
+					_sign = value > 0 ? '+' : '-';
+					js_config[this.action] = ['axis', i, 'x' + _sign];
 					this.leave();
 					return;
 				}

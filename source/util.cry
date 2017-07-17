@@ -1,6 +1,6 @@
 
 function make_grid(width, height, defaultValue) {
-	col = [defualtValue] * height;
+	col = [defaultValue] * height;
 	cols = [col];
 	while (cols.length < width) {
 		cols.add(cols[0].clone());

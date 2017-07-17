@@ -1,3 +1,6 @@
+import Math;
+import Resources;
+
 class PushTracker {
 	field push_counter;
 	field max_push_counter;
@@ -21,7 +24,6 @@ class Level {
 	field push_trackers;
 	field newsprites;
 	field circuitry;
-	field counter;
 	field render_exceptions;
 	field complete;
 	field spritify_counters;
@@ -31,7 +33,7 @@ class Level {
 	field sprite_introducer;
 	field hologram_manager;
 	field coil_manager;
-	field counter;
+	field counter = 0;
 	field hologram_pads;
 	field rats;
 	field values;
@@ -54,7 +56,6 @@ class Level {
 		this.push_trackers = [];
 		this.newsprites = [];
 		this.circuitry = new Circuits(this);
-		this.counter = 0;
 		this.render_exceptions = [];
 		this.complete = false;
 		this.spritify_counters = [];
@@ -175,13 +176,13 @@ class Level {
 		nswitches = {};
 		for (key : values.keys()) {
 			if (key.startsWith('action|')) {
-				sign = 1;
+				_sign = 1;
 				if (key.startsWith('action|negative|')) {
-					sign = -1;
+					_sign = -1;
 				}
 				name = key.split('|')[-1];
 				value = values[key];
-				if (sign == 1) {
+				if (_sign == 1) {
 					pswitches[name] = value;
 				} else {
 					nswitches[name] = value;

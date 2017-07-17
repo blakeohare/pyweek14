@@ -1,3 +1,4 @@
+import Graphics2D;
 
 class ImagesHelper {
 	static field _image_library = {};
@@ -9,7 +10,7 @@ function get_image(path) {
 	if (image == null) {
 		imageRes = ImagesHelper._imageSheet.getImage('images/' + path);
 		image = Graphics2D.GraphicsTexture.load(imageRes);
-		_image_library[path] = image;
+		ImagesHelper._image_library[path] = image;
 	}
 	return image;
 }

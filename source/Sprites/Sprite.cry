@@ -1,3 +1,4 @@
+import Math;
 
 function get_teleporter_image(going_out, counter, type) {
 	counter = min(60, max(0, counter));
@@ -66,7 +67,6 @@ class Sprite {
 	field impeded_last_go_round = false;
 	field rat_trot_mode = null;
 	field rat_blocked_counter = -42;
-	field rat_trot_mode;
 	field rat_move_max = 27;
 	field rat_move_counter;
 	field death_counter = -1;
@@ -77,12 +77,10 @@ class Sprite {
 	field staticy;
 	field ttype = null;
 	field ttl = null;
-	field ttl = 60;
 	field last_direction_of_movement = 's';
 	field direction_queue;
 	field is_moving = false;
 	field pushing = null;
-	field height = 2;
 	field block_id;
 	field block_tile;
 	field prototype;
@@ -119,7 +117,7 @@ class Sprite {
 		
 		this.death_counter = -1;
 		this.death_type = null;
-		this.height = 4;
+
 		if (this.isblock) {
 			this.height = 2;
 		}
@@ -130,7 +128,6 @@ class Sprite {
 		if (this.staticy) {
 			this.ttype = type.split('|')[1:].join('|');
 		}
-		this.ttl = null;
 		if (this.staticy) {
 			this.ttl = 60;
 		}
@@ -142,12 +139,12 @@ class Sprite {
 			this.height = 2;
 		}
 		
-		if (_block_images_for_sprites == null) {
+		if (Sprite._block_images_for_sprites == null) {
 			tile_store = get_tile_store();
 			ids = tile_store.get_all_block_tiles();
-			_block_images_for_sprites = {};
+			Sprite._block_images_for_sprites = {};
 			for (id : ids) {
-				_block_images_for_sprites[id] = tile_store.get_tile(id);
+				Sprite._block_images_for_sprites[id] = tile_store.get_tile(id);
 			}
 		}
 		

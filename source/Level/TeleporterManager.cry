@@ -52,13 +52,13 @@ class TeleporterManager {
 		while (i < total) {
 			sender = this.senders[i];
 			if (sender[0] == col && sender[1] == row && sender[2] == layer) {
-				enabled[i] = isenabled;
+				this.enabled[i] = isenabled;
 				this.update_tiles(i);
 				return;
 			}
 			receiver = this.receivers[i];
 			if (receiver[0] == col && receiver[1] == row && receiver[2] == layer) {
-				enabled[i] = isenabled;
+				this.enabled[i] = isenabled;
 				this.update_tiles(i);
 				return;
 			}

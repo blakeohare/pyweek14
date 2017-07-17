@@ -1,3 +1,4 @@
+import Graphics2D;
 
 class LevelPickerScene {
 

@@ -1,3 +1,4 @@
+import Graphics2DText;
 
 class FontHelper {
 	static field _COLORS_TO_COMPONENTS = {
@@ -12,7 +13,7 @@ class FontHelper {
 
 function get_text(text, size, color) {
 	key = str(size) + "," + str(color) + "|" + text;
-	texture = _text.get(key);
+	texture = FontHelper._text.get(key);
 	if (texture == null) {
 		// TODO: adjust this
 		size = size * 2 / 3 + 1;
@@ -20,7 +21,7 @@ function get_text(text, size, color) {
 		font = FontHelper._defaultFont ?? get_default_font();
 		fontRenderer = font.getRenderer(size, color[0], color[1], color[2]);
 		texture = fontRenderer.render(text);
-		_text[key] = texture;
+		FontHelper._text[key] = texture;
 	}
 	return texture;
 }

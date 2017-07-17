@@ -1,3 +1,4 @@
+import Math;
 
 class RenderException {
 	
@@ -72,7 +73,7 @@ class RenderException {
 		}
 		
 		this.offsets = RenderException._render_exceptions_coords[::reverse];
-		for (i = 0; i < offsets.length; ++i) {
+		for (i = 0; i < this.offsets.length; ++i) {
 			this.offsets[i] = [this.offsets[i][0] * xflip, this.offsets[i][1] * yflip];
 		}
 	}

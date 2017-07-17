@@ -1,3 +1,4 @@
+import Math;
 
 function override_switch_behavior(manager, level, index, is_blue) {
 	enabled = manager.enabled;
@@ -224,8 +225,8 @@ class SwitchManager {
 		row = Math.floor(sprite.y / 16);
 		layer = Math.floor(sprite.z / 8) - 1;
 		
-		floor = level.get_tile_at(col, row, layer);
-		if (floor != null && floor.isswitch) {
+		_floor = level.get_tile_at(col, row, layer);
+		if (_floor != null && _floor.isswitch) {
 			// TODO: for loop
 			i = 0;
 			while (i < this.switches.length) {

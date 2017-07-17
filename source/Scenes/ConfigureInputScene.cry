@@ -1,3 +1,5 @@
+import Graphics2D;
+
 class ClickyButton {
 
 	field id;
@@ -210,7 +212,7 @@ class ConfigureInputScene {
 		im = get_input_manager();
 		if (id == 'exit') {
 			this.save_changes();
-			this.next = new TransitionScene(new MainMenuScene());
+			this.next = new TransitionScene(new MainMenuScene(), this);
 		} else if (id == 'no joystick') {
 			im.set_active_actual_joystick(-1);
 		} else {
