@@ -1,126 +1,151 @@
-_MUSIC_ENABLED = True
+const _MUSIC_ENABLED = True
 
-_jukebox = None
+function get_jukebox() {
+	if (JukeBox.INSTANCE == None) {
+		_jukebox = new JukeBox();
+	}
+	return _jukebox;
+}
 
-def get_jukebox():
-	global _jukebox
-	if _jukebox == None:
-		_jukebox = JukeBox()
-	return _jukebox
+function play_sound(path) {
+	if (is_music_off()) return;
+	get_jukebox().play_sound(path);
+}
 
-def play_sound(path):
-	if is_music_off(): return
-	get_jukebox().play_sound(path)
+function is_music_off() {
+	return !_MUSIC_ENABLED;
+}
 
-def is_music_off():
-	return not _MUSIC_ENABLED
+class JukeBox {
 
-class JukeBox:
-	def __init__(self):
-		self.current = None
+	static field INSTANCE = null;
+
+	constructor() {
+		this.current = null;
 		
-		ps = get_persistent_state()
-		if (ps.forever.get('sfx') != None):
-			self.set_music_volume(ps.get_int_forever('music'))
-			self.set_sfx_volume(ps.get_int_forever('sfx'))
-		else:
-			self.set_music_volume(70)
-			self.set_sfx_volume(70)
-		self.sounds = {}
-		self.musics = {}
-		self.music_map = {
-			'intro':'biologytake2',
-			'12-0':'chemistry',
-			'13-0':'chemistry',
-			'14-0':'chemistry',
-			'17-3':'chemistry',
-			'18-0':'chemistry',
-			'19a-0':'chemistry',
-			'19b-1':'chemistry',
-			'19-0':'chemistry',
-			'99-0':'bossmusic',
+		ps = get_persistent_state();
+		if (ps.forever.get('sfx') != None) {
+			this.set_music_volume(ps.get_int_forever('music'));
+			this.set_sfx_volume(ps.get_int_forever('sfx'));
+		} else {
+			this.set_music_volume(70);
+			this.set_sfx_volume(70);
+		}
+		this.sounds = {};
+		this.musics = {};
+		this.music_map = {
+			'intro': 'biologytake2',
+			'12-0': 'chemistry',
+			'13-0': 'chemistry',
+			'14-0': 'chemistry',
+			'17-3': 'chemistry',
+			'18-0': 'chemistry',
+			'19a-0': 'chemistry',
+			'19b-1': 'chemistry',
+			'19-0': 'chemistry',
+			'99-0': 'bossmusic',
+		};
+	}
+	
+	function get_song_normalization(name) {
+		if (name == 'title') {
+			return 1;
+		}
+		return .3;
+	}
+	
+	function set_music_volume(percent) {
+		percent = Math.max(0, Math.min(100, Math.floor(percent)));
+		this.music_volume = percent;
+		this.update_volume(this.current);
+	}
+	
+	function update_volume(song) {
+		if (song != None) {
+			volume = this.music_volume * this.get_song_normalization(song);
+			// pygame.mixer.music.set_volume(volume / 100.0)
+		}
+	}
+	
+	function set_sfx_volume(percent) {
+		percent = Math.max(0, Math.min(100, Math.floor(percent)));
+		this.sfx_volume = percent;
+		this.sounds = {};
+	}
+	
+	function get_music_volume() {
+		return this.music_volume;
+	}
+	
+	function get_sfx_volume() {
+		return this.sfx_volume;
+	}
+	
+	function play_sound(path) {
+		if (path.contains('.')) {
+			throw new Exception("Do not include file extension in play_sound");
+		}
+
+		if (is_music_off()) return;
+
+		snd = this.sounds.get(path);
+		if (snd == null) {
+			fpath = 'sound/sfx/' + path + '.ogg';
+			snd = this.sounds.get(fpath);
+			if (snd == None) {
+				snd = Audio.SoundResource.loadFromResource(fpath);
+				volume = this.sfx_volume / 100.0;
+				if (path.startswith('talk')) {
+					if (path.contains('high')) {
+						volume = volume / 2;
+					}
+					volume = volume / 3;
+				}
+				if (path.contains('menumove')) {
+					volume = volume / 4;
+				snd.setDefaultVolume(volume);
+				this.sounds[path] = snd;
+			} else {
+				this.sounds[path] = snd;
+			}
+		}
+		snd.play();
+	}
+	
+	function ensure_current_song(songId) {
+		if (is_music_off()) return;
+		if (songId == 'bossmusic' && this.current == 'stringtheory') {
+			this.ensure_current_song('stringtheory');
+			return;
+		}
+
+		if (songId == None) {
+			Audio.Music.stop();
+			return;
 		}
 		
-		
-	def get_song_normalization(self, name):
-		if name == 'title':
-			return 1
-		
-		return .3
+		if (this.current != songId) {
+			songPath = 'sound/music/' + songId + '.ogg';
+			this.current = songId;
+			this.update_volume(songId);
+			music = this.musics.get(songPath);
+			if (music == None) {
+				music = Audio.Music.loadFromResource(songPath);
+				this.musics[songPath] = music;
+			}
+			music.play(True);
+		}
+	}
 	
-	def set_music_volume(self, percent):
-		percent = max(0, min(100, Math.floor(percent)))
-		self.music_volume = percent
-		self.update_volume(self.current)
+	function get_song_for_level(level) {
+		return this.music_map.get(level, 'astrophysics');
+	}
 	
-	def update_volume(self, song):
-		if song != None:
-			volume = self.music_volume * self.get_song_normalization(song)
-			#pygame.mixer.music.set_volume(volume / 100.0)
-	
-	def set_sfx_volume(self, percent):
-		percent = max(0, min(100, Math.floor(percent)))
-		self.sfx_volume = percent
-		self.sounds = {}
-	
-	def get_music_volume(self):
-		return self.music_volume
-	
-	def get_sfx_volume(self):
-		return self.sfx_volume
-	
-	def play_sound(self, path):
-		if '.' in path:
-			raise Exception("Do not include file extension in play_sound")
-
-		if is_music_off(): return
-
-		snd = self.sounds.get(path)
-		if snd == None:
-			fpath = 'sound/sfx/' + path + '.ogg'
-			snd = self.sounds.get(fpath)
-			if snd == None:
-				snd = Audio.SoundResource.loadFromResource(fpath)
-				volume = self.sfx_volume / 100.0
-				if path.startswith('talk'):
-					if 'high' in path:
-						volume = volume / 2
-					volume = volume / 3
-				if 'menumove' in path:
-					volume = volume / 4
-				snd.setDefaultVolume(volume)
-				self.sounds[path] = snd
-			else:
-				self.sounds[path] = snd
-		snd.play()
-	
-	def ensure_current_song(self, songId):
-		if is_music_off(): return
-		if songId == 'bossmusic' and self.current == 'stringtheory':
-			self.ensure_current_song('stringtheory')
-			return
-
-		if songId == None:
-			Audio.Music.stop()
-			return
-		
-		if self.current != songId:
-			songPath = 'sound/music/' + songId + '.ogg'
-			self.current = songId
-			self.update_volume(songId)
-			music = self.musics.get(songPath)
-			if music == None:
-				music = Audio.Music.loadFromResource(songPath)
-				self.musics[songPath] = music
-			music.play(True)
-
-	def get_song_for_level(self, level):
-		return self.music_map.get(level, 'astrophysics')
-	
-	def update(self, levelname):
-		song = self.get_song_for_level(levelname)
-		#if levelname == '99-0' and self.current == 'stringtheory' and song != 'stringtheory':
+	function update(levelname) {
+		song = this.get_song_for_level(levelname);
+		// if (levelname == '99-0' && this.current == 'stringtheory' && song != 'stringtheory')
+		//	return;
 			
-		#	#return
-			
-		self.ensure_current_song(song)
+		this.ensure_current_song(song);
+	}
+}

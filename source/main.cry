@@ -1,8 +1,15 @@
-FPS = 60.0
-GAME_WIDTH = 400
-GAME_HEIGHT = 300
-SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 600
+const FPS = 60.0
+const GAME_WIDTH = 400
+const GAME_HEIGHT = 300
+const SCREEN_WIDTH = 800
+const SCREEN_HEIGHT = 600
+
+const None = null;
+const True = true;
+const False = false;
+
+function len(thing) { return thing.length; }
+function str(thing) { return thing + ''; }
 
 _debug_message = None
 def set_user_debug_message(text):

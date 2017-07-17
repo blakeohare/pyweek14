@@ -1,10 +1,15 @@
-_image_library = {}
-_imageSheet = None
 
-def get_image(path):
-	image = _image_library.get(path)
-	if image == None:
-		imageRes = _imageSheet.getImage('images/' + path)
-		image = Graphics2D.GraphicsTexture.load(imageRes)
-		_image_library[path] = image
-	return image
+class ImagesHelpelr {
+	static field _image_library = {};
+	static field _imageSheet = null;
+}
+
+function get_image(path) {
+	image = ImagesHelper._image_library.get(path);
+	if (image == null) {
+		imageRes = ImagesHelper._imageSheet.getImage('images/' + path);
+		image = Graphics2D.GraphicsTexture.load(imageRes);
+		_image_library[path] = image;
+	}
+	return image;
+}

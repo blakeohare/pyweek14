@@ -1,26 +1,33 @@
 
-_COLORS_TO_COMPONENTS = {
-	'red': (255, 0, 0),
-	'white': (255, 255, 255),
-	'black': (0, 0, 0),
+class FontHelper {
+	static field _COLORS_TO_COMPONENTS = {
+		'red': [255, 0, 0],
+		'white': [255, 255, 255],
+		'black': [0, 0, 0],
+	};
+
+	static field _defaultFont = null;
+	static field _text = {};
 }
 
-_defaultFont = None
-_text = {}
-def get_text(text, size, color):
-	key = str(size) + "," + str(color) + "|" + text
-	texture = _text.get(key)
-	if texture == None:
-		size = size * 2 / 3 + 1
-		color = _COLORS_TO_COMPONENTS.get(color, color)
-		font = _defaultFont if _defaultFont != None else get_default_font()
-		fontRenderer = font.getRenderer(size, color[0], color[1], color[2])
-		texture = fontRenderer.render(text)
-		_text[key] = texture
-	return texture
+function get_text(text, size, color) {
+	key = str(size) + "," + str(color) + "|" + text;
+	texture = _text.get(key);
+	if (texture == null) {
+		// TODO: adjust this
+		size = size * 2 / 3 + 1;
+		color = FontHelper._COLORS_TO_COMPONENTS.get(color, color);
+		font = FontHelper._defaultFont ?? get_default_font();
+		fontRenderer = font.getRenderer(size, color[0], color[1], color[2]);
+		texture = fontRenderer.render(text);
+		_text[key] = texture;
+	}
+	return texture;
+}
 
-def get_default_font():
-	global _defaultFont
-	if _defaultFont == None:
-		_defaultFont = Graphics2DText.FontResource.fromSystem('Arial')
-	return _defaultFont
+function get_default_font() {
+	if (FontHelper._defaultFont == null) {
+		_defaultFont = Graphics2DText.FontResource.fromSystem('Arial');
+	}
+	return _defaultFont;
+}

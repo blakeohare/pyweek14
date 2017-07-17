@@ -1,97 +1,54 @@
 
-def make_grid(width, height, defaultValue):
-	cols = []
-	x = 0
-	while x < width:
-		col = []
-		y = 0
-		while y < height:
-			col.append(defaultValue)
-			y += 1
-		cols.append(col)
-		x += 1
-	return cols
+function make_grid(width, height, defaultValue) {
+	col = [defualtValue] * height;
+	cols = [col];
+	while (cols.length < width) {
+		cols.append(cols[0].clone());
+	}
+	return cols;
+}
 
-def safe_map(function, list):
-	i = 0
-	l = len(list)
-	output = []
-	while i < l:
-		output.append(function(list[i]))
-		i += 1
-	return output
-
-_range_4 = [0, 1, 2, 3]
-_range_2 = [0, 1]
-def safe_range(x):
-	global _range_4, _range_2
-	if x < 10:
-		if x == 4:
-			return _range_4
-		if x == 2:
-			return _range_2
+function safe_sorted(list, compare) {
+	return safe_sorted_helper(list, compare);
+}
 	
-	output = [0] * x
-	i = 1
-	while i < x:
-		output[i] = i
-		i += 1
-	return output
-
-def safe_sorted(list, compare):
-	return safe_sorted_helper(list, compare)
+function safe_sorted_helper(list, compare) {
+	if (len(list) <= 1) return list;
+		
+	if (len(list) == 2) {
+		if (compare(list[0], list[1])) {
+			return list;
+		} else {
+			return list[::-1];
+		}
+	}
 	
-def safe_sorted_helper(list, compare):
-	if len(list) <= 1:
-		return list
-	if len(list) == 2:
-		if compare(list[0], list[1]):
-			return list
-		else:
-			return list[::-1]
-	pivot_i = len(list) // 2
-	pivot = list[pivot_i]
-	list = list[:pivot_i] + list[pivot_i + 1:]
-	left = []
-	right = []
-	for item in list:
-		if compare(item, pivot):
-			left.append(item)
-		else:
-			right.append(item)
+	pivot_i = len(list) / 2;
+	pivot = list[pivot_i];
+	list = list[:pivot_i] + list[pivot_i + 1:];
+	left = [];
+	right = [];
+	for (item : list) {
+		if (compare(item, pivot)) {
+			left.add(item);
+		} else {
+			right.add(item);
+		}
+	}
 	
-	left = safe_sorted_helper(left, compare)
-	left.append(pivot)
-	right = safe_sorted_helper(right, compare)
-	return left + right
+	left = safe_sorted_helper(left, compare);
+	left.add(pivot);
+	right = safe_sorted_helper(right, compare);
+	return left + right;
+}
 
-_assertions_break = True
-def assertion(message):
-	global _assertions_break
-	if _assertions_break:
-		raise Exception(message)
-	else:
-		print(message)
+// TODO: inline this
+function assertion(message) {
+	throw new Core.Exception(message);
+}
 
-def copy_array(target, source):
-	while len(target) > len(source):
-		target.pop()
-	while len(target) < len(source):
-		target.append(None)
-	
-	i = 0
-	while i < len(source):
-		target[i] = source[i]
-		i += 1
-def debug_dict(dictionary):
-	return '\n'.join(safe_map(lambda k:str(k) + ": " + str(dictionary[k]), dictionary.keys()))
-
-def debug_list(list):
-	return '\n'.join(safe_map(str, list))
-
-def parseInt(string):
-	try:
-		# TODO: perhaps just call raise?
-		return string.strip()
-	except:
-		return 0
+// TODO: just move this inline
+function copy_array(target, source) {
+	target.clear();
+	target.concat(source);
+}
