@@ -113,7 +113,7 @@ class ConfigureInputScene {
 		self.im = im;
 		for (js : im.actual_joysticks) {
 			y += 20;
-			js_option_y_coords.append(y);
+			js_option_y_coords.add(y);
 			self.buttons.add(new ClickyButton('joystick ' + str(i), x, y, js.get_name(), a, b, c, hb, None));
 			i += 1;
 		}

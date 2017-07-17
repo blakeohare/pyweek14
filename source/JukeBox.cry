@@ -95,7 +95,7 @@ class JukeBox {
 			if (snd == None) {
 				snd = Audio.SoundResource.loadFromResource(fpath);
 				volume = this.sfx_volume / 100.0;
-				if (path.startswith('talk')) {
+				if (path.startsWith('talk')) {
 					if (path.contains('high')) {
 						volume = volume / 2;
 					}

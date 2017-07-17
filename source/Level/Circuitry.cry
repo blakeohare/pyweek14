@@ -48,7 +48,7 @@ class Circuits {
 				tile = self.level.get_tile_at(coord);
 				if (tile.actual_circuit) {
 					id = tile.id;
-					if (id.endswith('on')) {
+					if (id.endsWith('on')) {
 						id = id[:-2];
 					}
 					id = is_group_on ? (id + 'on') : id;
@@ -93,7 +93,7 @@ class Circuits {
 						if (item.circuit) {
 							circuits.add([x, y, z]);
 							circuits_by_loc[x +'|' + y + '|' + z] = [];
-							if (first_time && item.id.endswith('on')) {
+							if (first_time && item.id.endsWith('on')) {
 								permanently_on.add([x, y, z]);
 							}
 						}

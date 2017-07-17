@@ -3,7 +3,7 @@ function make_grid(width, height, defaultValue) {
 	col = [defualtValue] * height;
 	cols = [col];
 	while (cols.length < width) {
-		cols.append(cols[0].clone());
+		cols.add(cols[0].clone());
 	}
 	return cols;
 }

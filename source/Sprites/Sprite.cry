@@ -64,8 +64,8 @@ class Sprite {
 		self.holding_walkie = False;
 		self.intro_hack = False;
 		self.issupervisor = type == 'supervisor';
-		self.isblock = type.startswith('block|');
-		self.israt = type.startswith('rat|');
+		self.isblock = type.startsWith('block|');
+		self.israt = type.startsWith('rat|');
 		self.death_by_rat = 0;
 		self.impeded_last_go_round = False;
 		self.rat_trot_mode = None;
@@ -75,7 +75,7 @@ class Sprite {
 				self.rat_trot_mode = 'nw';
 			} else if (type.endsWith('ne')) {
 				self.rat_trot_mode = 'ne';
-			} else if (type.endswith('sw')) {
+			} else if (type.endsWith('sw')) {
 				self.rat_trot_mode = 'sw';
 			} else {
 				self.rat_trot_mode = 'se';

@@ -17,7 +17,7 @@ class MovingPlatformManager {
 		self.platforms = self.level.get_moving_platforms();
 		self.num_platforms = len(self.platforms);
 		while (len(directions) < self.num_platforms) {
-			directions.append(['P']);
+			directions.add(['P']);
 		}
 		self.directions = directions;
 	}
