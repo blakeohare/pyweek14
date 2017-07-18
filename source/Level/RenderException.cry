@@ -1,0 +1,91 @@
+import Math;
+
+class RenderException {
+	
+	static field _render_exceptions_coords = [
+		[2, 1], // 7
+		[4, 2], // 6
+		[6, 3], // 5
+		[8, 4], // 4
+		[10, 5], // 3
+		[12, 6], // 2
+		[14, 7], // 1
+	];
+
+	field is_block;
+	field is_sprite;
+	field z;
+	field counter;
+	field expired;
+	field do_show;
+	field dont_show;
+	field direction;
+	field tile;
+	field on_key;
+	field off_key;
+	field offsets;
+	
+	// start is a set of 3D coordinates
+	constructor(start, direction, tile, is_block, map_width) {
+		this.is_block = is_block;
+		this.is_sprite = !is_block;
+		this.z = start[2];
+		this.counter = 0;
+		this.expired = false;
+		if (direction == 'NE' || direction == 'NW') {
+			this.do_show = start;
+			if (direction == 'NE') {
+				this.dont_show = [start[0], start[1] - 1, start[2]];
+			} else { // NW
+				this.dont_show = [start[0] - 1, start[1], start[2]];
+			}
+		} else { // SW || SE
+			this.dont_show = start;
+			if (direction == 'SE') {
+				this.do_show = [start[0] + 1, start[1], start[2]];
+			} else { // SW
+				this.do_show = [start[0], start[1] + 1, start[2]];
+			}
+		}
+		this.direction = direction;
+		this.tile = tile;
+		this.on_key = this.do_show[0] + map_width * this.do_show[1];
+		this.off_key = this.dont_show[0] + map_width * this.dont_show[1];
+		
+		if (this.direction == 'NW') {
+			xflip = -1;
+			yflip = -1;
+			reverse = 1;
+		} else if (this.direction == 'NE') {
+			xflip = 1;
+			yflip = -1;
+			reverse = 1;
+		} else if (this.direction == 'SW') {
+			xflip = 1;
+			yflip = -1;
+			reverse = -1;
+		} else if (this.direction == 'SE') {
+			xflip = -1;
+			yflip = -1;
+			reverse = -1;
+		} else {
+			throw new Exception(); // this won't happen.
+		}
+		
+		this.offsets = RenderException._render_exceptions_coords[::reverse];
+		for (i = 0; i < this.offsets.length; ++i) {
+			this.offsets[i] = [this.offsets[i][0] * xflip, this.offsets[i][1] * yflip];
+		}
+	}
+	
+	function update() {
+		this.counter += 1;
+		if (this.counter > 6) {
+			this.expired = true;
+		}
+	}
+	
+	function get_offset() {
+		return this.offsets[min(6, this.counter)];
+	}
+}

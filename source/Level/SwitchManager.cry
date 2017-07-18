@@ -1,0 +1,342 @@
+import Math;
+
+function override_switch_behavior(manager, level, index, is_blue) {
+	enabled = manager.enabled;
+	name = level.name;
+	
+	if (name == '5-0') {
+		if (index > 0) {
+			if (enabled[1] && enabled[2]) {
+				level.activate_switch('door', true);
+			} else {
+				level.activate_switch('door', false);
+			}
+			
+			return true;
+		}
+	} else if (name == '16-0') {
+		if (index == 0) {
+			// Don't confuse the meaning of these 0's.
+			// The index == 0 which is the switch ID
+			// The pause token is 0 which is the moving platform ID
+			// They're the same here because that's a coincidence
+			level.moving_platforms.set_pause_token('0', !enabled[index]);
+			return true;
+		}
+	} else if (name == '18-0') {
+		mapping = [
+			[10],
+			[0],
+			[2],
+			[4],
+			[1, 9],
+			[5],
+			[7],
+			[8],
+			[3, 6]
+		];
+		for (platform : mapping[index]) {
+			level.moving_platforms.set_pause_token(str(platform), !enabled[index]);
+		}
+		return true;
+	} else if (name == 'flipmaze') {
+		level.activate_switch('blue', is_blue);
+		return true;
+	} else if (name == '24-0') {
+		if (index == 4) {
+			level.moving_platforms.set_pause_token('2', !enabled[index]);
+			return true;
+		}
+	} else if (name == '25-0') {
+		level.moving_platforms.set_pause_token(str(index - 1), !enabled[index]);
+		if (index != 0) {
+		
+			return true;
+		}
+	} else if (name == '90-0') {
+		if (index == 0) {
+			level.moving_platforms.set_pause_token('0', !enabled[index]);
+			return true;
+		}
+	}
+	return false;
+}
+
+class SwitchManager {
+
+	static field _switch_mapping = {
+		'4-0': [
+			'blue'
+		],
+		
+		'5-0': [
+			'bridge',
+			null,
+			null
+		],
+		
+		'8-0': [
+			'exit'
+		],
+		
+		'9-0': [
+			'exit'
+		],
+		
+		'10-2': [
+			'bridgene',
+			'bridgenw',
+			'bridgese'
+		],
+		
+		'12-0': [
+			'exit'
+		],
+		
+		'14-0': [
+			'blue',
+			'exit'
+		],
+		
+		'16-0': [
+			null,
+			'green'
+		],
+		
+		'17-3': [
+			'red',
+			'blue'
+		],
+		
+		'18-0': [null] * 9,
+		
+		'19-0': [
+			'power'
+		],
+		
+		'19c-0':
+		[ 'button' ],
+		
+		'20-0': [
+			'blue',
+			'power'
+		],
+		
+		'21-0': [
+			'green',
+			'blue',
+			'powere',
+			'powerw'
+		],
+		
+		'21a-0': [
+			'green',
+			'magenta',
+			'yellow',
+			'cyan'
+		],
+		
+		'24-0': [
+			'green',
+			'power',
+			'purple',
+			'grey',
+			null,
+			'yellow'
+		],
+		
+		'25-0': [
+			'grey'
+		],
+		
+		'26-0': [
+			'blue',
+			'red'
+		],
+		
+		'27-0': [
+			'cyan',
+			'magenta',
+			'yellow'
+		],
+		
+		'28-0': [
+			'door',
+			'bridge'
+		],
+		
+		'90-0': [
+			null,
+			'green',
+			'blue',
+			'power',
+			'power',
+			'yellow'
+		]
+	};
+	
+	field playscene;
+	field level;
+	field flipmaze_hack;
+	field switches;
+	field enabled;
+	field statuses;
+	field locations;
+	field rubiks;
+	field colors;
+	field activator_lookup;
+
+	constructor(level, playscene) {
+		this.playscene = playscene;
+		this.level = level;
+		this.flipmaze_hack = playscene.story_mode && level.name == 'flipmaze';
+		this.switches = this.level.get_switches();
+		this.enabled = [false] * this.switches.length;
+		this.statuses = [null] * this.switches.length;
+		this.locations = {};
+		for (_switch : this.switches) {
+			k = _switch[0] + '^' + _switch[1];
+			this.locations[k] = this.locations.get(k, []);
+			this.locations[k].add(_switch);
+		}
+		
+		ts = get_tile_store();
+		this.rubiks = ts.get_tile('rubiks');
+		this.colors = {
+			// Switch, block
+			'gray': [ts.get_tile('b1'), ts.get_tile('3')],
+			'red': [ts.get_tile('b2'), ts.get_tile('9')],
+			'blue': [ts.get_tile('b4'), ts.get_tile('10')],
+			'green': [ts.get_tile('b3'), ts.get_tile('11')],
+			'magenta': [ts.get_tile('b6'), ts.get_tile('12')],
+			'cyan': [ts.get_tile('b5'), ts.get_tile('13')],
+			'yellow': [ts.get_tile('b7'), ts.get_tile('14')],
+			'battery': [ts.get_tile('pi'), ts.get_tile('45')],
+		};
+		
+		this.activator_lookup = {};
+		for (color : this.colors.keys()) {
+			this.activator_lookup[this.colors[color][0].id] = this.colors[color][1];
+		}
+	}
+	
+	function update_statuses_for_sprite(sprite, level) {
+		col = Math.floor(sprite.x / 16);
+		row = Math.floor(sprite.y / 16);
+		layer = Math.floor(sprite.z / 8) - 1;
+		
+		_floor = level.get_tile_at(col, row, layer);
+		if (_floor != null && _floor.isswitch) {
+			// TODO: for loop
+			i = 0;
+			while (i < this.switches.length) {
+				sw = this.switches[i];
+				
+				if (sw[0] == col && sw[1] == row && sw[2] == layer) {
+					this.statuses[i] = ['sprite', sprite];
+					break;
+				}
+				i += 1;
+			}
+		}
+	}
+	
+	function check_switch_for_block_and_update(i, _switch, level) {
+		col = _switch[0];
+		row = _switch[1];
+		layer = _switch[2] + 1;
+		above = level.get_tile_at(col, row, layer);
+		if (above != null && above.pushable) {
+			this.statuses[i] = ['block', above];
+		}
+	}
+		
+	function update_statuses(sprites) {
+		if (this.switches.length == 0) {
+			return;
+		}
+		
+		i = 0;
+		while (i < this.switches.length) {
+			this.statuses[i] = null;
+			i += 1;
+		}
+		
+		players = [];
+		level = this.level;
+		for (sprite : sprites) {
+			if (sprite.main_or_hologram) {
+				players.add(sprite);
+			} else {
+				this.update_statuses_for_sprite(sprite, level);
+			}
+		}
+		
+		for (p : players) {
+			this.update_statuses_for_sprite(p, level);
+		}
+		
+		i = 0;
+		while (i < this.switches.length) {
+			this.check_switch_for_block_and_update(i, this.switches[i], level);
+			i += 1;
+		}
+	}
+	
+	function update_enabled(sprites, suppress_triggers) {
+		
+		this.update_statuses(sprites);
+		before = this.enabled.clone();
+		
+		i = 0;
+		while (i < this.switches.length) {
+			_switch = this.switches[i];
+			status = this.statuses[i];
+			if (status != null) {
+				if (status[0] == 'sprite') {
+					if (_switch[3] == this.colors['gray'][0] || this.level.name == 'flipmaze') {
+						if (this.flipmaze_hack) {
+							this.flipmaze_hack = false;
+							this.playscene.next = new DialogScene(this.playscene, 'h1');
+						}
+						this.enabled[i] = true;
+					}
+				} else if (status[0] == 'block') {
+					type = _switch[3];
+					if (type == this.colors['gray'] || (status[1] == this.rubiks && type.id != 'pi')) {
+						this.enabled[i] = true;
+					} else if (this.activator_lookup[type.id] == status[1]) {
+						this.enabled[i] = true;
+					} else {
+						this.enabled[i] = false;
+					}
+				}
+			} else {
+				this.enabled[i] = false;
+			}
+			
+			if (!suppress_triggers) {
+				if (before[i] != this.enabled[i]) {
+					this.do_action(this.level, this.level.name, i, this.enabled[i]);
+				}
+			}
+			
+			i += 1;
+		}
+	}
+	
+	function do_action(level, name, switch_index, positive) {
+		
+		is_blue = level.get_tile_at(this.switches[switch_index]) == this.colors['blue'][0];
+		
+		if (override_switch_behavior(this, level, switch_index, is_blue)) {
+			return;
+		}
+		
+		mapping = SwitchManager._switch_mapping.get(name);
+		if (mapping != null) {
+			action_name = mapping[switch_index];
+			level.activate_switch(action_name, positive);
+		}
+	}
+}

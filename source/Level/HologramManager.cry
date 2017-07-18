@@ -1,0 +1,81 @@
+import Math;
+
+class HologramManager {
+	field level;
+	field copy_pad;
+	field output_pads;
+	field copy_mode_counter;
+	field used;
+	field new_sprites;
+	field sprites_created;
+	
+	constructor(level) {
+		this.level = level;
+		pads = level.get_hologram_pads();
+		this.copy_pad = null;
+		this.output_pads = [];
+		for (pad : pads) {
+			if (pad[3]) {
+				this.copy_pad = pad;
+			} else {
+				this.output_pads.add(pad);
+			}
+		}
+		
+		this.copy_mode_counter = -1;
+		this.used = false;
+		this.new_sprites = [];
+		this.sprites_created = [];
+	}
+	
+	function get_new_sprites() {
+		ns = this.new_sprites;
+		this.new_sprites = [];
+		return ns;
+	}
+	
+	function animation_sequence() {
+		if (this.copy_mode_counter < 0) {
+			return null;
+		} else {
+			copy_process = this.copy_mode_counter > 0;
+			for (sprite : this.sprites_created) {
+				sprite.clone_creating = copy_process;
+			}
+		}
+		return this.copy_mode_counter;
+	}
+	
+	function update(playscene, level, player) {
+		if (this.copy_pad == null) return;
+		
+		this.copy_mode_counter -= 1;
+		if (this.used) {
+			return;
+		}
+		
+		cp = this.copy_pad;
+		
+		col = Math.floor(player.x / 16);
+		row = Math.floor(player.y / 16);
+		layer = Math.floor(player.z / 8) - 1;
+		
+		if (cp[0] == col && cp[1] == row && cp[2] == layer) {
+			this.copy_mode_counter = 180;
+			// TODO: add new sprites
+			this.used = true;
+			player.x = col * 16 + 8;
+			player.y = row * 16 + 8;
+			for (p : this.output_pads) {
+				pc = p[0];
+				pr = p[1];
+				pl = p[2] + 1;
+				this.new_sprites.add(new Sprite(pc * 16 + 8, pr * 16 + 8, pl * 8, 'hologram|main'));
+				if (level.name == '26-0' && playscene.story_mode) {
+					playscene.next = new DialogScene(playscene, 'hologram');
+				}
+			}
+			this.sprites_created = this.new_sprites.clone();
+		}
+	}
+}

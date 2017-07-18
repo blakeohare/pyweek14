@@ -1,0 +1,123 @@
+import Graphics2D;
+import Math;
+
+class SetInputScene {
+
+	field next;
+	field prev;
+	field is_keyboard;
+	field action;
+	field tryanother;
+	field show_tryanother;
+	field counter = 0;
+	field top_img;
+	field bottom_img;
+
+	constructor(action, is_keyboard, prev_scene) {
+		this.next = this;
+		this.prev = prev_scene;
+		this.is_keyboard = is_keyboard;
+		this.action = action;
+		font_size = 20;
+		this.tryanother = get_text("Key in use, try another", 12, [255, 0, 0]);
+		this.show_tryanother = false;
+		font_color = [255, 255, 255];
+		if (this.is_keyboard) {
+			this.top_img = get_text("Press the key on the keyboard", font_size, font_color);
+		} else {
+			this.top_img = get_text("Press the button on the gamepad", font_size, font_color);
+		}
+		this.bottom_img = get_text('that will be used to ' + {
+			'left': "move left",
+			'right': 'move right',
+			'up': 'move up',
+			'down': 'move down',
+			'start': 'pause or confirm menus',
+			'spray': 'spray decontaminant',
+			'walkie': 'use your walkie talkie (save)'
+		}[action], font_size, font_color);
+	}
+	
+	function key_in_use(code, action) {
+		km = get_input_manager()._key_mapping;
+		for (k : km.keys()) {
+			if (k == code) {
+				if (km[k] != action) {
+					this.show_tryanother = true;
+					return true;
+				} else {
+					return false;
+				}
+			}
+		}
+		return false;
+	}
+	
+	function leave() {
+		this.next = this.prev;
+		this.prev.next = this.prev;
+	}
+	
+	function process_input(events, pressed, axes, mouse) {
+		im = get_input_manager();
+		
+		if (this.is_keyboard) {
+			for (ku : im.raw_keyups) {
+				if (!this.key_in_use(ku, this.action)) {
+					im.set_key_config(this.action, ku);
+					this.leave();
+					break;
+				}
+			}
+		} else {
+			// TODO: disable button to get here if this.active_actual_joystick is -1
+			js = im.actual_joysticks[im.active_actual_joystick];
+			js_config = im.joysticks[im.active_joystick];
+			num_buttons = js.getButtonCount();
+			for (i = 0; i < num_buttons; ++i) {
+				if (js.getButtonState(i)) {
+					js_config[this.action] = ['button', i];
+					this.leave();
+					return;
+				}
+			}
+			num_axes = js.getAxisCount();
+			for (i = 0; i < num_axes; ++i) {
+				value = js.getAxisState(i);
+				if (Math.abs(value) > .3) {
+					_sign = value > 0 ? '+' : '-';
+					js_config[this.action] = ['axis', i, 'x' + _sign];
+					this.leave();
+					return;
+				}
+			}
+		}
+	}
+	
+	function update(counter) {
+		this.counter++;
+	}
+	
+	function render(screen, counter) {
+		this.prev.render(screen, counter);
+		Graphics2D.Draw.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, 0, 0, 0, 170);
+		if (this.is_keyboard) {
+			label = "Press the key on the keyboard";
+		} else {
+			label = "Press the button on the gamepad";
+		}
+		h = this.top_img.height;
+		y = 150 - h - 3;
+		left = 25;
+		top = y - 20;
+		width = 350;
+		height = h * 2 + 6 + 40;
+		Graphics2D.Draw.rectangle(left, top, width, height, 128, 128, 128);
+		Graphics2D.Draw.rectangle(left + 1, top + 1, width - 2, height - 2, 0, 0, 0);
+		this.top_img.draw(200 - this.top_img.width / 2, y);
+		this.bottom_img.draw(200 - this.bottom_img.width / 2, 150 + 3);
+		if (this.show_tryanother) {
+			this.tryanother.draw(200 - this.tryanother.width / 2, top + height - 15);
+		}
+	}
+}

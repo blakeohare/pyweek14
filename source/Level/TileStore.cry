@@ -1,0 +1,50 @@
+import Resources;
+
+class TileStore {
+	static field INSTANCE = null;
+	
+	field tiles;
+	
+	constructor() {
+		tiles = {};
+		manifest_dir = 'data/tile_manifests';
+		manifests = Resources.directoryList(manifest_dir);
+		for (manifest : manifests) {
+			manifest_data = Resources.readText(manifest_dir + '/' + manifest).split('\n');
+			for (line : manifest_data) {
+				if (line != '' && line[0] != '#') {
+					cols = line.split('\t');
+					if (cols.length >= 4) {
+						id = cols[0];
+						images = cols[1];
+						height = Core.parseInt(cols[2]) ?? 0;
+						flags = cols[3];
+						tiles[id] = new Tile(id, images, height, flags);
+					}
+				}
+			}
+		}
+		this.tiles = tiles;
+	}
+	
+	function get_tile(id) {
+		return this.tiles[id];
+	}
+	
+	function get_all_block_tiles() {
+		output = [];
+		for (k : this.tiles.keys()) {
+			if (this.tiles[k].pushable) {
+				output.add(k);
+			}
+		}
+		return output;
+	}
+}
+
+function get_tile_store() {
+	if (TileStore.INSTANCE == null) {
+		TileStore.INSTANCE = new TileStore();
+	}
+	return TileStore.INSTANCE;
+}

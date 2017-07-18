@@ -1,0 +1,427 @@
+import Graphics2D;
+import Resources;
+
+function get_startup_dialog(play_scene) {
+	id = {
+		'1-3': 'a1',
+		'2-3': 'a2',
+		'4-0': 'b1',
+		//'5-0': 'b2',
+		//'6-0': 'b3',
+		//'7-0': 'b4',
+		'8-0': 'c1',
+		'9-0': 'c2',
+		//'10-2': 'c3',
+		//'11-0': 'c4',
+		'12-0': 'd1',
+		//'13-0': 'd2',
+		//'14-0': 'd3',
+		'15-0': 'e1',
+		//'16-0': 'e2',
+		//'17-3': 'e3',
+		'18-0': 'e4',
+		'19a-0': 'f1',
+		'19b-1': 'f2',
+		'19-0': 'g1',
+		'20-0': 'g2',
+		//'21-0': 'g3',
+		//'flipmaze': 'h1',
+		'25-0': 'h2',
+		//'24-0': 'i1',
+		//'26-0': 'j1',
+		'27-0': 'j2',
+		//'28-0': 'j3',
+		'90-0': '90',
+		'99-0': '99'
+	}.get(play_scene.level.name, null);
+	
+	if (id != null) {
+		return new DialogScene(play_scene, id);
+	}
+	return null;
+}
+
+class TextPrinter {
+
+	field text;
+	field counter = 0;
+	field speaker;
+
+	constructor(text, speaker) {
+		this.text = text;
+		this.speaker = speaker;
+	}
+		
+	function get_next_char(pressed) {
+		this.counter += 1;
+		t = '';
+		if (this.text.length == 0) {
+			return null;
+		}
+		amt = (pressed && this.counter > 6) ? 20 : 1;
+		t = this.text[:amt];
+		this.text = this.text[amt:];
+		if (this.counter % 6 == 1) {
+			sound = null;
+			if (this.speaker == 's') {
+				sound = 'talkbloop';
+			} else if ('jf'.contains(this.speaker)) {
+				sound = 'talkblooplow';
+			} else if (this.speaker == 'p') {
+				sound = 'talkbloophigh';
+			}
+			
+			if (sound != null) {
+				play_sound(sound);
+			}
+		}
+		return t;
+	}
+}
+
+class DialogPause {
+	
+	field remaining;
+	
+	constructor(amount) {
+		this.remaining = amount;
+	}
+	
+	function keep_pausing() {
+		this.remaining -= 1;
+		return this.remaining >= 0;
+	}
+}
+
+class DialogScene {
+	field id;
+	field next;
+	field wait_counter;
+	field phase_duration;
+	field playscene;
+	field text_printer;
+	field prompt_for_continue;
+	field pauser;
+	field i;
+	field phase;
+	field phase_counter;
+	field active_portrait;
+	field buffer;
+	field clear_on_continue;
+	field fast_speed;
+	field colors;
+	field buffer_clear_counter;
+	field frame_yielding;
+	field buffer_shift_offset;
+	field lines;
+	field labels;
+	
+	constructor(playscene, id) {
+		this.id = id;
+		this.next = this;
+		this.wait_counter = id == 'hologram' ? 240 : 0;
+		this.phase_duration = 60;
+		this.playscene = playscene;
+		this.initialize_script(id);
+		this.text_printer = null;
+		this.prompt_for_continue = false;
+		this.pauser = null;
+		this.i = 0;
+		this.phase = 'init';
+		this.phase_counter = 0;
+		this.active_portrait = null;
+		this.buffer = [];
+		this.clear_on_continue = false;
+		this.fast_speed = false;
+		this.colors = {
+			'w': [255, 255, 255],
+			's': [220, 180, 140],
+			'j': [140, 180, 230],
+			'f': [0, 200, 100],
+			'p': [255, 120, 180]
+		};
+		
+		this.buffer_clear_counter = -42;
+		this.frame_yielding = -42;
+		this.buffer_shift_offset = 0;
+	}
+	
+	function initialize_script(id) {
+		file = Resources.readText('data/dialog/' + id + '.txt');
+		this.lines = file.split('\n');
+		this.labels = {};
+		// TODO: for loop
+		i = 0;
+		while (i < this.lines.length) {
+			parts = this.lines[i].split('|');
+			if (parts[0] == 'label' && parts.length == 2) {
+				this.labels[parts[1]] = i;
+			}
+			i += 1;
+		}
+	}
+	
+	function process_input(events, pressed, axes, mouse) {
+		pushed = false;
+		this.fast_speed = false;
+		for (event : events) {
+			if (event.down && ['start', 'spray', 'walkie'].contains(event.key)) {
+				pushed = true;
+				//this.fast_speed = true;
+			}
+		}
+		
+		for (j : ['start', 'spray', 'walkie']) {
+			if (pressed[j]) {
+				this.fast_speed = true;
+			}
+		}
+		
+		if (pushed && this.prompt_for_continue) {
+			// TODO: this can be improved so it isn't quite as jumpy
+			// should also flush all text_printer queues
+			this.prompt_for_continue = false;
+			if (this.clear_on_continue) {
+				this.buffer = [];
+			}
+		}
+	}
+	
+	function update(counter) {
+		if (this.wait_counter > 0) {
+			this.playscene.update(counter);
+			this.wait_counter -= 1;
+			return;
+		}
+		this.phase_counter += 1;
+		this.frame_yielding -= 1;
+		
+		if (this.frame_yielding >= 0) {
+			for (s : this.playscene.sprites) {
+				if (s.issupervisor) {
+					// TODO: figure out why this empty block was here
+				}
+			}
+			this.playscene.update(counter);
+		}
+		
+		keep_going = true;
+		while (keep_going) {
+			if (this.phase == 'init') {
+				if (this.phase_counter == this.phase_duration) {
+					this.phase = 'dialog';
+				}
+				keep_going = false;
+			} else if (this.phase == 'end') {
+				if (this.phase_counter == this.phase_duration) {
+					this.next = this.playscene;
+					this.next.next = this.next;
+				}
+				keep_going = false;
+			} else if (this.prompt_for_continue) {
+				keep_going = false;
+			} else if (this.text_printer != null) {
+				n = this.text_printer.get_next_char(this.fast_speed);
+				if (n == null) {
+					this.text_printer = null;
+				} else {
+					this.buffer[-1][0] += n;
+					keep_going = false;
+				}
+			} else if (this.buffer_clear_counter > 0) {
+				this.buffer_clear_counter -= 1;
+				if (this.buffer_clear_counter == 0) {
+					this.buffer = this.buffer[1:];
+				}
+				keep_going = false;
+			} else if (this.pauser != null) {
+				if (!this.pauser.keep_pausing()) {
+					this.pauser = null;
+				}
+				keep_going = false;
+			} else {
+				if (this.i < this.lines.length) {
+					line = this.lines[this.i].trim();
+					if (line.length > 0) {
+						parts = line.split('|');
+						command = parts[0];
+						if (command == 'i') {
+							this.change_portrait(parts[1]);
+						} else if (command == 'r') {
+							this.change_portrait(null);
+						} else if (command == 'p') {
+							this.pauser = new DialogPause(Core.parseInt(parts[1]) ?? 0);
+						} else if (command == 's') {
+							if (this.buffer.length == 3) {
+								this.buffer_clear_counter = 10;
+								keep_going = false;
+								this.i -= 1;
+							} else {
+								color = this.colors[parts[1]];
+								text = parts[2];
+								this.buffer.add(['', color]);
+								this.text_printer = new TextPrinter(text, parts[1]);
+							}
+						} else if (command == 'credits') {
+							this.next = new TransitionScene(this, new CreditsScene(false));
+							keep_going = false;
+						} else if (command == 'music') {
+							get_jukebox().ensure_current_song(parts[1]);
+						} else if (command == 'snd') {
+							if (!parts[1].startsWith('talk')) {
+								play_sound(parts[1]);
+							}
+						} else if (command == 'c') {
+							this.prompt_for_continue = true;
+							this.clear_on_continue = false;
+							keep_going = false;
+						} else if (command == 'cc') {
+							this.prompt_for_continue = true;
+							this.clear_on_continue = true;
+						} else if (command == 'h') {
+							hack_function = get_hacks_for_level(this.playscene.level.name, 'dialog_hack')[parts[1]];
+							hack_function(this.playscene, this.playscene.level);
+						} else if (command == 'y') {
+							this.frame_yielding = Core.parseInt(parts[1]) ?? 0;
+						} else if (command == 'goto') {
+							this.do_goto(parts[1]);
+						} else if (command == 'if') {
+							var = parts[1];
+							operator = parts[2];
+							value = Core.parseInt(parts[3]) ?? 0;
+							label = parts[4];
+							this.do_if(operator, var, value, label);
+						} else if (command == 'end') {
+							this.phase_counter = 0;
+							this.phase = 'end';
+						}
+					}
+					
+					this.i += 1;
+				} else {
+					this.phase = 'end';
+					this.phase_counter = 0;
+					keep_going = false;
+				}
+			}
+		}
+	}
+	
+	function change_portrait(id) {
+		if (id == null) {
+			this.active_portrait = null;
+		} else {
+			this.active_portrait = get_image('portraits/' + id + '.png');
+		}
+	}
+	
+	function do_goto(label) {
+		line = this.labels.get(label);
+		if (line != null) {
+			i = line;
+		}
+	}
+	
+	function do_if(op, var, val, lbl) {
+		
+		finders = [get_persisted_level_int, get_persisted_session_int, get_persisted_forever_int];
+		value = 0;
+		for (finder : finders) {
+			value = finder(var);
+			if (value != 0) {
+				break;
+			}
+		}
+		
+		if (op == '=') {
+			if (value == val) {
+				this.do_goto(lbl);
+			}
+		} else if (op == '<') {
+			if (value < val) {
+				this.do_goto(lbl);
+			}
+		} else if (op == '>') {
+			if (value < val) {
+				this.do_goto(lbl);
+			}
+		} else if (op == '~') {
+			if (value != val) {
+				this.do_goto(lbl);
+			}
+		}
+	}
+	
+	function render_box(screen, phase, counter) {
+		
+		width = 300;
+		height = 100;
+		if (phase == 'end') {
+			counter = this.phase_duration - counter;
+		}
+		
+		if (phase == 'dialog') {
+			// pass
+		} else {
+			half = this.phase_duration / 2;
+			if (counter < this.phase_duration / 2) {
+				height = 10;
+			} else {
+				height = 90 * (counter - this.phase_duration / 2) / (this.phase_duration / 2) + 10;
+			}
+			if (counter < half) {
+				width = counter * 300 / half;
+			} else {
+				width = 300;
+			}
+		}
+		
+		x = GAME_WIDTH / 2 - width / 2;
+		y = 100 - height / 2;
+		Graphics2D.Draw.rectangle(x, y, width, height, 0, 0, 0, 180);
+		Graphics2D.Draw.rectangle(x, y, width, 1, 255, 255, 255);
+		Graphics2D.Draw.rectangle(x, y, 1, height, 255, 255, 255);
+		Graphics2D.Draw.rectangle(x + width - 1, y, 1, height, 255, 255, 255);
+		Graphics2D.Draw.rectangle(x, y + height - 1, width, 1, 255, 255, 255);
+	}
+		
+	function render(screen, counter) {
+		
+		this.playscene.render(screen, counter);
+		
+		if (this.wait_counter > 0) return;
+		
+		this.render_box(screen, this.phase, this.phase_counter);
+		
+		if (this.phase == 'dialog') {
+			if (this.active_portrait != null) {
+				this.active_portrait.draw(10, 10);
+			}
+			
+			font_size = 18;
+			line_height = 23;
+			last_color = [255, 255, 255];
+			y = 70;
+			
+			cursor_height = y + line_height * 3;
+			
+			if (this.buffer_clear_counter > 0) {
+				y -= (10 - this.buffer_clear_counter) * line_height / 10;
+			}
+			
+			for (line : this.buffer) {
+				text = line[0];
+				color = line[1];
+				last_color = color;
+				img = get_text(text, font_size, color);
+				img.draw(89, y);
+				y += line_height;
+			}
+			
+			if (this.prompt_for_continue && (counter / 10) % 2 == 0) {
+				y = cursor_height;
+				Graphics2D.Draw.triangle(300, y, 308, y, 304, y + 5, last_color[0], last_color[1], last_color[2]);
+			}
+		}
+	}
+}

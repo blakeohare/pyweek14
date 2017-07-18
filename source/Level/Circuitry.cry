@@ -1,0 +1,192 @@
+function make_key(x, y, z) {
+	return x + '|' + y + '|' + z;
+}
+
+function make_ckey(c) {
+	return c[0] + '|' + c[1] + '|' + c[2];
+}
+
+class Circuits {
+
+	field level;
+	field groups_by_coords;
+	field power_in;
+	field permanently_on;
+	field coords_by_group;
+	field on_groups;
+	field groups;
+
+	constructor(level) {
+		this.level = level;
+		this.refresh_groups(true);
+	}
+	
+	function LAMBDA_1(x) {
+		return this.groups_by_coords[make_ckey(x)];
+	}
+	
+	function refresh_charges() {
+		goo_was_fried = false;
+		on_circuits = get_hacks_for_level(this.level.name, 'on_circuits');
+		if (on_circuits == null) {
+			on_circuits = [];
+		}
+		active_input_panels = [];
+		for (input_panel : this.power_in) {
+			x = input_panel[0];
+			y = input_panel[1];
+			z = input_panel[2];
+			lookup = this.level.cellLookup[x][y];
+			if (z + 1 < lookup.length) {
+				ti = lookup[z + 1];
+				if (ti != null) {
+					t = this.level.grid[x][y][ti];
+					if (t != null && t.id == '45') {
+						active_input_panels.add(input_panel);
+					}
+				}
+			}
+		}
+		
+		on_groups = (on_circuits + active_input_panels + this.permanently_on).map(this.LAMBDA_1);
+		group_id = 1;
+		max_group_id = this.coords_by_group.length - 1;
+		while (group_id <= max_group_id) {
+			is_group_on = on_groups.contains(group_id);
+			for (coord : this.coords_by_group[group_id]) {
+				tile = this.level.get_tile_at(coord);
+				if (tile.actual_circuit) {
+					id = tile.id;
+					if (id.endsWith('on')) {
+						id = id[:-2];
+					}
+					id = is_group_on ? (id + 'on') : id;
+					tile = get_tile_store().get_tile(id);
+					this.level.modify_block(coord[0], coord[1], coord[2], tile);
+					if (is_group_on) {
+						goo_check = this.level.get_tile_at(coord[0], coord[1], coord[2] + 1);
+						if (goo_check != null && goo_check.is_goo) {
+							this.level.modify_block(coord[0], coord[1], coord[2] + 1, null);
+							goo_was_fried = true;
+						}
+					}
+				}
+			}
+			group_id += 1;
+		}
+		this.on_groups = on_groups;
+		if (goo_was_fried) {
+			// TODO: play frying goo noise
+		}
+	}
+	
+	function refresh_groups(first_time = false) {
+		this.groups = [];
+		permanently_on = [];
+		grid = this.level.grid;
+		width = this.level.width;
+		height = this.level.height;
+		circuits = [];
+		circuits_by_loc = {};
+		this.power_in = [];
+		y = 0;
+		while (y < height) {
+			x = 0;
+			while (x < width) {
+				stack = grid[x][y];
+				z = 0;
+				for (item : stack) {
+					if (item == null) {
+						z += 1;
+					} else {
+						if (item.circuit) {
+							circuits.add([x, y, z]);
+							circuits_by_loc[x +'|' + y + '|' + z] = [];
+							if (first_time && item.id.endsWith('on')) {
+								permanently_on.add([x, y, z]);
+							}
+						}
+						if (item.power_input) {
+							this.power_in.add([x, y, z]);
+						}
+						z += item.height;
+					}
+				}
+				x += 1;
+			}
+			y += 1;
+		}
+		
+		tags = {}; // key -> group name
+		
+		for (circuit : circuits) {
+			x = circuit[0];
+			y = circuit[1];
+			z = circuit[2];
+			neighbors = [
+				circuits_by_loc.get(make_key(x, y - 1, z)),
+				circuits_by_loc.get(make_key(x, y + 1, z)),
+				circuits_by_loc.get(make_key(x + 1, y, z)),
+				circuits_by_loc.get(make_key(x - 1, y, z))];
+			for (neighbor : neighbors) {
+				if (neighbor != null) {
+					neighbor.add(circuit);
+				}
+			}
+		}
+		
+		group_id = 0;
+		while (circuits.length > 0) {
+			group_id += 1;
+			circuit = circuits.pop();
+			while (tags.get(make_ckey(circuit)) != null) {
+				if (circuits.length > 0) {
+					circuit = circuits.pop();
+				} else {
+					circuit = null;
+					break;
+				}
+			}
+			
+			if (circuit != null) {
+				queue = [circuit];
+				while (queue.length > 0) {
+					item = queue.pop();
+					k = make_ckey(item);
+					tags[k] = group_id;
+					for (neighbor : circuits_by_loc[k]) {
+						if (tags.get(make_ckey(neighbor)) == null) {
+							tags[make_ckey(neighbor)] = group_id;
+							queue.add(neighbor);
+						}
+					}
+				}
+			}
+		}
+		
+		groups_to_coords = [[]];
+		for (k : tags.keys()) {
+			group_id = tags[k];
+			while (groups_to_coords.length <= group_id) {
+				groups_to_coords.add([]);
+			}
+			coords = k.split('|').map(Core.parseInt);
+			groups_to_coords[group_id].add([coords[0], coords[1], coords[2]]);
+		}
+		this.coords_by_group = groups_to_coords;
+		this.groups_by_coords = tags;
+		if (first_time) {
+			this.permanently_on = permanently_on;
+		}
+		this.refresh_charges();
+	}
+	
+	function is_charged(x, y, z) {
+		k = make_key(x, y, z);
+		group_id = this.groups_by_coords.get(k, 0);
+		if (group_id > 0) {
+			return this.on_groups.contains(group_id);
+		}
+		return false;
+	}
+}

@@ -1,0 +1,103 @@
+import Game;
+import Graphics2D;
+import ImageResources;
+import UserData;
+
+const FPS = 60.0;
+const GAME_WIDTH = 400;
+const GAME_HEIGHT = 300;
+const SCREEN_WIDTH = 800;
+const SCREEN_HEIGHT = 600;
+
+function str(thing) { return thing + ''; }
+
+class DebugMessageHelper {
+	static field msg = null;
+}
+
+function set_user_debug_message(text) {
+	DebugMessageHelper.msg = text;
+}
+
+function get_user_debug_message() {
+	return DebugMessageHelper.msg;
+}
+
+function main() {
+
+	window = new Game.GameWindow("Sudo Science", FPS, GAME_WIDTH, GAME_HEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT);
+	
+	pressed = {
+		'start': false,
+		'left': false,
+		'right': false,
+		'down': false,
+		'up': false,
+		'action': false
+	};
+	
+	load_persistent_state();
+	
+	if (UserData.fileExists('start.txt')) {
+		lines = UserData.fileReadText('start.txt').trim().split('\n');
+		
+		if (lines[0] == 'normal') {
+			active_scene = new MainMenuScene();
+		} else {
+			level_name = lines[0];
+			active_scene = new PlayScene(level_name, false);
+			if (!active_scene.do_not_override_start) {
+				coords = lines[1].split(',').map(Core.parseInt);
+				x = coords[0];
+				y = coords[1];
+				z = 8;
+				active_scene.player.x = x * 16 + 8;
+				active_scene.player.y = y * 16 + 8;
+				active_scene.player.z = z * 8;
+			}
+		}
+	} else {
+		active_scene = new MainMenuScene();
+	}
+	
+	counter = 0;
+	
+	input_manager = get_input_manager();
+	
+	// TODO: make an async loader scene
+	ImagesHelper._imageSheet = ImageResources.ImageSheet.loadFromResources('everything');
+	
+	// TODO: remove this from all the scene classes
+	fake_screen = null;
+	
+	while (active_scene != null) {
+		counter++;
+		event_list = [];
+		event_list = input_manager.get_events(window);
+		pressed = input_manager.my_pressed;
+		try_quit = input_manager.quitAttempt;
+		axes = input_manager.axes;
+		mouse_events = input_manager.get_mouse_events();
+		
+		active_scene.process_input(event_list, pressed, axes, mouse_events);
+		active_scene.update(counter);
+		
+		Graphics2D.Draw.fill(0, 0, 0);
+		
+		active_scene.render(fake_screen, counter);
+		
+		debug_message = get_user_debug_message();
+		if (debug_message != null) {
+			txt = get_text(debug_message, 20, [255, 0, 0]);
+			txt.draw(10, 10);
+		}
+		
+		active_scene = active_scene.next;
+		
+		if (try_quit) {
+			active_scene = null;
+		}
+		
+		window.clockTick();
+	}
+}

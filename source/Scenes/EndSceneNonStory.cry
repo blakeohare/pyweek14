@@ -1,0 +1,30 @@
+class EndSceneNonStory {
+
+	field next;
+	
+	constructor() {
+		this.next = this;
+	}
+		
+	function process_input(events, pressed, axes, mouse) {
+		for (event : events) {
+			if (event.down) {
+				if (event.key == 'start' || event.key == 'spray' || event.key == 'walkie') {
+					this.next = new TransitionScene(this, new MainMenuScene());
+				}
+			}
+		}
+	}
+	
+	function update(counter) {
+		// pass
+	}
+	
+	function render(screen, counter) {
+		img = get_text("This is the end of the game.", 30, [255, 255, 255]);
+		img2 = get_text("To see the ending, play in story-mode.", 14, [255, 255, 255]);
+		
+		img.draw(200 - img.width / 2, 100);
+		img2.draw(200 - img2.width / 2, 150);
+	}
+}

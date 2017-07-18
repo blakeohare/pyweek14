@@ -1,0 +1,45 @@
+class PlaySceneOverlay {
+	
+	field playscene;
+	field level;
+	
+	constructor(playscene, level) {
+		this.playscene = playscene;
+		this.level = level;
+	}
+	
+	function pad_with_zeroes(num, digits) {
+		s = str(num);
+		while (s.length < digits) {
+			s = '0' + s;
+		}
+		return s;
+	}
+	
+	function render(screen, render_counter) {
+		bg = get_image('misc/status_overlay.png');
+		goo = get_image('tiles/mediumdegoo.png');
+		rp = get_image('tiles/researchpapers.png');
+
+		bg.draw(0, GAME_HEIGHT - bg.height);
+		goo.draw(0, GAME_HEIGHT - goo.height - 14);
+		rp.draw(24, GAME_HEIGHT - rp.height - 0);
+		
+		research_saved = get_persisted_forever_int('research');
+		session_research = get_persisted_session_int('research');
+		level_research = get_persisted_level_int('research');
+		r = research_saved + level_research + session_research;
+		
+		goo_count = get_text(this.pad_with_zeroes(get_persisted_level_int('decontaminant'), 3), 16, [100, 255, 100]);
+		rp_count = get_text(this.pad_with_zeroes(r, 3), 16, [255, 255, 255]);
+		loc = get_level_manager().get_current_room_name(this.level.name);
+		if (loc == null) {
+			loc = "Room Needs Name";
+		}
+		loc = get_text(loc, 12, [255, 255, 255]);
+		
+		goo_count.draw(30, GAME_HEIGHT - goo.height - 5);
+		rp_count.draw(54, GAME_HEIGHT - rp.height + 11);
+		loc.draw(GAME_WIDTH - 90, GAME_HEIGHT - loc.height - 4);
+	}
+}

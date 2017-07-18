@@ -1,0 +1,62 @@
+
+function make_grid(width, height, defaultValue) {
+	col = [defaultValue] * height;
+	cols = [col];
+	while (cols.length < width) {
+		cols.add(cols[0].clone());
+	}
+	return cols;
+}
+
+function safe_sorted(list, compare) {
+	return safe_sorted_helper(list, compare);
+}
+	
+function safe_sorted_helper(list, compare) {
+	if (list.length <= 1) return list;
+		
+	if (list.length == 2) {
+		if (compare(list[0], list[1])) {
+			return list;
+		} else {
+			return list[::-1];
+		}
+	}
+	
+	pivot_i = list.length / 2;
+	pivot = list[pivot_i];
+	list = list[:pivot_i] + list[pivot_i + 1:];
+	left = [];
+	right = [];
+	for (item : list) {
+		if (compare(item, pivot)) {
+			left.add(item);
+		} else {
+			right.add(item);
+		}
+	}
+	
+	left = safe_sorted_helper(left, compare);
+	left.add(pivot);
+	right = safe_sorted_helper(right, compare);
+	return left + right;
+}
+
+function py_range(num) {
+	output = [];
+	for (i = 0; i < num; ++i) {
+		output.add(i);
+	}
+	return output;
+}
+
+// TODO: inline this
+function assertion(message) {
+	throw new Core.Exception(message);
+}
+
+// TODO: just move this inline
+function copy_array(target, source) {
+	target.clear();
+	target.concat(source);
+}

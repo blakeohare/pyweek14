@@ -1,0 +1,50 @@
+import Math;
+
+class CoilManager {
+	
+	field coils;
+	
+	constructor(level) { }
+	
+	function set_fresh_coils(coils) {
+		this.coils = coils;
+	}
+	
+	function find_zapped_sprites(sprites) {
+		coil_map = [];
+		for (coil : this.coils) {
+			x = coil[0];
+			while (coil_map.length <= x) {
+				coil_map.add([]);
+			}
+			coil_map[x].add(coil);
+		}
+		
+		for (sprite : sprites) {
+			if (sprite.death_counter < 0 && (sprite.main_or_hologram || sprite.israt)) {
+				col = Math.floor(sprite.x / 16);
+				while (col + 2 >= coil_map.length) {
+					coil_map.add([]);
+				}
+				
+				i = col - 1;
+				while (i <= col + 1) {
+					coil_column = coil_map[i];
+					for (coil : coil_column) {
+						if (Math.abs(coil[2] - Math.floor(sprite.z / 8)) < 2) {
+							dx = coil[0] * 16 + 8 - sprite.x;
+							dy = coil[1] * 16 + 8 - sprite.y;
+							if (dx * dx + dy * dy < 24 * 24) {
+								sprite.death_counter = 90;
+								sprite.death_type = 'bazat';
+								sprite.immobilized = true;
+							}
+						}
+					}
+					
+					i += 1;
+				}
+			}
+		}
+	}
+}

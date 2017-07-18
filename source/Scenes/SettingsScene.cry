@@ -1,0 +1,113 @@
+// Sound* settings
+class SettingsScene {
+	field next;
+	field i;
+	field jk;
+	
+	constructor() {
+		this.next = this;
+		this.i = 0;
+		this.jk = get_jukebox();
+	}
+	
+	function toggle_magic() {
+		z = 1 - get_persisted_forever_int('magic');
+		set_persisted_forever_int('magic', z);
+	}
+	
+	function process_input(events, pressed, axes, mouse) {
+		for (event : events) {
+			if (event.down) {
+				if (event.key == 'up') {
+					this.i -= 1;
+					if (this.i == -1) {
+						this.i = 0;
+					} else {
+						play_sound('menumove');
+					}
+				}
+				
+				if (event.key == 'down') {
+					this.i += 1;
+					if (this.i > 3) {
+						this.i = 3;
+					} else {
+						play_sound('menumove');
+					}
+				}
+				
+				if (event.key == 'right') {
+					if (this.i == 0) { // SFX
+						this.jk.set_sfx_volume(this.jk.get_sfx_volume() + 10);
+						play_sound('menumove');
+					} else if (this.i == 1) { // Music
+						this.jk.set_music_volume(this.jk.get_music_volume() + 10);
+						play_sound('menumove');
+					} else if (this.i == 2) {
+						this.toggle_magic();
+						play_sound('menumove');
+					}
+				} else if (event.key == 'left') {
+					if (this.i == 0) { // SFX
+						this.jk.set_sfx_volume(this.jk.get_sfx_volume() - 10);
+						play_sound('menumove');
+					} else if (this.i == 1) { // Music
+						this.jk.set_music_volume(this.jk.get_music_volume() - 10);
+						play_sound('menumove');
+					} else if (this.i == 2) {
+						this.toggle_magic();
+						play_sound('menumove');
+					}
+				} else if (event.key == 'start') {
+					if (this.i == 2) {
+						this.toggle_magic();
+						play_sound('menumove');
+					} else if (this.i == 3) {
+						get_persistent_state().set_int_forever('sfx', this.jk.get_sfx_volume());
+						get_persistent_state().set_int_forever('music', this.jk.get_music_volume());
+						this.next = new TransitionScene(this, new MainMenuScene());
+						get_persistent_state().save_game();
+						play_sound('menumove');
+					}
+				}
+			}
+		}
+	}
+	
+	function update(counter) {
+		// pass
+	}
+	
+	function render(screen, counter) {
+		header = get_text("Sound Settings", 30, [255, 255, 255]);
+		x = (GAME_WIDTH - header.width) / 2;
+		y = 30;
+		header.draw(x, y);
+		
+		y += header.height + 30;
+		
+		g = [120, 120, 120];
+		w = [255, 255, 255];
+		
+		c = this.i == 0 ? w : g;
+		img = get_text("SFX Volume: " + str(this.jk.get_sfx_volume()) + "%", 18, c);
+		img.draw((GAME_WIDTH - img.width) / 2, y);
+		y += img.height + 40;
+		
+		c = this.i == 1 ? w : g;
+		img = get_text("Music Volume: " + str(this.jk.get_music_volume()) + "%", 18, c);
+		img.draw((GAME_WIDTH - img.width) / 2, y);
+		y += img.height + 40;
+		
+		c = this.i == 2 ? w : g;
+		t = get_persisted_forever_int('magic') == 1 ? "More Magic " : "Magic";
+		img = get_text(t, 18, c);
+		img.draw((GAME_WIDTH - img.width) / 2, y);
+		y += img.height + 40;
+		
+		c = this.i == 3 ? w : g;
+		img = get_text("Return to Main Menu", 18, c);
+		img.draw((GAME_WIDTH - img.width) / 2, y);
+		y += img.height + 40;
+	}
+}

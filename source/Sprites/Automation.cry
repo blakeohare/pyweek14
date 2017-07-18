@@ -1,0 +1,182 @@
+import Math;
+
+class Automation {
+
+	field type;
+	field level;
+	field counter = 0;
+	field intro_dialog_start = 343;
+	field sprite;
+	
+	constructor(level, type) {
+		this.type = type;
+		this.level = level;
+	}
+	
+	// (dx, dy)
+	function get_next_values() {
+		c = this.counter;
+		sprite = this.sprite;
+		this.counter += 1;
+		o = null;
+		if (this.level == '99-0') {
+			o = this.do_99_player(this.level, c, sprite);
+		} else {
+			if (this.type == 'intro_janitor') {
+				o = this.do_intro_janitor(this.level, c, sprite);
+			} else if (this.type == 'intro_supervisor') {
+				o = this.do_intro_supervisor(this.level, c, sprite);
+			} else if (this.type == 'intro_protagonist') {
+				o = this.do_intro_protagonist(this.level, c, sprite);
+			}
+			
+			if (o == null) {
+				return [0, 0];
+			}
+		}
+		return o;
+	}
+	
+	function do_99_player(level, counter, sprite) {
+		
+		if (counter < 15) {
+			return [0, 0];
+		} else if (counter < 23) {
+			return [-1.5, 0];
+		} else if (counter < 40) {
+			return [0, 1.5];
+		} else if (counter < 57) {
+			return [0, -1.5];
+		} else if (counter < 69) {
+			return [-1.5, 0];
+		} else if (counter == 80) {
+			drf2 = get_tile_store().get_tile('drf2');
+			sprite.level.modify_block(4, 4, 1, drf2);
+		}
+		
+		return [0, 0];
+	}
+	
+	function hold_spray(sprite) {
+		sprite.holding_spray = true;
+	}
+	
+	function unhold_spray(sprite) {
+		sprite.holding_spray= false;
+	}
+	
+	function hold_walkie(sprite) {
+		sprite.holding_walkie = true;
+	}
+	
+	function unhold_walkie(sprite) {
+		sprite.holding_walkie = false;
+	}
+	
+	function kill_me(sprite) {
+		sprite.garbage_collect = true;
+	}
+	
+	function do_intro_janitor(level, counter, sprite) {
+		ranges = [
+		// less than, then return, and do...
+			[8, [1, 2]],
+			[116, [0, 2]],
+			[4, [-2, 0]],
+			[182, [0, 0]],
+			[4, [-1, 0]],
+			[40, [0, 0], this.hold_spray],
+			[1, [0, 0], this.unhold_spray],
+			[6, [0, 0]],
+			[4, [1, 0]],
+			[1, [-1, 0]],
+			[210, [0, 0]],
+			[4, [-1, 0]],
+			[6, [0, 0]],
+			[40, [0, 0], this.hold_walkie],
+			[26, [0, 0], this.unhold_walkie],
+			[6, [1, 0]],
+			[1, [-1, 0]],
+			[30, [0, 0]],
+			[4, [1, 0]],
+			[40, [0, 1.4]],
+			[1, [0, 0], this.kill_me],
+			[999, [0, -4]]
+		];
+		cumulative = 0;
+		for (r : ranges) {
+			cumulative += r[0];
+			if (counter < cumulative) {
+				if (r.length == 3) {
+					r[2](sprite);
+				}
+				return r[1];
+			}
+		}
+	}
+	
+	function do_intro_supervisor(level, counter, sprite) {
+		ranges = [
+		// less than, then return, and do...
+			[8, [1, 2]],
+			[108, [0, 2]],
+			[4, [-2, 0]],
+			[320, [0, 0]],
+			[4, [1, 0]],
+			[60, [0, 1]],
+			[1, [0, 0], this.kill_me],
+			[999, [0, -4]]
+		];
+		cumulative = 0;
+		for (r : ranges) {
+			cumulative += r[0];
+			if (counter < cumulative) {
+				if (r.length == 3) {
+					r[2](sprite);
+				}
+				
+				return r[1];
+			}
+		}
+		
+		leave_begin = 373;
+		if (counter < 116) {
+			if (counter < 8) {
+				x = 1;
+			} else {
+				x = 0;
+			}
+			return [x, 2];
+		} else if (counter < 120) {
+			return [-2, 0];
+		} else if (counter > leave_begin) {
+			t = leave_begin;
+			if (counter < t + 16) {
+				return [1, 0];
+			} else if (counter < t + 16 + 48) {
+				return [0, 1];
+			} else if (counter == 450) {
+				sprite.garbage_collect = true;
+			}
+		}
+	}
+	
+	function do_intro_protagonist(level, counter, sprite) {
+		s = 180;
+		if (counter == s + 132) {
+			sprite.intro_hack = true;
+			level.modify_block(Math.floor(sprite.x / 16), Math.floor(sprite.y / 16), Math.floor(sprite.z / 8), get_tile_store().get_tile('54'));
+		}
+		if (counter < s + 132) {
+			return null;
+		}
+		
+		if (counter < s + 148) {
+			return [0, 1];
+		}
+		
+		if (counter < s + 149) {
+			return [1, 0];
+		}
+	}
+}

@@ -1,0 +1,148 @@
+import Graphics2D;
+
+class LevelPickerScene {
+
+	field next;
+	field x;
+	field y;
+	field regions;
+	
+	constructor() {
+		this.next = this;
+		this.x = 0;
+		this.y = 0;
+		this.regions = [
+			["Sector A", '1-3 2-3 2a-0 3-1'.split(' ')],
+			["Sector B", '4-0 5-0 6-0 7-0'.split(' ')],
+			["Sector C", '8-0 9-0 10-2 11-0'.split(' ')],
+			["Sector D", '12-0 13-0 14-0 14a-0'.split(' ')],
+			["Sector E", '15-0 16-0 17-3 18-0'.split(' ')],
+			["Sector F", '19a-0 19b-1 19c-0'.split(' ')],
+			["Sector G", '19-0 20-0 21-0 21a-0'.split(' ')],
+			["Sector H", 'flipmaze 25-0 24-0'.split(' ')],
+			["Sector J", '26-0 27-0 28-0'.split(' ')],
+			["Sector X", '90-0'.split(' ')]
+		];
+	}
+	
+	static field _level_image = {};
+
+	function get_level_image(name) {
+		img = LevelPickerScene._level_image.get(name);
+		if (img == null) {
+			img = get_image('levelshots/' + name + '.png');
+			w = img.width;
+			h = img.height;
+			if (w > 100) {
+				h = h * 100 / w;
+				w = 100;
+			}
+			if (h > 60) {
+				w = w * 60 / h;
+				h = 60;
+			}
+			img = img.scale(w, h);
+			LevelPickerScene._level_image[name] = img;
+		}
+		return img;
+	}
+	
+	function process_input(events, pressed, axes, mouse) {
+		for (event : events) {
+			if (event.down) {
+				if (event.key == 'left') {
+					this.x -= 1;
+					if (this.x < 0) {
+						this.x = 0;
+					} else {
+						play_sound('menumove');
+						this.y = 0;
+					}
+				} else if (event.key == 'right') {
+					this.x += 1;
+					if (this.x > this.regions.length) {
+						this.x = this.regions.length - 1;
+					} else {
+						play_sound('menumove');
+						this.y = 0;
+					}
+				} else if (event.key == 'down') {
+					this.y += 1;
+					if (this.y >= this.regions[this.x][1].length) {
+						this.y -= 1;
+					} else {
+						play_sound('menumove');
+					}
+				} else if (event.key == 'up') {
+					this.y -= 1;
+					if (this.y < 0) {
+						this.y = 0;
+					} else {
+						play_sound('menumove');
+					}
+				} else if (event.key == 'start') {
+					if (this.x == this.regions.length) {
+						this.next = new TransitionScene(this, new MainMenuScene());
+					} else {
+						this.next = new TransitionScene(this, new PlayScene(this.regions[this.x][1][this.y], false));
+					}
+				}
+			}
+		}
+	}
+	
+	function update(counter) {
+		// pass
+	}
+	
+	function render(screen, counter) {
+		Graphics2D.Draw.fill(48, 48, 48);
+		bye = get_text("Level Picker", 18, 'white');
+		x = (GAME_WIDTH - bye.width) / 2;
+		bye.draw(x, 10);
+		
+		x = 10;
+		y = 30;
+		i = 0;
+		sector = get_text("Sector: ", 16, [255, 255, 0]);
+		sector.draw(x, y);
+		
+		x += sector.width + 10;
+		for (region : this.regions + [null]) {
+			
+			color = [130, 130, 130];
+			if (i == this.x) {
+				color = [255, 255, 255];
+			}
+			if (region == null) {
+				label = get_text("Main Menu", 16, color);
+			} else {
+				label = get_text(this.regions[i][0].split(' ')[1], 16, color);
+			}
+			label.draw(x, y);
+			x += label.width + 10;
+			i += 1;
+		}
+		
+		y += sector.height + 10;
+		
+		if (this.x < this.regions.length) {
+			lm = get_level_manager();
+			i = 0;
+			maps = this.regions[this.x][1];
+			for (m : maps) {
+				img = this.get_level_image(m);
+				img.draw(30, y);
+				
+				color = [120, 120, 120];
+				if (this.y == i) {
+					color = [255, 255, 255];
+				}
+				name_label = get_text(lm.get_current_room_name(m), 20, color);
+				name_label.draw(150, y);
+				y += 60;
+				i += 1;
+			}
+		}
+	}
+}

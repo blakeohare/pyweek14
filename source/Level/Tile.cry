@@ -1,0 +1,145 @@
+function flags_contains(flags, items) {
+	for (c : items) {
+		if (flags.contains(c)) {
+			return true;
+		}
+	}
+	return false;
+}
+
+function is_num(string) {
+	return '0123456789'.contains(string);
+}
+
+class Tile {
+	
+	field id;
+	field framerate;
+	field hascharge;
+	field tesla;
+	field teslaon;
+	field images;
+	field still;
+	field still_image;
+	field y_offsets;
+	field still_y_offset;
+	field image_count;
+	field height;
+	field no_blocks;
+	field isholopad;
+	field pushable;
+	field blocking;
+	field circuit;
+	field actual_circuit;
+	field stairs;
+	field teleporter;
+	field power_input;
+	field power_output;
+	field isexit;
+	field cant_push_over;
+	field research;
+	field goo;
+	field isswitch;
+	field powerup;
+	field is_goo;
+	field goo_size;
+	field topography;
+	field entrance;
+	
+	constructor(id, images, height, flags) {
+		this.id = id;
+		images = images.split('|');
+		this.framerate = 4;
+		if (is_num(images[0][0])) {
+			this.framerate = Core.parseInt(images[0]) ?? 0;
+			images = images[1:];
+		}
+		this.hascharge = false;
+		
+		if (id == '4off') {
+			images = ['teslacoil1.png'];
+		}
+		
+		this.tesla = id == '4off' || id == '4';
+		this.teslaon = id == '4';
+		
+		this.images = [];
+		for (image : images) {
+			this.images.add(get_image('tiles/' + image));
+		}
+
+		this.still = this.images.length == 1;
+		this.still_image = this.images[0];
+		this.y_offsets = [];
+		for (image : this.images) {
+			this.y_offsets.add(24 - image.height);
+		}
+
+		this.still_y_offset = this.y_offsets[0];
+		this.image_count = this.images.length;
+		this.height = height;
+		this.no_blocks = false;
+		this.isholopad = id == 'clone' || id == 'clone2';
+		this.pushable = flags_contains(flags, 's');
+		this.blocking = flags_contains(flags, 'x');
+		this.circuit = flags_contains(flags, 'eh');
+		this.actual_circuit = flags_contains(flags, 'e');
+		this.stairs = flags_contains(flags, '12345678');
+		this.teleporter = id == 't1';
+		this.power_input = id == 'pi';
+		this.power_output = id == 'po';
+		this.isexit = id == '37' || id == '38';
+		this.cant_push_over = flags_contains(flags, 'n');
+		this.research = id == '41';
+		this.goo = id == '42' || id == '43' || id == '44';
+		this.isswitch = id == 'pi' || id == 'b1' || id == 'b2' || id == 'b3' || id == 'b4' || id == 'b5' || id == 'b6' || id == 'b7';
+		this.powerup = this.research || this.goo;
+		this.is_goo = id == '15';
+		this.goo_size = 0;
+		if (this.goo) {
+			this.goo_size = ((Core.parseInt(id) - 41) - 1) * 2 + 1; // 1, 3, 5 OMGHAX
+		}
+		this.blocking = this.blocking || this.stairs || this.pushable;
+		if (this.stairs) {
+			this.no_blocks = true;
+			double = flags_contains(flags, '5678');
+			topo = double ? 2 : 1;
+			if (flags_contains(flags, '15')) {
+				this.topography = [0, -topo, -topo, 0];
+				this.entrance = 'SE';
+			} else if (flags_contains(flags, '26')) {
+				this.topography = [0, 0, -topo, -topo];
+				this.entrance = 'SW';
+			} else if (flags_contains(flags, '37')) {
+				this.topography = [-topo, 0, 0, -topo];
+				this.entrance = 'NW';
+			} else if (flags_contains(flags, '48')) {
+				this.topography = [-topo, -topo, 0, 0];
+				this.entrance = 'NE';
+			}
+		}
+	}
+	
+	// Code duplicated below
+	function get_image(render_counter) {
+		if (this.still) {
+			return this.still_image;
+		}
+		i = (render_counter / this.framerate) % this.image_count;
+		return this.images[i];
+	}
+
+	// Code duplicated above
+	function render(screen, x, y, render_counter) {
+		if (this.still) {
+			img = this.still_image;
+			y += this.still_y_offset;
+		} else {
+			i = (render_counter / this.framerate) % this.image_count;
+			img = this.images[i];
+			y += this.y_offsets[i];
+		}
+		
+		img.draw(x, y);
+	}
+}

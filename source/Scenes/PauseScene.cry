@@ -1,0 +1,100 @@
+import Graphics2D;
+import Math;
+
+class PauseScene {
+	field next;
+	field playscene;
+	field i;
+	field options;
+	
+	constructor(playscene) {
+		this.next = this;
+		this.playscene = playscene;
+		this.i = 0;
+		this.options = [
+			"Continue",
+			"Restart Level",
+			"Use Walkie Talkie (Save Game)",
+			"Main Menu",
+			"Quit"];
+	}
+	
+	function process_input(events, pressed, axes, mouse) {
+		for (event : events) {
+			if (event.down) {
+				if (event.key == 'up') {
+					this.i -= 1;
+					if (this.i < 0) {
+						this.i = 0;
+					} else {
+						play_sound('menumove');
+					}
+				} else if (event.key == 'down') {
+					this.i += 1;
+					if (this.i < this.options.length) {
+						play_sound('menumove');
+					}
+				} else if (event.key == 'spray' || event.key == 'start') {
+					this.do_it();
+				}
+			}
+		}
+		if (this.i < 0) {
+			this.i = 0;
+		}
+		if (this.i >= this.options.length) {
+			this.i = this.options.length - 1;
+		}
+	}
+	
+	function do_it() {
+		i = max(0, min(this.options.length - 1, this.i));
+		if (i == 0) {
+			// Continue
+			this.next = this.playscene;
+			this.next.next = this.next;
+		} else if (i == 1) {
+			this.next = new TransitionScene(this, new PlayScene(this.playscene.level.name, this.playscene.story_mode, true));
+		} else if (i == 2) {
+			this.save_game();
+			this.next = new DialogScene(this.playscene, 'save');
+		} else if (i == 3) {
+			this.next = new TransitionScene(this, new MainMenuScene());
+		} else if (i == 4) {
+			this.next = null;
+		}
+	}
+	
+	function save_game() {
+		ps = get_persistent_state();
+		increment_persisted_forever_int('research', get_persisted_session_int('research'));
+		set_persisted_session_int('research', 0);
+		get_persistent_state().set_string_forever('save_level', this.playscene.level.name);
+		get_persistent_state().save_game();
+	}
+
+	function update(counter) {
+		// pass
+	}
+	
+	function render(screen, counter) {
+		this.playscene.render(screen, counter);
+		Graphics2D.Draw.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, 0, 0, 0, 180);
+		y = 100;
+		
+		i = 0;
+		for (option : this.options) {
+			text = this.options[i];
+			color = [100, 100, 100];
+			if (this.i == i) {
+				color = [255, 255, 255];
+			}
+			img = get_text(text, 18, color);
+			
+			x = (GAME_WIDTH - img.width) / 2;
+			img.draw(x, y);
+			i += 1;
+			y += img.height + 20;
+		}
+	}
+}

@@ -1,0 +1,101 @@
+import Math;
+
+class CreditsScene {
+	field next;
+	field canSkip;
+	field speed;
+	field counter;
+	field things;
+	
+	constructor(canSkip) {
+		this.next = this;
+		this.canSkip = canSkip;
+		this.speed = .7;
+		this.counter = 0;
+		this.things = [
+			[null, [' ', "Credits"], null],
+			[null, ["Programming", "Blake O'Hare"], 'blake'],
+			['spears', ["Level Art", "Angel McLaughlin"], null],
+			[null, ["Music and Sound", "Adrian Cline"], 'ikanreed'],
+			['satyrane', ["Story and Dialog", "Laura Freer"], null],
+			[null, ["Portrait and Large Art", "\"Fixception\""], 'fixception'],
+			['brendan', ["Puzzle Design", "Brendan & Steve"], 'stiva'],
+			['duke', ["Level Implementation", "Will Duke & Ted Burton"], 'eofpi'],
+			[null, [" ", "Thank you for playing."], null]
+		];
+		
+		if (!this.canSkip) {
+			r = get_persisted_forever_int('research');
+			r += get_persisted_session_int('research');
+			this.things.add(
+				[null, [" ", "Research papers collected: " + str(r) + " out of 36"], null]
+			);
+		}
+		
+		i = 0;
+		while (i < this.things.length) {
+			thing = this.things[i];
+			left = thing[0];
+			right = thing[2];
+			if (left != null) {
+				left = get_image('us/' + left + '.png');
+			}
+			if (right != null) {
+				right = get_image('us/' + right + '.png');
+				right = right.flip(true, false);
+			}
+			this.things[i][0] = left;
+			this.things[i][2] = right;
+			
+			i += 1;
+		}
+	}
+	
+	function process_input(events, pressed, axes, mouse) {
+		for (event : events) {
+			if (event.down) {
+				if (event.key == 'start' || event.key == 'spray' || event.key == 'walkie') {
+					if (this.canSkip) {
+						this.next = new TransitionScene(this, new MainMenuScene());
+					}
+				}
+			}
+		}
+	}
+	
+	function update(counter) {
+		get_jukebox().ensure_current_song('stringtheory');
+		this.counter += 1;
+	}
+	
+	function render(screen, counter) {
+		
+		y = 350 - Math.floor(this.counter * this.speed);
+		
+		for (item : this.things) {
+			left = item[0];
+			right = item[2];
+			top = get_text(item[1][0], 14, [123, 123, 123]);
+			bottom = get_text(item[1][1], 24, [255, 255, 255]);
+			
+			x1 = GAME_WIDTH / 2 - top.width / 2;
+			x2 = GAME_WIDTH / 2 - bottom.width / 2;
+			x = Math.min(x1, x2);
+			top.draw(x1, y);
+			y2 = y + top.height + 5;
+			bottom.draw(x2, y2);
+			r = 400 - x;
+			if (left != null) {
+				left.draw(x - left.width - 14, y - 5);
+			}
+			if (right != null) {
+				right.draw(r + 14, y - 5);
+			}
+			y = y2 + bottom.height + 140;
+		}
+		
+		if (y < -50) {
+			this.next = new TransitionScene(this, new MainMenuScene());
+		}
+	}
+}

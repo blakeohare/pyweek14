@@ -1,0 +1,108 @@
+import Graphics2D;
+import Math;
+
+function MMS_startNewStoryMode() { return new PlayScene('intro', true); }
+function MMS_resumeSaved() { return new PlayScene(get_persistent_state().get_string_forever('save_level'), true); }
+function MMS_levelPicker() { return new LevelPickerScene(); }
+function MMS_configureInput() { return new ConfigureInputScene(); }
+function MMS_soundSettings() { return new SettingsScene(); }
+function MMS_credits() { return new CreditsScene(true); }
+function MMS_exit() { return new GoodbyeScene(); }
+
+class MainMenuScene {
+	field next;
+	field index;
+	field first;
+	field options;
+	
+	constructor() {
+		this.next = this;
+		this.index = 0;
+		this.first = true;
+		has_save_data = get_persisted_forever_string('save_level') != '';
+		this.options = [
+			['Start New Story Mode', true, MMS_startNewStoryMode],
+			['Resume Saved Game', has_save_data, MMS_resumeSaved],
+			['Level Picker', true, MMS_levelPicker],
+			['Configure Input', true, MMS_configureInput],
+			['Sound Settings', true, MMS_soundSettings],
+			['Credits', true, MMS_credits],
+			['Exit', true, MMS_exit]
+		];
+	}
+
+	function process_input(events, pressed, axes, mouse) {
+		go = false;
+		for (event : events) {
+			if (event.down) {
+				if (event.key == 'down') {
+					this.index += 1;
+					if (this.index < this.options.length && !this.options[this.index][1]) {
+						this.index += 1;
+					}
+					if (this.index < this.options.length) {
+						play_sound('menumove');
+					} else {
+						this.index = this.options.length - 1;
+					}
+				} else if (event.key == 'up') {
+					this.index -= 1;
+					if (!this.options[this.index][1]) {
+						this.index -= 1;
+					}
+					
+					if (this.index >= 0) {
+						play_sound('menumove');
+					} else {
+						this.index = 0;
+					}
+				} else if (event.key == 'start') {
+					go = true;
+				}
+			}
+		}
+		
+		this.index = max(this.index, 0);
+		this.index = min(this.index, this.options.length - 1);
+		
+		if (go) {
+			lamb = this.options[this.index][2];
+			next_scene = lamb();
+			this.next = new TransitionScene(this, next_scene);
+		}
+	}
+	
+	function update(counter) {
+		get_jukebox().ensure_current_song('title');
+		if (this.first) {
+			this.first = false;
+			get_persistent_state().session = {};
+		}
+	}
+	
+	function render(screen, counter) {
+		get_image('misc/title_screen.png').draw(0, 0);
+		
+		title = get_text("Sudo Science", 36, [255, 255, 255]);
+		w = title.width;
+		h = title.height;
+		title.draw(20, 20);
+		
+		y = h + 30 + 20;
+		i = 0;
+		for (option : this.options) {
+			x = 20;
+			color = [190, 190, 190];
+			if (this.index == i) {
+				Graphics2D.Draw.rectangle(x, y + 5, 5, 5, 255, 255, 255);
+			} else if (!option[1]) {
+				color = [80, 80, 80];
+			}
+			x = 30;
+			text = get_text(option[0], 18, color);
+			text.draw(x, y);
+			y += text.height + 10;
+			i += 1;
+		}
+	}
+}

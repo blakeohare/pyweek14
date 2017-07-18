@@ -1,0 +1,973 @@
+import Math;
+import Resources;
+
+class PushTracker {
+	field push_counter;
+	field max_push_counter;
+	field push_target;
+	field owner;
+	
+	constructor(sprite) {
+		this.push_counter = -1;
+		this.max_push_counter = 25;
+		this.push_target = null;
+		this.owner = sprite;
+	}
+}
+
+function sprite_z_key(sprite) {
+	return sprite.z;
+}
+
+class Level {
+	field name;
+	field push_trackers;
+	field newsprites;
+	field circuitry;
+	field render_exceptions;
+	field complete;
+	field spritify_counters;
+	field moving_platforms;
+	field teleporters;
+	field switch_manager;
+	field sprite_introducer;
+	field hologram_manager;
+	field coil_manager;
+	field counter = 0;
+	field hologram_pads;
+	field rats;
+	field values;
+	field width;
+	field height;
+	field pswitches;
+	field nswitches;
+	field switches;
+	field coils;
+	field grid;
+	field cellLookup;
+	field teleporter_tiles;
+	field allsprites;
+	field any_res;
+	field re_blits;
+	
+	constructor(name, playscene) {
+		this.name = name;
+		this.initialize();
+		this.push_trackers = [];
+		this.newsprites = [];
+		this.circuitry = new Circuits(this);
+		this.render_exceptions = [];
+		this.complete = false;
+		this.spritify_counters = [];
+		this.moving_platforms = new MovingPlatformManager(this);
+		this.teleporters = new TeleporterManager(this);
+		this.switch_manager = new SwitchManager(this, playscene);
+		this.sprite_introducer = get_hacks_for_level(name, 'introduce_sprites');
+		this.hologram_manager = new HologramManager(this);
+		this.coil_manager = new CoilManager(this);
+		this.counter = 0;
+		this.hologram_pads = [];
+	}
+	
+	function get_push_tracker(sprite) {
+		for (p : this.push_trackers) {
+			if (p.owner == sprite) {
+				return p;
+			}
+		}
+		p = new PushTracker(sprite);
+		this.push_trackers.add(p);
+		return p;
+	}
+	
+	function get_hologram_pads() {
+		return this.hologram_pads;
+	}
+	
+	function spray_from(sprites) {
+		success = false;
+		
+		for (sprite : sprites) {
+			col = Math.floor(sprite.x / 16);
+			row = Math.floor(sprite.y / 16);
+			layer = Math.floor(sprite.z / 8);
+			dir = sprite.last_direction_of_movement;
+			x = sprite.x % 16;
+			y = sprite.y % 16;
+			
+			// TODO: switch statement
+			if (dir == 'n') {
+				if (y < x) {
+					dir = 'ne';
+				} else {
+					dir = 'nw';
+				}
+			} else if (dir == 's') {
+				if (y < x) {
+					dir = 'se';
+				} else {
+					dir = 'sw';
+				}
+			} else if (dir == 'e') {
+				if (x + y > 16) {
+					dir = 'se';
+				} else {
+					dir = 'ne';
+				}
+			} else if (dir == 'w') {
+				if (x + y > 16) {
+					dir = 'sw';
+				} else {
+					dir = 'nw';
+				}
+			}
+			
+			if (dir == 'nw') {
+				col -= 1;
+			} else if (dir == 'ne') {
+				row -= 1;
+			} else if (dir == 'sw') {
+				row += 1;
+			} else if (dir == 'se') {
+				col += 1;
+			}
+			
+			maybe_goo = this.get_tile_at(col, row, layer);
+			if (maybe_goo != null && maybe_goo.is_goo) {
+				this.modify_block(col, row, layer, null);
+				success = true;
+			}
+		}
+		
+		return success;
+	}
+	
+	function get_new_sprites() {
+		output = this.newsprites;
+		this.newsprites = [];
+		return output;
+	}
+	
+	function initialize() {
+		this.rats = [];
+		lines = Resources.readText('data/levels/' + this.name + '.txt').split('\n');
+		values = {};
+		for (line : lines) {
+			line = line.trim();
+			if (line.length > 0 && line[0] == '#') {
+				parts = line.split(':');
+				if (parts.length > 1) {
+					key = parts[0][1:];
+					value = parts[1:].join(':');
+					values[key] = value.trim();
+				}
+			}
+		}
+		this.values = values;
+		this.width = Core.parseInt(this.values['width']);
+		this.height = Core.parseInt(this.values['height']);
+		this.initialize_tiles(this.values['tiles'].split(','));
+		
+		this.initialize_switch_actions(values);
+	}
+	
+	function initialize_switch_actions(values) {
+		pswitches = {};
+		nswitches = {};
+		for (key : values.keys()) {
+			if (key.startsWith('action|')) {
+				_sign = 1;
+				if (key.startsWith('action|negative|')) {
+					_sign = -1;
+				}
+				name = key.split('|')[-1];
+				value = values[key];
+				if (_sign == 1) {
+					pswitches[name] = value;
+				} else {
+					nswitches[name] = value;
+				}
+			}
+		}
+		
+		this.pswitches = pswitches;
+		this.nswitches = nswitches;
+	}
+	
+	function activate_switch(name, is_positive) {
+		lookup = this.nswitches;
+		if (is_positive) {
+			lookup = this.pswitches;
+		}
+		ts = get_tile_store();
+		for (change : lookup.get(name).split('%')) {
+			parts = change.split('^');
+			col = Core.parseInt(parts[0]);
+			row = Core.parseInt(parts[1]);
+			layer = Core.parseInt(parts[2]);
+			id = parts[3];
+			tile = id == '0' ? null : ts.get_tile(id);
+			this.modify_block(col, row, layer, tile);
+		}
+	}
+	
+	function get_switches() {
+		return this.switches;
+	}
+	
+	function get_coils() {
+		if (this.coils == null) {
+			this.coils = [];
+			stacks = this.grid;
+			lookups = this.cellLookup;
+			
+			// TODO: for loop
+			y = 0;
+			while (y < this.height) {
+				x = 0;
+				while (x < this.width) {
+					z = 0;
+					stack = stacks[x][y];
+					stacklen = stack.length;
+					while (z < stacklen) {
+						cell = stack[z];
+						if (cell != null && cell.teslaon) {
+							lookup = lookups[x][y];
+							z = 0;
+							while (z < lookup.length) {
+								t = lookup[z];
+								if (t != null && stack[t].teslaon) {
+									this.coils.add([x, y, z]);
+								}
+								z += 1;
+							}
+							break;
+						}
+						z += 1;
+					}
+					x += 1;
+				}
+				y += 1;
+			}
+		}
+		return this.coils;
+	}
+	
+	function initialize_tiles(tiles) {
+		width = this.width;
+		height = this.height;
+		grid = make_grid(this.width, this.height, null);
+		references = make_grid(this.width, this.height, null);
+		moving_platforms = [];
+		this.switches = [];
+		this.coils = [];
+		this.hologram_pads = [];
+		this.teleporter_tiles = [];
+		tilestore = get_tile_store();
+		i = 0;
+		for (tile : tiles) {
+			x = i % width;
+			y = i / width;
+			tileStack = [];
+			referenceStack = [];
+			grid[x][y] = tileStack;
+			references[x][y] = referenceStack;
+			cells = tile.split('|');
+			
+			if (cells.length == 1 && cells[0].length == 0) {
+				// pass
+			} else {
+				for (cell : cells) {
+					
+					if (cell == '0') {
+						referenceStack.add(null);
+						tileStack.add(null);
+					} else {
+						t = tilestore.get_tile(cell);
+						tid = t.id;
+						if (tid == '16') { // moving platform
+							moving_platforms.add([x, y, referenceStack.length]);
+						}
+						if (tid == 't1' || tid == 't2' || tid == 't3') {
+							this.teleporter_tiles.add([x, y, referenceStack.length, t.id]);
+						}
+						
+						if (t.isswitch) {
+							this.switches.add([x, y, referenceStack.length, t]);
+						}
+						
+						if (t.teslaon) {
+							this.coils.add([x, y, referenceStack.length]);
+						}
+						
+						if (t.isholopad) {
+							this.hologram_pads.add([x, y, referenceStack.length, tid == 'clone']);
+						}
+						
+						// TODO: switch
+						if (tid == 'rat' || tid == 'rat2' || tid == 'rat3' || tid == 'rat4') {
+							if (tid == 'rat') {
+								dir = 'se';
+							} else if (tid == 'rat2') {
+								dir = 'ne';
+							} else if (tid == 'rat3') {
+								dir = 'sw';
+							} else {
+								dir = 'nw';
+							}
+							sprite = new Sprite(x * 16 + 8, y * 16 + 8, tileStack.length * 8, 'rat|' + dir);
+							this.rats.add(sprite);
+							sprite.standingon = tileStack[-1]; // This will explode if a rat is placed on the bottom row of the map
+							
+							referenceStack.add(null);
+							tileStack.add(null);
+						} else {
+							
+							// TODO: for loop
+							z = 0;
+							while (z < t.height) {
+								referenceStack.add(tileStack.length);
+								z += 1;
+							}
+							
+							tileStack.add(t);
+						}
+					}
+				}
+			}
+			
+			i += 1;
+		}
+		this.grid = grid;
+		this.cellLookup = references;
+		this.moving_platforms = moving_platforms;
+	}
+		
+	function get_tile_at(x, y = null, z = null) {
+		if (y == null) {
+			y = x[1];
+			z = x[2];
+			x = x[0];
+		}
+		if (z < 0) return null;
+		lookup = this.cellLookup[x][y];
+		if (lookup.length <= z) {
+			return null;
+		}
+		index = lookup[z];
+		if (index == null) {
+			return null;
+		}
+		return this.grid[x][y][index];
+	}
+	
+	function get_platform_below(col, row, z, blocking_only) {
+	
+		// TODO: interlace the block list here
+		// so that blocks get included in the collision
+		// results
+		
+		// Alternatively, pushed blocks can be part of the 
+		// primary model and will be updated when they move
+		// around.
+		refStack = this.cellLookup[col][row];
+		tileStack = this.grid[col][row];
+		i = Math.min(refStack.length - 1, z / 8);
+		
+		while (i >= 0) {
+			t = refStack[i];
+			if (t == null) {
+				// pass
+			} else {
+				tile = this.grid[col][row][t];
+				if (!blocking_only || tile.blocking) {
+					return [(i + 1) * 8, tile];
+				}
+			}
+			i -= 1;
+		}
+	}
+	
+	function render(screen, xOffset, yOffset, sprites, render_counter) {
+		this.counter += 1;
+		this.allsprites = sprites;
+		this.any_res = false;
+		this.re_blits = {};
+		
+		width = this.width;
+		height = this.height;
+		sprite_lookup = {};
+		for (sprite : sprites) {
+			x = Math.floor(sprite.x) / 16;
+			y = Math.floor(sprite.y) / 16;
+			key = y * width + x;
+			list = sprite_lookup.get(key);
+			if (list == null) {
+				sprite_lookup[key] = [sprite];
+			} else {
+				list.add(sprite);
+			}
+		}
+		empty_list = [];
+		
+		re_on_keys = {};
+		re_off_keys = {};
+		for (re : this.render_exceptions) {
+			re_on_keys[re.on_key] = re_on_keys.get(re.on_key, []);
+			re_on_keys[re.on_key].add(re);
+			re_off_keys[re.off_key] = re_off_keys.get(re.off_key, []);
+			re_off_keys[re.off_key].add(re);
+		}
+		
+		for (k : re_on_keys.keys()) {
+			list = re_on_keys[k];
+			if (list.length > 1) {
+				list.sort(sprite_z_key);
+			}
+		}
+		for (k : re_off_keys.keys()) {
+			list = re_off_keys[k];
+			if (list.length > 1) {
+				list.sort(sprite_z_key);
+			}
+		}
+		
+		i = 0;
+		while (i < width + height) {
+			col = i;
+			row = 0;
+			
+			if (col >= width) {
+				diff = col - width + 1;
+				col -= diff;
+				row += diff;
+			}
+			index = col + row * width;
+			indexStep = width - 1;
+			reblitIndex = index - width + 1;
+			
+			while (row < height && col >= 0) {
+				sprite_list = sprite_lookup.get(index);
+				re_on = re_on_keys.get(index);
+				re_off = re_off_keys.get(index);
+				
+				if (re_on != null) {
+					re_on = re_on.clone();
+				}
+				if (re_off != null) {
+					re_off = re_off.clone();
+				}
+				
+				re_blits = this.re_blits.get(reblitIndex);
+				if (sprite_list == null && re_blits == null && re_on == null && re_off == null) {
+					// most common case. Just naively render a simple list of tiles without any 
+					// crazy if statements or expensive function calls...
+					
+					z = 0;
+					x = xOffset + col * 16 - row * 16 - 16;
+					y = yOffset + col * 8 + row * 8;
+					
+					stack = this.grid[col][row];
+					for (tile : stack) {
+						if (tile == null) {
+							z++;
+						} else {
+							tile.render(screen, x, y - z * 8, render_counter);
+							z += tile.height;
+						}
+					}
+				} else {
+					this.render_tile_stack(screen, col, row, xOffset, yOffset, render_counter, sprite_list, re_on, re_off, re_blits);
+				}
+				
+				row++;
+				col--;
+				index += indexStep;
+				reblitIndex += indexStep;
+			}
+			i += 1;
+		}
+	}
+		
+	function render_sprite(screen, sprite, xOffset, yOffset, render_counter, re_render = false) {
+		
+		q = sprite.render_me(screen, xOffset, yOffset, render_counter);
+		if (!re_render) {
+			if (sprite.x % 16 < 6 && sprite.y % 16 > 10) {
+				if (sprite.main_or_hologram || sprite.israt) {
+					col = Math.floor(sprite.x / 16);
+					row = Math.floor(sprite.y / 16);
+					layer = Math.floor(sprite.z / 8);
+					k = col + this.width * row;
+					r = [layer + sprite.height, q];
+					if (this.re_blits.get(k) == null) {
+						this.re_blits[k] = [r];
+					} else {
+						if (this.re_blits[k][-1][0] < r[0]) {
+							this.re_blits[k].add(r);
+						} else {
+							i = 0;
+							while (i < this.re_blits[k].length) {
+								if (this.re_blits[k][i][0] > r[0]) {
+									this.re_blits[k] = this.re_blits[k][:i] + [r] + this.re_blits[k][i:];
+									break;
+								}
+								i += 1;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	function render_tile_stack(screen, col, row, xOffset, yOffset, render_counter, sprites, re_on, re_off, re_blits) {
+		re_sprite_on = null;
+		re_sprite_off = null;
+		re_block_on = null;
+		re_block_off = null;
+		
+		if (re_on != null) {
+			re_block_on = [];
+			re_sprite_on = [];
+			for (re : re_on) {
+				if (re.is_block) {
+					this.any_res = true;
+					re_block_on.add(re);
+				} else {
+					re_sprite_on.add(re);
+				}
+			}
+		}
+		
+		if (re_off != null) {
+			re_block_off = [];
+			re_sprite_off = [];
+			for (re : re_off) {
+				if (re.is_block) {
+					this.any_res = true;
+					re_block_off.add(re);
+				} else {
+					re_sprite_off.add(re);
+				}
+			}
+		}
+		
+		stack = this.grid[col][row];
+			
+		z = 0;
+		x = xOffset + col * 16 - row * 16 - 16;
+		y = yOffset + col * 8 + row * 8;
+		i = 0;
+		while (i < stack.length) {
+			
+			// re blit stuff from the right
+			
+			if (re_blits != null) {
+				while (re_blits != null && re_blits.length > 0 && re_blits[0][0] <= z) {
+					q = re_blits[0][1];
+					sprite = q[0];
+					sprite.render_me(screen, q[1], q[2], q[3]);
+					re_blits = re_blits[1:];
+				}
+			}
+			
+			tile = stack[i];
+			if (sprites != null) {
+				new_sprites = [];
+				for (sprite : sprites) {
+					if (sprite.z <= z * 8) {
+						if (re_sprite_off != null && re_sprite_off.length > 0 && re_sprite_off[0].z == z && re_sprite_off[0].tile == sprite) {
+							re = re_sprite_off.remove(0);
+						} else {
+							re_offset = [0, 0];
+							if (re_sprite_on != null) {
+								rei = 0;
+								while (rei < re_sprite_on.length) {
+									re = re_sprite_on[rei];
+									if (re.tile == sprite) {
+										re_sprite_on.remove(rei);
+										re_offset = re.get_offset();
+									} else {
+										rei += 1;
+									}
+								}
+							}
+							
+							this.render_sprite(screen, sprite, xOffset + re_offset[0], yOffset + re_offset[1], render_counter);
+						}
+					} else {
+						new_sprites.add(sprite);
+					}
+				}
+				sprites = new_sprites;
+			}
+			
+			while (re_sprite_on != null && re_sprite_on.length > 0 && re_sprite_on[0].z < z) {
+				re = re_sprite_on.remove(0);
+				offset = re.get_offset();
+				_x = xOffset + offset[0];
+				_y = yOffset + offset[1];
+				xdiff = re.do_show[0] - re.dont_show[0];
+				ydiff = re.do_show[1] - re.dont_show[1];
+				xdiff_pixel = xdiff * 16 - ydiff * 16;
+				ydiff_pixel = xdiff * 8 + ydiff * 8;
+				this.render_sprite(screen, re.tile, _x + xdiff_pixel, _y + ydiff_pixel, render_counter);
+			}
+			
+			if (tile == null) {
+				if (re_block_on != null && re_block_on.length > 0 && re_block_on[0].z == z) {
+					re = re_block_on.remove(0);
+					offset = re.get_offset();
+					re.tile.render(screen, x + offset[0], y - z * 8 + offset[1], render_counter);
+					//z += re.tile.height - 1;
+				}
+				z += 1;
+			} else {
+				if (re_block_off != null && re_block_off.length > 0 && re_block_off[0].z == z) {
+					re = re_block_off.remove(0);
+				} else if (re_block_on != null && re_block_on.length > 0 && re_block_on[0].z == z) {
+					re = re_block_on.remove(0);
+					offset = re.get_offset();
+					tile.render(screen, x + offset[0], y - z * 8 + offset[1], render_counter);
+				} else {
+					tile.render(screen, x, y - z * 8, render_counter);
+				}
+				z += tile.height;
+			}
+			i += 1;
+		}
+		
+		if (re_blits != null) {
+			
+			while (re_blits != null && re_blits.length > 0 && re_blits[0][0] <= z) {
+				q = re_blits[0][1];
+				sprite = q[0];
+				sprite.render_me(screen, q[1], q[2], q[3]);
+				re_blits = re_blits[1:];
+			}
+		}
+		
+		if ((sprites != null && sprites.length > 0) || (re_sprite_on != null && re_sprite_on.length > 0)) {
+			
+			if (sprites == null) {
+				sprites = [];
+			} else {
+				sprites.sort(sprite_z_key);
+			}
+			
+			sprite_i = 0;
+			re_i = 0;
+			if (re_sprite_on == null) {
+				re_sprite_on = [];
+			}
+			
+			rendered_sprites = [];
+			for (re : re_sprite_on) {
+				for (sprite : sprites) {
+					if (re.tile == sprite) {
+						rendered_sprites.add(sprite);
+					}
+				}
+			}
+			
+			if (rendered_sprites.length > 0) {
+				new_sprites = [];
+				for (sprite : rendered_sprites) {
+					if (rendered_sprites.contains(sprite)) {
+						// pass
+					} else {
+						new_sprites.add(sprite);
+					}
+				}
+				sprites = new_sprites;
+			}
+			
+			while (sprite_i < sprites.length || re_i < re_sprite_on.length) {
+				sprite = null;
+				re = null;
+				if (sprite_i == sprites.length) {
+					re = re_sprite_on[re_i];
+					re_i += 1;
+				} else if (re_i == re_sprite_on.length) {
+					sprite = sprites[sprite_i];
+					sprite_i += 1;
+				} else {
+					re = re_sprite_on[re_i];
+					sprite = sprites[sprite_i];
+					if (re.z < Math.floor(sprite.z / 8)) {
+						sprite = null;
+						re_i += 1;
+					} else {
+						re = null;
+						sprite_i += 1;
+					}
+				}
+				
+				if (re != null) {
+					offset = re.get_offset();
+					_x = xOffset + offset[0];
+					_y = yOffset + offset[1];
+					if (re.direction == 'NE' || re.direction == 'NW') {
+						xdiff = re.do_show[0] - re.dont_show[0];
+						ydiff = re.do_show[1] - re.dont_show[1];
+						xdiff_pixel = xdiff * 16 - ydiff * 16;
+						ydiff_pixel = xdiff * 8 + ydiff * 8;
+						_x += xdiff_pixel;
+						_y += ydiff_pixel;
+					}
+					
+					this.render_sprite(screen, re.tile, _x, _y, render_counter);
+
+				} else {
+					suppress = false;
+					if (re_sprite_off != null) {
+						rei = 0;
+						while (rei < re_sprite_off.length) {
+							re = re_sprite_off[rei];
+							if (sprite == re.tile) {
+								re_sprite_off.remove(rei);
+								suppress = true;
+							} else {
+								rei += 1;
+							}
+						}
+					}
+					
+					if (!suppress) {
+						this.render_sprite(screen, sprite, xOffset, yOffset, render_counter);
+					}
+				}
+			}
+		}
+	}
+	
+	// there are no blockages. It's already been verified by the time this function
+	// has been called.
+	function push_block(sprite, start_col, start_row, end_col, end_row, layer) {
+		play_sound('blockpush');
+		pt = this.get_push_tracker(sprite);
+		pt.push_counter = -1;
+		pt.push_target = null;
+		
+		block = this.modify_block(start_col, start_row, layer, null);
+		this.modify_block(end_col, end_row, layer, block);
+		
+		if (start_row == end_row) {
+			if (start_col < end_col) {
+				dir = 'SE';
+			} else {
+				dir = 'NW';
+			}
+		} else if (start_row < end_row) {
+			dir = 'SW';
+		} else {
+			dir = 'NE';
+		}
+		
+		this.render_exceptions.add(new RenderException([start_col, start_row, layer], dir, block, true, this.width));
+		
+		below_layer = layer - 1;
+		
+		was_standing_on = this.get_tile_at(start_col, start_row, below_layer);
+		
+		target_lookup = this.cellLookup[end_col][end_row];
+		stack = this.grid[end_col][end_row];
+		should_spritify = false;
+		if (below_layer < target_lookup.length) {
+			standingon = target_lookup[below_layer];
+			if (standingon == null) {
+				should_spritify = true;
+			} else {
+				standingon = stack[standingon];
+				if (!standingon.blocking) {
+					should_spritify = true;
+				} else {
+					if (standingon.id == 'po' && block.id == '46' && this.circuitry.is_charged(end_col, end_row, below_layer)) {
+						play_sound('battery_charge');
+						this.modify_block(end_col, end_row, layer, get_tile_store().get_tile('45'));
+					}
+					if (standingon.id == 'pi') {
+						if (block.id == '45') {
+							play_sound('electricity_flows');
+							this.circuitry.refresh_charges();
+						}
+					}
+					
+					if (was_standing_on != null && was_standing_on.id == 'pi' && block.id == '45') {
+						play_sound('battery_deplete');
+						this.modify_block(end_col, end_row, layer, get_tile_store().get_tile('46'));
+						this.circuitry.refresh_charges();
+					}
+				}
+			}
+		} else {
+			should_spritify = true;
+		}
+		
+		if (should_spritify) {
+			this.spritify_counters.add([end_col, end_row, layer, 5]);
+		}
+	}
+	
+	function spritify_block(col, row, layer) {
+		block = this.modify_block(col, row, layer, null);
+		this.newsprites.add(new Sprite(col * 16 + 8, row * 16 + 8, layer * 8, 'block|' + block.id));
+	}
+	
+	function modify_block(col, row, layer, type) {
+		this.coils = null;
+		output = null;
+		z = 0;
+		stack = this.grid[col][row];
+		newstack = [];
+		layer_bottom = layer;
+		layer_top = layer;
+		if (type != null) {
+			layer_top += type.height - 1;
+		}
+		
+		for (item : stack) {
+			if (item == null) {
+				newstack.add(null);
+				z += 1;
+			} else {
+				if (z >= layer_bottom && z <= layer_top) {
+					if (z == layer_bottom) {
+						output = item;
+					}
+					newstack += [null] * item.height;
+				} else {
+					newstack.add(item);
+				}
+				z += item.height;
+			}
+		}
+		while (z <= layer_top) {
+			newstack.add(null);
+			z += 1;
+		}
+		// at this point newstack has all None's where the modification will go
+		
+		i = 0;
+		z = 0;
+		while (i < newstack.length) {
+			item = newstack[i];
+			if (z == layer_bottom) {
+				newstack[i] = type;
+				for (q : py_range(layer_top - layer_bottom)) {
+					newstack.remove(i + 1);
+				}
+				break;
+			}
+			if (item == null) {
+				z += 1;
+			} else {
+				z += item.height;
+			}
+			i += 1;
+		}
+		
+		teleported = false;
+		if (type != null && type.pushable) {
+			// check to see if we just placed a pushable block onto a teleporter platform
+			t = this.get_tile_at(col, row, layer - 1);
+			if (t != null && t.teleporter) {
+				d = this.teleporters.get_destination(col, row, layer - 1);
+				if (d == 'blocked') {
+					this.announce_teleporter_blocked();
+				} else if (d == null) {
+					// pass
+				} else {
+					teleported = true;
+					source = [col, row, layer];
+					this.teleporters.teleport_block(type, source, d);
+				}
+			}
+		}
+		
+		if (!teleported) {
+			copy_array(stack, newstack);
+			this.canonicalize_stack(col, row);
+		}
+		
+		return output;
+	}
+	
+	function announce_teleporter_blocked() {
+		// TODO: play sound
+	}
+	
+	function canonicalize_stack(col, row) {
+		stack = this.grid[col][row];
+		lookup = [];
+		i = 0;
+		for (item : stack) {
+			if (item == null) {
+				lookup.add(null);
+			} else {
+				lookup += [i] * item.height;
+			}
+			i += 1;
+		}
+		copy_array(this.cellLookup[col][row], lookup);
+	}
+	
+	function update(sprites, sprite_additions, sprite_removals) {
+		created = null;
+		if (this.sprite_introducer != null) {
+			created = this.sprite_introducer(this, this.counter);
+		}
+		
+		if (created != null) {
+			for (c : created) {
+				col = Math.floor(c.x / 16);
+				row = Math.floor(c.y / 16);
+				layer = Math.floor(c.z / 8);
+				c.standingon = this.get_tile_at(col, row, layer - 1);
+				sprite_additions.add(c);
+			}
+		}
+		
+		new_re = [];
+		this.moving_platforms.update(sprites, new_re);
+		this.teleporters.update();
+		
+		for (sprite : this.teleporters.get_new_sprites()) {
+			sprite_additions.add(sprite);
+		}
+		for (sprite : this.teleporters.get_removed_sprites()) {
+			sprite_removals.add(sprite);
+		}
+		
+		for (re : this.render_exceptions) {
+			re.update();
+			if (!re.expired) {
+				new_re.add(re);
+			}
+		}
+		this.render_exceptions = new_re;
+		
+		i = 0;
+		while (i < this.spritify_counters.length) {
+			t = this.spritify_counters[i];
+			if (t[-1] == 0) {
+				this.spritify_counters = this.spritify_counters[:i] + this.spritify_counters[i + 1:];
+				this.spritify_block(t[0], t[1], t[2]);
+			} else {
+				t[-1] -= 1;
+				i += 1;
+			}
+		}
+		
+		this.counter += 1;
+	}
+	
+	function get_moving_platforms() {
+		return this.moving_platforms;
+	}
+	
+	function get_teleporters() {
+		return this.teleporter_tiles;
+	}
+}

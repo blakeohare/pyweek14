@@ -1,0 +1,45 @@
+import Graphics2D;
+import Math;
+
+class TransitionScene {
+	
+	field next;
+	field before;
+	field after;
+	field counter = 0;
+	
+	constructor(before, after) {
+		this.next = this;
+		this.before = before;
+		this.after = after;
+	}
+		
+	function process_input(events, pressed, axes, mouse) {
+		// pass
+	}
+	
+	function update(counter) {
+		this.counter += 1;
+		if (this.counter >= 60) {
+			this.next = this.after;
+		}
+	}
+	
+	function render(screen, counter) {
+		
+		if (this.counter <= 30) {
+			opacity = this.counter / 30.0;
+			bg = this.before;
+		} else {
+			opacity = (60 - this.counter) / 30.0;
+			bg = this.after;
+		}
+		
+		alpha = Math.floor(opacity * 255);
+		if (alpha > 255) alpha = 255;
+		else if (alpha < 0) alpha = 0;
+		
+		bg.render(screen, counter);
+		Graphics2D.Draw.rectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, 0, 0, 0, alpha);
+	}
+}

@@ -1,0 +1,35 @@
+import Graphics2DText;
+import Math;
+
+class FontHelper {
+	static field _COLORS_TO_COMPONENTS = {
+		'red': [255, 0, 0],
+		'white': [255, 255, 255],
+		'black': [0, 0, 0],
+	};
+
+	static field _defaultFont = null;
+	static field _text = {};
+}
+
+function get_text(text, size, color) {
+	key = str(size) + "," + str(color) + "|" + text;
+	texture = FontHelper._text.get(key);
+	if (texture == null) {
+		// TODO: adjust this
+		size = Math.floor(size * .4) + 1;
+		color = FontHelper._COLORS_TO_COMPONENTS.get(color, color);
+		font = FontHelper._defaultFont ?? get_default_font();
+		fontRenderer = font.getRenderer().setSize(size).setColor(color[0], color[1], color[2]);
+		texture = fontRenderer.render(text);
+		FontHelper._text[key] = texture;
+	}
+	return texture;
+}
+
+function get_default_font() {
+	if (FontHelper._defaultFont == null) {
+		_defaultFont = Graphics2DText.FontResource.fromSystem('Arial');
+	}
+	return _defaultFont;
+}

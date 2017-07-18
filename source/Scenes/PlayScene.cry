@@ -1,0 +1,292 @@
+import Math;
+
+class PlayScene {
+	field story_mode;
+	field research_collected;
+	field next;
+	field level_name;
+	field level;
+	field player;
+	field sprites;
+	field overlay;
+	field do_not_override_start;
+	field counter = 0;
+	field do_stuff;
+	field holograms;
+	field x_offset_override = 0;
+	field fixed_x;
+	field fixed_y;
+	field target_camera_x;
+	field target_camera_y;
+	field camera_x;
+	field camera_y;
+	
+	constructor(level_name, story_mode, temp_suppress = false) {
+		this.story_mode = story_mode;
+		persistence_change_level();
+		if (level_name == '1-3') {
+			set_persisted_level_int('decontaminant', 3);
+		}
+		
+		this.research_collected = 0;
+		this.next = this;
+		this.level_name = level_name;
+		this.level = new Level(level_name, this);
+		this.player = new Sprite(17, 177, 32, 'main');
+		this.sprites = [this.player];
+		this.player.level = this.level;
+		for (rat : this.level.rats) {
+			rat.standingon = null;
+			this.sprites.add(rat);
+		}
+		this.overlay = new PlaySceneOverlay(this, this.level);
+		this.do_not_override_start = false;
+		level_manager = get_level_manager();
+		start = level_manager.get_starting_point_for_level(level_name);
+		this.do_stuff = get_hacks_for_level(level_name, 'do_stuff');
+		if (level_name == '99-0') {
+			this.player.set_automation(new Automation('99-0', '99_p'));
+		}
+		
+		if (start != null) {
+			x = start[0];
+			y = start[1];
+			z = start[2];
+			dir = 's';
+			if (start.length >= 4) {
+				dir = start[3];
+			}
+			this.do_not_override_start = true;
+		
+			this.player.x = x * 16 + 8;
+			this.player.y = y * 16 + 8;
+			this.player.z = z * 8;
+			this.player.last_direction_of_movement = dir;
+			this.player.standingon = this.level.get_tile_at(x, y, z - 1);
+		}
+		
+		this.holograms = [];
+		level_pixel_width = this.level.height * 16 + this.level.width * 16;
+		level_pixel_height = level_pixel_width / 2 + 12 * 8;
+		this.fixed_x = level_pixel_width < 400;
+		this.fixed_y = level_pixel_height < 300;
+		if (this.level.name == '28-0') {
+			this.fixed_x = true;
+			this.fixed_y = true;
+			this.x_offset_override = 40;
+		}
+		this.target_camera_x = null;
+		this.target_camera_y = null;
+		this.camera_x = null;
+		this.camera_y = null;
+		if (this.do_stuff != null) {
+			this.do_stuff(this, this.level, -1);
+		}
+		
+		if (this.story_mode && !temp_suppress) {
+			ds = get_startup_dialog(this);
+			if (ds != null) {
+				this.next = ds;
+			}
+		}
+	}
+	
+	function process_input(events, pressed, axes, mouse) {
+		for (event : events) {
+			if (event.key == 'spray' && event.down && this.player.spray_counter < 0) {
+				if (get_persisted_level_int('decontaminant') > 0) {
+					play_sound('spray');
+					increment_persisted_level_int('decontaminant', -1);
+					this.player.spray_counter = 30;
+					if (this.level.spray_from([this.player] + this.holograms)) {
+						if (this.level.name == '1-3' && this.story_mode) {
+							this.next = new DialogScene(this, 'a1b');
+						}
+					}
+				}
+			}
+			
+			if (event.key == 'start' && event.down && this.level.name != 'intro' && this.level.name != '99-0') {
+				this.next = new PauseScene(this);
+			}
+		}
+		
+		if (!this.player.immobilized && this.player.automation == null) {
+			dx = axes[0];
+			dy = axes[1];
+			if (this.player.spray_counter < 0) {
+				this.player.dx = dx;
+				this.player.dy = dy;
+				
+				for (h : this.holograms) {
+					h.dx = dx;
+					h.dy = dy;
+				}
+			}
+		}
+	}
+	
+	function update(counter) {
+		level = this.level;
+		player = this.player;
+		
+		if (this.do_stuff != null) {
+			this.do_stuff(this, level, this.counter);
+		}
+		
+		if (player.death_by_rat > 0) {
+			player.death_by_rat += 1;
+			if (player.death_by_rat == 90) {
+				this.restart_level();
+			}
+		}
+		
+		filtered = [];
+		for (sprite : this.sprites) {
+			sprite.update(level);
+			sprite = sprite.get_replacement_sprite();
+			if (!sprite.garbage_collect) {
+				filtered.add(sprite);
+			}
+			
+			if (sprite.israt && player.death_by_rat == 0) {
+				dx = sprite.x - player.x;
+				dy = sprite.y - player.y;
+				distance = dx * dx + dy * dy;
+				if (distance < 144) {
+					player.death_by_rat = 1;
+					player.immobilized = true;
+				}
+			}
+		}
+		
+		this.sprites = filtered + level.get_new_sprites();
+		
+		if (this.player.death_counter == 1) {
+			this.restart_level();
+		}
+		
+		if (this.player.z < -140) {
+			this.restart_level();
+		}
+		
+		this.level.switch_manager.update_enabled(this.sprites, false);
+		
+		this.do_hologram_stuff();
+		
+		this.level.coil_manager.set_fresh_coils(this.level.get_coils());
+		this.level.coil_manager.find_zapped_sprites(this.sprites);
+		
+		if (this.level.complete) {
+			next_level = get_level_manager().get_next_level(this.level.name);
+			if (next_level == null || (this.level.name == '90-0' && this.story_mode == false)) {
+				this.next = new TransitionScene(this, new EndSceneNonStory());
+			} else {
+				increment_persisted_session_int('research', get_persisted_level_int('research'));
+				set_persisted_level_int('research', 0);
+				this.next = new TransitionScene(this, new PlayScene(next_level, this.story_mode));
+			}
+		}
+		
+		sprites_to_add = [];
+		sprites_to_remove = [];
+		
+		this.level.update(this.sprites, sprites_to_add, sprites_to_remove);
+
+		for (sprite : sprites_to_remove) {
+			sprite.garbage_collect = true;
+		}
+		for (sprite : sprites_to_add) {
+			this.sprites.add(sprite);
+		}
+		
+		get_jukebox().update(this.level.name);
+	}
+	
+	function do_hologram_stuff() {
+		this.level.hologram_manager.update(this, this.level, this.player);
+		
+		anim = this.level.hologram_manager.animation_sequence();
+		if (anim != null) {
+			this.player.immobilized = true;
+			if (anim == 0) {
+				this.player.immobilized = false;
+			}
+		}
+		
+		for (sprite : this.level.hologram_manager.get_new_sprites()) {
+			this.sprites.add(sprite);
+			this.holograms.add(sprite);
+		}
+		this.counter += 1;
+	}
+	
+	function restart_level() {
+		this.next = new TransitionScene(this, new PlayScene(this.level.name, this.story_mode, true));
+	}
+	
+	function render(screen, counter) {
+		
+		player_position = this.player.pixel_position(0, 0, null);
+		player_x = player_position[0];
+		player_y = player_position[1];
+		
+		if (this.fixed_x) {
+			this.target_camera_x = GAME_WIDTH / 2;
+		} else {
+			this.target_camera_x = GAME_WIDTH / 2 - player_x;
+		}
+		
+		if (this.fixed_y) {
+			this.target_camera_y = 50;
+		} else {
+			this.target_camera_y = 120 - player_y;
+		}
+		
+		if (this.camera_x == null) {
+			this.camera_x = this.target_camera_x;
+		}
+		if (this.camera_y == null) {
+			this.camera_y = this.target_camera_y;
+		}
+		
+		max_pan_speed = 4;
+		if (this.camera_x != this.target_camera_x) {
+			if (Math.abs(this.camera_x - this.target_camera_x) == 1) {
+				this.camera_x = this.target_camera_x;
+			} else {
+				new_camera_x = (this.camera_x + this.target_camera_x) / 2;
+				if (Math.abs(new_camera_x - this.camera_x) > max_pan_speed) {
+					if (this.camera_x < new_camera_x) {
+						this.camera_x += max_pan_speed;
+					} else {
+						this.camera_x -= max_pan_speed;
+					}
+				} else {
+					this.camera_x = new_camera_x;
+				}
+			}
+		}
+		
+		if (this.camera_y != this.target_camera_y) {
+			if (Math.abs(this.camera_y - this.target_camera_y) == 1) {
+				this.camera_y = this.target_camera_y;
+			} else {
+				new_camera_y = (this.camera_y + this.target_camera_y) / 2;
+				if (Math.abs(new_camera_y - this.camera_y) > max_pan_speed) {
+					if (this.camera_y < new_camera_y) {
+						this.camera_y += max_pan_speed;
+					} else {
+						this.camera_y -= max_pan_speed;
+					}
+				} else {
+					this.camera_y = new_camera_y;
+				}
+			}
+		}
+		
+		this.level.render(screen, this.camera_x + this.x_offset_override, this.camera_y, this.sprites, counter);
+		
+		this.overlay.render(screen, counter);
+	}
+}
