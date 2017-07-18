@@ -437,7 +437,6 @@ class Level {
 			col = i;
 			row = 0;
 			
-			
 			if (col >= width) {
 				diff = col - width + 1;
 				col -= diff;
@@ -445,6 +444,8 @@ class Level {
 			}
 			index = col + row * width;
 			indexStep = width - 1;
+			reblitIndex = index - width + 1;
+			
 			while (row < height && col >= 0) {
 				sprite_list = sprite_lookup.get(index);
 				re_on = re_on_keys.get(index);
@@ -457,11 +458,32 @@ class Level {
 					re_off = re_off.clone();
 				}
 				
-				this.render_tile_stack(screen, col, row, xOffset, yOffset, render_counter, sprite_list, re_on, re_off);
+				re_blits = this.re_blits.get(reblitIndex);
+				if (sprite_list == null && re_blits == null && re_on == null && re_off == null) {
+					// most common case. Just naively render a simple list of tiles without any 
+					// crazy if statements or expensive function calls...
+					
+					z = 0;
+					x = xOffset + col * 16 - row * 16 - 16;
+					y = yOffset + col * 8 + row * 8;
+					
+					stack = this.grid[col][row];
+					for (tile : stack) {
+						if (tile == null) {
+							z++;
+						} else {
+							tile.render(screen, x, y - z * 8, render_counter);
+							z += tile.height;
+						}
+					}
+				} else {
+					this.render_tile_stack(screen, col, row, xOffset, yOffset, render_counter, sprite_list, re_on, re_off, re_blits);
+				}
 				
 				row++;
 				col--;
 				index += indexStep;
+				reblitIndex += indexStep;
 			}
 			i += 1;
 		}
@@ -499,14 +521,11 @@ class Level {
 		}
 	}
 	
-	function render_tile_stack(screen, col, row, xOffset, yOffset, render_counter, sprites, re_on, re_off) {
+	function render_tile_stack(screen, col, row, xOffset, yOffset, render_counter, sprites, re_on, re_off, re_blits) {
 		re_sprite_on = null;
 		re_sprite_off = null;
 		re_block_on = null;
 		re_block_off = null;
-		
-		index = (col + 1) + this.width * (row - 1);
-		re_blits = this.re_blits.get(index);
 		
 		if (re_on != null) {
 			re_block_on = [];
