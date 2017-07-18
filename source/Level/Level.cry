@@ -398,15 +398,15 @@ class Level {
 		height = this.height;
 		sprite_lookup = {};
 		for (sprite : sprites) {
-			x = Math.floor(sprite.x / 16);
-			y = Math.floor(sprite.y / 16);
-			key = x + '_' + y;
+			x = Math.floor(sprite.x) / 16;
+			y = Math.floor(sprite.y) / 16;
+			key = y * width + x;
 			list = sprite_lookup.get(key);
 			if (list == null) {
-				list = [];
-				sprite_lookup[key] = list;
+				sprite_lookup[key] = [sprite];
+			} else {
+				list.add(sprite);
 			}
-			list.add(sprite);
 		}
 		empty_list = [];
 		
@@ -420,35 +420,50 @@ class Level {
 		}
 		
 		for (k : re_on_keys.keys()) {
-			re_on_keys[k].sort(sprite_z_key);
+			list = re_on_keys[k];
+			if (list.length > 1) {
+				list.sort(sprite_z_key);
+			}
 		}
 		for (k : re_off_keys.keys()) {
-			re_off_keys[k].sort(sprite_z_key);
+			list = re_off_keys[k];
+			if (list.length > 1) {
+				list.sort(sprite_z_key);
+			}
 		}
+		
+		empty_list = [];
 		
 		i = 0;
 		while (i < width + height) {
 			col = i;
 			row = 0;
 			
+			
+			if (col >= width) {
+				diff = col - width + 1;
+				col -= diff;
+				row += diff;
+			}
+			index = col + row * width;
+			indexStep = width - 1;
 			while (row < height && col >= 0) {
-				if (col < width) {
-					sprite_list = sprite_lookup.get(col + '_' + row);
-					k = col + '|' + row;
-					re_on = re_on_keys.get(k);
-					re_off = re_off_keys.get(k);
-					
-					if (re_on != null) {
-						re_on = re_on.clone();
-					}
-					if (re_off != null) {
-						re_off = re_off.clone();
-					}
-					
-					this.render_tile_stack(screen, col, row, xOffset, yOffset, render_counter, sprite_list, re_on, re_off);
+				sprite_list = sprite_lookup.get(index, empty_list);
+				re_on = re_on_keys.get(index);
+				re_off = re_off_keys.get(index);
+				
+				if (re_on != null) {
+					re_on = re_on.clone();
 				}
-				row += 1;
-				col -= 1;
+				if (re_off != null) {
+					re_off = re_off.clone();
+				}
+				
+				this.render_tile_stack(screen, col, row, xOffset, yOffset, render_counter, sprite_list, re_on, re_off);
+				
+				row++;
+				col--;
+				index += indexStep;
 			}
 			i += 1;
 		}
@@ -734,7 +749,7 @@ class Level {
 			dir = 'NE';
 		}
 		
-		this.render_exceptions.add(new RenderException([start_col, start_row, layer], dir, block, true));
+		this.render_exceptions.add(new RenderException([start_col, start_row, layer], dir, block, true, this.width));
 		
 		below_layer = layer - 1;
 		

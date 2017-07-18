@@ -26,7 +26,7 @@ class RenderException {
 	field offsets;
 	
 	// start is a set of 3D coordinates
-	constructor(start, direction, tile, is_block) {
+	constructor(start, direction, tile, is_block, map_width) {
 		this.is_block = is_block;
 		this.is_sprite = !is_block;
 		this.z = start[2];
@@ -49,8 +49,8 @@ class RenderException {
 		}
 		this.direction = direction;
 		this.tile = tile;
-		this.on_key = this.do_show[0] + '|' + this.do_show[1];
-		this.off_key = this.dont_show[0] + '|' + this.dont_show[1];
+		this.on_key = this.do_show[0] + map_width * this.do_show[1];
+		this.off_key = this.dont_show[0] + map_width * this.dont_show[1];
 		
 		if (this.direction == 'NW') {
 			xflip = -1;

@@ -167,7 +167,7 @@ class MovingPlatformManager {
 								if (first) {
 									this.platforms[i] = target;
 								}
-								render_exceptions.add(new RenderException(move_me, direction, mp, true));
+								render_exceptions.add(new RenderException(move_me, direction, mp, true, level.width));
 								first = false;
 							}
 							directions.add(directions.remove(0));
@@ -196,7 +196,7 @@ class MovingPlatformManager {
 												}
 											}
 											if (!blocked) {
-												render_exceptions.add(new RenderException(coords, direction, sprite, false));
+												render_exceptions.add(new RenderException(coords, direction, sprite, false, level.width));
 												sprite.x += offset[0] * 16;
 												sprite.y += offset[1] * 16;
 											} else {
