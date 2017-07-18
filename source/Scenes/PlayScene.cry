@@ -149,7 +149,7 @@ class PlayScene {
 				filtered.add(sprite);
 			}
 			
-			if (sprite.israt && !player.death_by_rat) {
+			if (sprite.israt && player.death_by_rat == 0) {
 				dx = sprite.x - player.x;
 				dy = sprite.y - player.y;
 				distance = dx * dx + dy * dy;
