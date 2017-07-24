@@ -388,6 +388,8 @@ class Level {
 		}
 	}
 	
+	field plot_has_artifacts = null;
+	
 	function render(screen, xOffset, yOffset, sprites, render_counter) {
 		this.counter += 1;
 		this.allsprites = sprites;
@@ -396,19 +398,24 @@ class Level {
 		
 		width = this.width;
 		height = this.height;
+		
+		if (this.plot_has_artifacts == null) {
+			this.plot_has_artifacts = [-1] * (this.width * this.height);
+		}
+		
 		sprite_lookup = {};
+		
 		for (sprite : sprites) {
 			x = Math.floor(sprite.x) / 16;
 			y = Math.floor(sprite.y) / 16;
 			key = y * width + x;
-			list = sprite_lookup.get(key);
-			if (list == null) {
-				sprite_lookup[key] = [sprite];
+			if (sprite_lookup.contains(key)) {
+				sprite_lookup[key].add(sprite);
 			} else {
-				list.add(sprite);
+				sprite_lookup[key] = [sprite];
 			}
+			this.plot_has_artifacts[key] = this.counter;
 		}
-		empty_list = [];
 		
 		re_on_keys = {};
 		re_off_keys = {};
@@ -417,6 +424,8 @@ class Level {
 			re_on_keys[re.on_key].add(re);
 			re_off_keys[re.off_key] = re_off_keys.get(re.off_key, []);
 			re_off_keys[re.off_key].add(re);
+			this.plot_has_artifacts[re.on_key] = this.counter;
+			this.plot_has_artifacts[re.off_key] = this.counter;
 		}
 		
 		for (k : re_on_keys.keys()) {
@@ -445,45 +454,46 @@ class Level {
 			index = col + row * width;
 			indexStep = width - 1;
 			reblitIndex = index - width + 1;
+			x = xOffset + (col - row) * 16 - 16;
+			y = yOffset + (col + row) * 8;
 			
-			while (row < height && col >= 0) {
-				sprite_list = sprite_lookup.get(index);
-				re_on = re_on_keys.get(index);
-				re_off = re_off_keys.get(index);
-				
-				if (re_on != null) {
-					re_on = re_on.clone();
-				}
-				if (re_off != null) {
-					re_off = re_off.clone();
-				}
-				
-				re_blits = this.re_blits.get(reblitIndex);
-				if (sprite_list == null && re_blits == null && re_on == null && re_off == null) {
-					// most common case. Just naively render a simple list of tiles without any 
-					// crazy if statements or expensive function calls...
+			if (y >= 0) { // if you're still off the top, no point in rendering.
+				while (row < height && col >= 0) {
+
+					if (x < -32) break; // you've run off the left side of the screen
 					
-					z = 0;
-					x = xOffset + col * 16 - row * 16 - 16;
-					y = yOffset + col * 8 + row * 8;
-					
-					stack = this.grid[col][row];
-					for (tile : stack) {
-						if (tile == null) {
-							z++;
+					if (x < GAME_WIDTH) {
+						
+						if (this.plot_has_artifacts[index] != this.counter) {
+							// most common case. Just naively render a simple list of tiles without any 
+							// crazy if statements or expensive function calls...
+							
+							z = 0;
+							
+							stack = this.grid[col][row];
+							for (tile : stack) {
+								if (tile == null) {
+									z++;
+								} else {
+									tile.render(screen, x, y - z * 8, render_counter);
+									z += tile.height;
+								}
+							}
 						} else {
-							tile.render(screen, x, y - z * 8, render_counter);
-							z += tile.height;
+							sprite_list = sprite_lookup.get(index);
+							re_on = re_on_keys.get(index);
+							re_off = re_off_keys.get(index);
+							re_blits = this.re_blits.get(reblitIndex);
+							this.render_tile_stack(screen, col, row, xOffset, yOffset, render_counter, sprite_list, re_on, re_off, re_blits);
 						}
 					}
-				} else {
-					this.render_tile_stack(screen, col, row, xOffset, yOffset, render_counter, sprite_list, re_on, re_off, re_blits);
+					
+					x -= 32;
+					row++;
+					col--;
+					index += indexStep;
+					reblitIndex += indexStep;
 				}
-				
-				row++;
-				col--;
-				index += indexStep;
-				reblitIndex += indexStep;
 			}
 			i += 1;
 		}
