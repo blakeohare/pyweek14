@@ -22,9 +22,9 @@
 	<target name="java">
 		<platform>java-app</platform>
 	</target>
-	
+
 	<target name="games_browser">
 		<platform>javascript-app</platform>
-		<jsfileprefix>games/sudoscienc</jsfileprefix>
+		<jsfileprefix>games/sudoscience</jsfileprefix>
 	</target>
 </build>
